@@ -1,94 +1,78 @@
-name: nf-core linting
-# This workflow is triggered on pushes and PRs to the repository.
-# It runs the `nf-core pipelines lint` and markdown lint tests to ensure
-# that the code meets the nf-core guidelines.
+name: Linting
+
 on:
   pull_request:
+  push:
+    branches: [master]
   release:
     types: [published]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   pre-commit:
+    name: pre-commit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@v5
 
-      - name: Install Nextflow
-        uses: nf-core/setup-nextflow@893c28b667aedeba26e37f296d260ccc5bc4d914 # v3
-
-      - name: Run prek
-        uses: j178/prek-action@5337cb91e0fa35a7ff31b9ca345126d8bbbcdf16 # v2
-
-  nf-core:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out pipeline code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-
-      - name: Install Nextflow
-        uses: nf-core/setup-nextflow@893c28b667aedeba26e37f296d260ccc5bc4d914 # v3
-
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+      - uses: actions/setup-python@v6
         with:
-          python-version: "3.14"
-          architecture: "x64"
+          python-version: "3.12"
+
+      - name: Install Nextflow
+        uses: nf-core/setup-nextflow@v3
 
       - name: Setup uv
-        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        uses: astral-sh/setup-uv@v9
 
-      - name: read .nf-core.yml
-        uses: pietrobolcato/action-read-yaml@9f13718d61111b69f30ab4ac683e67a56d254e1d # 1.1.0
-        id: read_yml
+      # .pre-commit-config.yaml has a local hook that shells out to nf-core, so the
+      # version pinned in .nf-core.yml has to be on the PATH before the hooks run.
+      - name: Install nf-core
+        run: |
+          NF_CORE_VERSION=$(grep '^nf_core_version:' .nf-core.yml | awk '{print $2}')
+          uv tool install "nf-core==${NF_CORE_VERSION}"
+
+      - uses: pre-commit/action@v3.0.1
+
+  nf-core-lint:
+    name: nf-core pipelines lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
         with:
-          config: ${{ github.workspace }}/.nf-core.yml
+          python-version: "3.12"
 
-      - name: Install dependencies
-        run: uv tool install nf-core==${{ steps.read_yml.outputs['nf_core_version'] }}
+      - name: Install Nextflow
+        uses: nf-core/setup-nextflow@v3
 
-      - name: Run nf-core pipelines lint
-        if: ${{ github.base_ref != 'master' && github.base_ref != 'main' }}
-        env:
-          GITHUB_COMMENTS_URL: ${{ github.event.pull_request.comments_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_PR_COMMIT: ${{ github.event.pull_request.head.sha }}
-        run: nf-core -l lint_log.txt pipelines lint --dir ${GITHUB_WORKSPACE} --markdown lint_results.md
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v9
 
-      - name: Run nf-core pipelines lint --release
-        if: ${{ github.base_ref == 'master' || github.base_ref == 'main' }}
-        env:
-          GITHUB_COMMENTS_URL: ${{ github.event.pull_request.comments_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_PR_COMMIT: ${{ github.event.pull_request.head.sha }}
-        run: nf-core -l lint_log.txt pipelines lint --release --dir ${GITHUB_WORKSPACE} --markdown lint_results.md
+      - name: Install nf-core
+        run: |
+          NF_CORE_VERSION=$(grep '^nf_core_version:' .nf-core.yml | awk '{print $2}')
+          uv tool install "nf-core==${NF_CORE_VERSION}"
 
-      - name: Save PR number
-        if: ${{ always() }}
-        run: echo ${{ github.event.pull_request.number }} > PR_number.txt
+      # --release additionally checks that the version number is not a dev version.
+      - name: Lint
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            nf-core -l lint_log.txt pipelines lint --release --dir "${GITHUB_WORKSPACE}" --markdown lint_results.md
+          else
+            nf-core -l lint_log.txt pipelines lint --dir "${GITHUB_WORKSPACE}" --markdown lint_results.md
+          fi
 
-      - name: Upload linting log file artifact
-        if: ${{ always() }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      - name: Upload lint results
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          name: linting-logs
+          name: lint-results
           path: |
             lint_log.txt
             lint_results.md
-            PR_number.txt
-
-      # Build a comment for the shared pr-comment.yml poster to publish on the PR
-      - name: Prepare PR comment
-        if: ${{ always() }}
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          mkdir -p pr-comment
-          echo "$PR_NUMBER" > pr-comment/pr_number.txt
-          echo "lint" > pr-comment/header.txt
-          [ -f lint_results.md ] && cp lint_results.md pr-comment/comment.md || true
-
-      - name: Upload PR comment artifact
-        if: ${{ always() }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: pr-comment
-          path: pr-comment/

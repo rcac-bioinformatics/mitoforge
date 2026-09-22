@@ -28,7 +28,7 @@
                     [
                         "MITOFORGE_SAMPLE_STATS",
                         "mitoforge",
-                        "0.1.0dev"
+                        "0.1.0"
                     ]
                 ],
                 "contigs_stats": [
@@ -57,12 +57,12 @@
                     [
                         "MITOFORGE_SAMPLE_STATS",
                         "mitoforge",
-                        "0.1.0dev"
+                        "0.1.0"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-09-22T13:06:51.321050822",
+        "timestamp": "2026-09-22T15:39:26.168828228",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"

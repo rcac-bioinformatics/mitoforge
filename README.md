@@ -36,13 +36,27 @@ Everything else — how to write the samplesheet, worked examples for each kind 
 what every output file means, and what to do when a sample fails — is at
 **<https://rcac-bioinformatics.github.io/mitoforge/>**.
 
+New to it? Start with the [quick start](https://rcac-bioinformatics.github.io/mitoforge/quick-start/):
+five commands from clone to results.
+
+## Status
+
+Version 0.1.0. What changed, and what is known to be broken, is in
+[`CHANGELOG.md`](CHANGELOG.md).
+
+The Negishi, Bell and Anvil profiles are **untested on cluster** — they were written
+from documentation on a machine with no SLURM. Please
+[open an issue](https://github.com/rcac-bioinformatics/mitoforge/issues) with anything
+that does not work.
+
 ## Credits
 
 mitoforge is written and maintained by Arun Seetharam at the Rosen Center for Advanced
 Computing, Purdue University.
 
 It wraps existing tools rather than reimplementing them. Please cite them: see
-[`CITATIONS.md`](CITATIONS.md).
+[`CITATIONS.md`](CITATIONS.md). To cite mitoforge itself, see
+[`CITATION.cff`](CITATION.cff).
 
 This pipeline uses code and infrastructure developed and maintained by the
 [nf-core](https://nf-co.re) community, reused here under the

@@ -6,10 +6,10 @@
                     "getorganelle": "1.7.7.1"
                 },
                 "MITOFORGE_SAMPLE_STATS": {
-                    "mitoforge": "0.1.0dev"
+                    "mitoforge": "0.1.0"
                 },
                 "MITOFORGE_SUMMARY": {
-                    "mitoforge": "0.1.0dev"
+                    "mitoforge": "0.1.0"
                 },
                 "MITOHIFI_FINALIZE": {
                     "mitohifi": "3.2.3"
@@ -18,11 +18,11 @@
                     "mitohifi": "3.2.3"
                 },
                 "Workflow": {
-                    "rcac-bioinformatics/mitoforge": "v0.1.0dev"
+                    "rcac-bioinformatics/mitoforge": "v0.1.0"
                 }
             }
         ],
-        "timestamp": "2026-09-22T14:52:18.119415963",
+        "timestamp": "2026-09-22T15:52:55.603959744",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"

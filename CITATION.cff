@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+title: mitoforge
+message: >-
+  If you use this pipeline, please cite it as below, and cite the tools it wraps.
+  They are listed in CITATIONS.md and at
+  https://rcac-bioinformatics.github.io/mitoforge/citations/
+type: software
+authors:
+  - given-names: Arun
+    family-names: Seetharam
+    affiliation: Rosen Center for Advanced Computing, Purdue University
+repository-code: "https://github.com/rcac-bioinformatics/mitoforge"
+url: "https://rcac-bioinformatics.github.io/mitoforge/"
+abstract: >-
+  A Nextflow pipeline that assembles, circularises and annotates animal
+  mitochondrial genomes from PacBio HiFi or Illumina paired-end reads, for many
+  samples at once. HiFi samples are assembled with MitoHiFi and Illumina samples
+  with GetOrganelle; every assembly then goes through the same finishing step, so
+  all samples get identical outputs.
+keywords:
+  - nextflow
+  - mitochondrial genome
+  - mitogenome
+  - genome assembly
+  - annotation
+  - pacbio hifi
+  - illumina
+license: MIT
+version: 0.1.0
+date-released: "2026-09-22"

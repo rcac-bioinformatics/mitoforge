@@ -167,3 +167,24 @@ Tested:
 - `mkdocs build --strict` with anchor and link validation on - clean.
 - `nf-core pipelines lint` - 0 failures, warnings down to 10.
 - `nextflow run . -profile test,docker` - still green.
+
+### Phase 5 - CI and release: done
+
+Done:
+
+- `.github/workflows/nf-test.yml`: the whole suite on Docker, Nextflow 25.10.4 and `latest-everything` (the latter non-blocking). Frees disk before starting, because the MitoHiFi image alone is ~7 GB and a stock runner does not have room. Runs `bin/fetch_testdata.sh` first; the test data is fetched, not committed.
+- `.github/workflows/linting.yml`: pre-commit and `nf-core pipelines lint`, the latter with `--release` on a release event. Both jobs install the nf-core version pinned in `.nf-core.yml`, because `.pre-commit-config.yaml` has a local hook that shells out to it.
+- `.github/workflows/docs.yml` (added in Phase 4) builds with `--strict` on pull requests and deploys to GitHub Pages on push to master.
+- Deleted `.github/actions/{get-shards,nf-test}`: the template's sharded matrix included a conda profile, which MitoHiFi does not support, and posted PR comments through a workflow that was pruned in Phase 0. Both are in the `files_exist` lint ignores now.
+- `CHANGELOG.md` for v0.1.0, `CITATION.cff`, version bumped from `0.1.0dev` to `0.1.0`, tagged `v0.1.0`.
+
+Tested:
+
+- `nf-test test` - 29 tests green, snapshots regenerated for the version bump.
+- `nf-core pipelines lint --release` - 0 failures, 9 warnings.
+- `mkdocs build --strict` - clean.
+
+Not done here, because it needs the GitHub repository to exist:
+
+- Pushing, and enabling GitHub Pages with "GitHub Actions" as the source in the repository settings. Until that is done, `.github/workflows/docs.yml` builds but cannot deploy.
+- No CI run has actually happened. The workflows are written but unproven, in the same way the cluster profiles are.
