@@ -34,14 +34,17 @@ jobs:
       - name: Build
         run: mkdocs build --strict
 
+      # Everything but a pull request deploys: a push to master, and a manual
+      # workflow_dispatch. Gating on `push` alone made a dispatched run build the
+      # site, upload nothing, and still report success.
       - uses: actions/upload-pages-artifact@v4
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: github.event_name != 'pull_request'
         with:
           path: site
 
   deploy:
     name: Deploy to GitHub Pages
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     permissions:

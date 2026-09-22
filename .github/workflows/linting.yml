@@ -27,7 +27,7 @@ jobs:
         uses: nf-core/setup-nextflow@v3
 
       - name: Setup uv
-        uses: astral-sh/setup-uv@v9
+        uses: astral-sh/setup-uv@v9.0.0
 
       # .pre-commit-config.yaml has a local hook that shells out to nf-core, so the
       # version pinned in .nf-core.yml has to be on the PATH before the hooks run.
@@ -52,7 +52,7 @@ jobs:
         uses: nf-core/setup-nextflow@v3
 
       - name: Setup uv
-        uses: astral-sh/setup-uv@v9
+        uses: astral-sh/setup-uv@v9.0.0
 
       - name: Install nf-core
         run: |
