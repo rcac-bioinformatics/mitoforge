@@ -1,0 +1,48 @@
+nextflow_workflow {
+
+    name "Test subworkflow SUMMARY"
+    script "../main.nf"
+    workflow "SUMMARY"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "summary"
+
+    test("one sample with assembly stats, one without") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                def hifi_meta  = [ id: 'hifiA',  platform: 'hifi',     genetic_code: 5, ref_fa: file("\${projectDir}/testdata/hifi/MW539688.1.fasta", checkIfExists: true) ]
+                def short_meta = [ id: 'shortA', platform: 'illumina', genetic_code: 2, ref_fa: file("\${projectDir}/testdata/hifi/MW539688.1.fasta", checkIfExists: true) ]
+                def mitogenome = file("\${projectDir}/testdata/hifi/ilDeiPorc1.final_mitogenome.fasta", checkIfExists: true)
+                def final_stats    = file("\${projectDir}/modules/local/mitoforge_sample_stats/tests/final_contigs_stats.tsv", checkIfExists: true)
+                def assembly_stats = file("\${projectDir}/modules/local/mitoforge_sample_stats/tests/assembly_contigs_stats.tsv", checkIfExists: true)
+
+                input[0] = channel.of([ hifi_meta, mitogenome ], [ short_meta, mitogenome ])
+                input[1] = channel.of([ hifi_meta, final_stats ], [ short_meta, final_stats ])
+                // only the hifi sample has an assembly-stage table
+                input[2] = channel.of([ hifi_meta, assembly_stats ])
+                """
+            }
+        }
+
+        then {
+            def summary = path(workflow.out.summary[0]).readLines()
+            assertAll(
+                { assert workflow.success },
+                { assert summary.size() == 3 },
+                { assert summary[1].startsWith('hifiA\t') },
+                { assert summary[2].startsWith('shortA\t') },
+                // the hifi sample's assembly table says it was circularised; the
+                // short-read sample only has the finishing table, which says it was not
+                { assert summary[1].split('\t')[6] == 'True' },
+                { assert summary[2].split('\t')[6] == 'False' },
+                { assert path(workflow.out.multiqc[0]).text.contains('plot_type') }
+            )
+        }
+    }
+}

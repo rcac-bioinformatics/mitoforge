@@ -187,7 +187,9 @@ def toolCitationText() {
     // Keep this in step with CITATIONS.md as stages are added.
     def citation_text = [
             "Tools used in the workflow included:",
-            "MultiQC (Ewels et al. 2016)",
+            "MitoHiFi (Uliano-Silva et al. 2023),",
+            "samtools (Danecek et al. 2021)",
+            "and MultiQC (Ewels et al. 2016)",
             "."
         ].join(' ').trim()
 
@@ -197,7 +199,9 @@ def toolCitationText() {
 def toolBibliographyText() {
     // Keep this in step with CITATIONS.md as stages are added.
     def reference_text = [
-            "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics , 32(19), 3047–3048. doi: /10.1093/bioinformatics/btw354</li>"
+            "<li>Uliano-Silva, M., Ferreira, J. G. R. N., Krasheninnikova, K., Darwin Tree of Life Consortium, Formenti, G., Abueg, L., Torrance, J., Myers, E. W., Durbin, R., Blaxter, M., & McCarthy, S. A. (2023). MitoHiFi: a python pipeline for mitochondrial genome assembly from PacBio high fidelity reads. BMC Bioinformatics, 24(1), 288. doi: 10.1186/s12859-023-05385-y</li>",
+            "<li>Danecek, P., Bonfield, J. K., Liddle, J., Marshall, J., Ohan, V., Pollard, M. O., Whitwham, A., Keane, T., McCarthy, S. A., Davies, R. M., & Li, H. (2021). Twelve years of SAMtools and BCFtools. GigaScience, 10(2), giab008. doi: 10.1093/gigascience/giab008</li>",
+            "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics , 32(19), 3047-3048. doi: 10.1093/bioinformatics/btw354</li>"
         ].join(' ').trim()
 
     return reference_text

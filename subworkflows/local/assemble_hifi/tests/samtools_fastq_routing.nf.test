@@ -1,0 +1,47 @@
+nextflow_process {
+
+    name "PacBio BAM reads come out of samtools fastq on the 'other' channel"
+    script "../../../../modules/nf-core/samtools/fastq/main.nf"
+    process "SAMTOOLS_FASTQ"
+
+    tag "subworkflows_local"
+    tag "assemble_hifi"
+
+    // ASSEMBLE_HIFI takes the BAM branch's reads from SAMTOOLS_FASTQ.out.other, which
+    // looks wrong until you know why: records in an unaligned PacBio BAM carry flag 4
+    // and neither READ1 nor READ2, and `samtools fastq` sends exactly those to the
+    // file given to -0. If a future samtools ever changes that, this test fails here
+    // rather than silently handing MitoHiFi an empty read set.
+    //
+    // testdata/bam/alz.ccs.bam is a real PacBio CCS unaligned BAM (human Iso-Seq) from
+    // the nf-core test-datasets collection. Only the read routing is under test.
+
+    test("all reads land on 'other', and 'fastq' comes back empty") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = channel.of([
+                    [ id: 'pacbio', single_end: true ],
+                    file("\${projectDir}/testdata/bam/alz.ccs.bam", checkIfExists: true)
+                ])
+                input[1] = false
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.other.size() == 1 },
+                { assert path(process.out.other[0][1]).linesGzip.size() > 0 },
+                { assert path(process.out.other[0][1]).linesGzip[0].startsWith('@') },
+                // The _1 and _singleton files are written but hold no reads
+                { assert process.out.fastq.size() == 0 || path(process.out.fastq[0][1]).linesGzip.size() == 0 }
+            )
+        }
+    }
+}

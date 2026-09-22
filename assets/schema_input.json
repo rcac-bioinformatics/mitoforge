@@ -58,7 +58,6 @@
             },
             "genetic_code": {
                 "type": "integer",
-                "default": 2,
                 "enum": [1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14, 16, 21, 22, 23, 24, 25],
                 "errorMessage": "Column 'genetic_code': must be an NCBI translation table number. Common animal choices: 2 = vertebrate mitochondrial (default), 5 = invertebrate mitochondrial, 9 = echinoderm and flatworm mitochondrial.",
                 "meta": ["genetic_code"]

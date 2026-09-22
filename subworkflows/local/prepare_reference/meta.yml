@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "prepare_reference"
+description: Give every sample a close-relative reference mitogenome in FASTA and GenBank form
+keywords:
+  - reference
+  - mitogenome
+  - NCBI
+components:
+  - mitohifi/findmitoreference
+input:
+  - ch_samples:
+      type: file
+      description: |
+        Samples from INPUT_CHECK.
+        Structure: [ val(meta), [ path(reads) ] ]
+output:
+  - reference:
+      type: file
+      description: |
+        Samples whose reference is now resolved.
+        Structure: [ val(meta), path(ref_fa), path(ref_gb) ]
+        meta.ref_fa and meta.ref_gb are files on this channel, not strings.
+  - needs_hifi:
+      type: file
+      description: |
+        Samples whose ref_fa is 'hifi:<sample>' and so cannot be resolved until that
+        sample has been assembled and finished.
+        Structure: [ val(meta), [ path(reads) ] ]
+authors:
+  - "Arun Seetharam"
+maintainers:
+  - "Arun Seetharam"

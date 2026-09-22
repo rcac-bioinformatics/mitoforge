@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "finalize"
+description: Circularise, rotate to tRNA-Phe and annotate every assembly with MitoHiFi in contigs mode
+keywords:
+  - circularisation
+  - annotation
+  - mitogenome
+components:
+  - mitohifi/mitohifi
+input:
+  - ch_assembly:
+      type: file
+      description: |
+        An uncompressed assembly from any assembler.
+        Structure: [ val(meta), path(fasta) ]
+output:
+  - assembly:
+      type: file
+      description: |
+        The finished mitogenome.
+        Structure: [ val(meta), path(final_mitogenome.fasta) ]
+  - gb:
+      type: file
+      description: |
+        Its annotation in GenBank format.
+        Structure: [ val(meta), path(final_mitogenome.gb) ]
+  - gff:
+      type: file
+      description: |
+        Its annotation in GFF format, when MitoHiFi produces one.
+        Structure: [ val(meta), path(final_mitogenome.gff) ]
+  - stats:
+      type: file
+      description: |
+        Per-contig table for the finished mitogenome.
+        Structure: [ val(meta), path(contigs_stats.tsv) ]
+authors:
+  - "Arun Seetharam"
+maintainers:
+  - "Arun Seetharam"

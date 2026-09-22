@@ -1,0 +1,117 @@
+nextflow_process {
+
+    name "Test process MITOFORGE_SAMPLE_STATS"
+    script "../main.nf"
+    process "MITOFORGE_SAMPLE_STATS"
+
+    tag "modules"
+    tag "modules_local"
+    tag "mitoforge_sample_stats"
+
+    // The two .tsv files next to this test are real MitoHiFi 3.2.3 output, captured
+    // from a run of the test profile on the Deilephila porcellus test reads:
+    //   assembly_contigs_stats.tsv  from MitoHiFi -r, was_circular True
+    //   final_contigs_stats.tsv     from MitoHiFi -c on that result, was_circular
+    //                               False, because -r had already trimmed the overlap
+    // Together they pin down the behaviour the circularity column depends on.
+
+    test("reads size, genes and circularity out of MitoHiFi's tables") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = channel.of([
+                    [ id: 'ilDeiPorc1', platform: 'hifi', genetic_code: 5, ref_fa: file("\${projectDir}/testdata/hifi/MW539688.1.fasta", checkIfExists: true) ],
+                    file("\${projectDir}/testdata/hifi/ilDeiPorc1.final_mitogenome.fasta", checkIfExists: true),
+                    file("\${projectDir}/modules/local/mitoforge_sample_stats/tests/final_contigs_stats.tsv", checkIfExists: true),
+                    file("\${projectDir}/modules/local/mitoforge_sample_stats/tests/assembly_contigs_stats.tsv", checkIfExists: true)
+                ])
+                """
+            }
+        }
+
+        then {
+            def summary = path(process.out.summary[0][1]).text.trim().split('\t')
+            def contigs = path(process.out.contigs_stats[0][1]).readLines()
+            assertAll(
+                { assert process.success },
+                { assert summary[0] == 'ilDeiPorc1' },
+                { assert summary[1] == 'hifi' },
+                { assert summary[2] == '5' },
+                { assert summary[3] == 'MW539688.1.fasta' },
+                { assert summary[4] == '15316' },
+                { assert summary[5] == '36' },
+                // True, because the assembly step found and trimmed the overlap, even
+                // though the finishing step no longer sees one
+                { assert summary[6] == 'True' },
+                { assert summary[7] == 'COX1' },
+                { assert summary[8] == 'pass' },
+                // Header, then the rows from both stages, with no '#' comment lines
+                { assert contigs[0].startsWith('sample\tstage\tcontig_id') },
+                { assert contigs.any { line -> line.startsWith('ilDeiPorc1\tfinal\t') } },
+                { assert contigs.any { line -> line.startsWith('ilDeiPorc1\tassembly\t') } },
+                { assert contigs.every { line -> !line.startsWith('#') } }
+            )
+        }
+    }
+
+    test("works with no assembly-stage table, as for a short-read sample") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = channel.of([
+                    [ id: 'shortA', platform: 'illumina', genetic_code: 2, ref_fa: file("\${projectDir}/testdata/hifi/MW539688.1.fasta", checkIfExists: true) ],
+                    file("\${projectDir}/testdata/hifi/ilDeiPorc1.final_mitogenome.fasta", checkIfExists: true),
+                    file("\${projectDir}/modules/local/mitoforge_sample_stats/tests/assembly_contigs_stats.tsv", checkIfExists: true),
+                    []
+                ])
+                """
+            }
+        }
+
+        then {
+            def summary = path(process.out.summary[0][1]).text.trim().split('\t')
+            def contigs = path(process.out.contigs_stats[0][1]).readLines()
+            assertAll(
+                { assert process.success },
+                { assert summary[1] == 'illumina' },
+                { assert summary[4] == '15316' },
+                { assert summary[6] == 'True' },
+                { assert contigs.every { line -> !line.startsWith('ilDeiPorc1\tassembly\t') } }
+            )
+        }
+    }
+
+    test("stub") {
+
+        options "-stub"
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = channel.of([
+                    [ id: 'ilDeiPorc1', platform: 'hifi', genetic_code: 5, ref_fa: null ],
+                    file("\${projectDir}/testdata/hifi/ilDeiPorc1.final_mitogenome.fasta", checkIfExists: true),
+                    file("\${projectDir}/modules/local/mitoforge_sample_stats/tests/final_contigs_stats.tsv", checkIfExists: true),
+                    []
+                ])
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+    }
+}

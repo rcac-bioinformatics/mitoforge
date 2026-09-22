@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "input_check"
+description: Turn validated samplesheet rows into the meta maps every later stage consumes
+keywords:
+  - samplesheet
+  - validation
+  - metadata
+components: []
+input:
+  - ch_rows:
+      type: file
+      description: |
+        Samplesheet rows as nf-schema hands them over.
+        Structure: [ val(meta), path(fastq_1), path(fastq_2), path(bam), val(ref_fa), val(ref_gb) ]
+  - default_genetic_code:
+      type: integer
+      description: NCBI translation table to use for any row whose genetic_code column is blank.
+output:
+  - samples:
+      type: file
+      description: |
+        One entry per samplesheet row.
+        Structure: [ val(meta), [ path(reads) ] ]
+        meta contains id, platform, genetic_code, species, ref_fa, ref_gb, ref_source,
+        single_end and input_type. ref_fa and ref_gb are still the strings the user
+        wrote; PREPARE_REFERENCE replaces them with files.
+authors:
+  - "Arun Seetharam"
+maintainers:
+  - "Arun Seetharam"

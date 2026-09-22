@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "summary"
+description: Collect one row per sample and one stacked contig table for the whole run
+keywords:
+  - summary
+  - report
+  - multiqc
+components:
+  - mitoforge_sample_stats
+  - mitoforge_summary
+input:
+  - ch_assembly:
+      type: file
+      description: |
+        The finished mitogenome for each sample.
+        Structure: [ val(meta), path(fasta) ]
+  - ch_final_stats:
+      type: file
+      description: |
+        Per-contig table from FINALIZE.
+        Structure: [ val(meta), path(contigs_stats.tsv) ]
+  - ch_assembly_stats:
+      type: file
+      description: |
+        Per-contig table from the assembler, for the assemblers that produce one.
+        Samples with no entry here are handled.
+        Structure: [ val(meta), path(contigs_stats.tsv) ]
+output:
+  - summary:
+      type: file
+      description: |
+        One row per sample.
+        Structure: path(mitoforge_summary.tsv)
+  - all_contigs_stats:
+      type: file
+      description: |
+        Every sample's per-contig rows, from both stages, under one header.
+        Structure: path(all_contigs_stats.tsv)
+  - multiqc:
+      type: file
+      description: |
+        The same summary with a MultiQC custom-content header.
+        Structure: path(mitoforge_summary_mqc.tsv)
+authors:
+  - "Arun Seetharam"
+maintainers:
+  - "Arun Seetharam"

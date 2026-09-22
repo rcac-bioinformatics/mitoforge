@@ -1,0 +1,71 @@
+{
+    "stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "ilDeiPorc1",
+                            "platform": "hifi",
+                            "genetic_code": 5,
+                            "ref_fa": null
+                        },
+                        "ilDeiPorc1.summary.tsv:md5,32d674fc3a0c7738d4f2ae32dbefa87d"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "ilDeiPorc1",
+                            "platform": "hifi",
+                            "genetic_code": 5,
+                            "ref_fa": null
+                        },
+                        "ilDeiPorc1.contigs_stats.tsv:md5,581362162678f0e56e03493c317cb564"
+                    ]
+                ],
+                "2": [
+                    [
+                        "MITOFORGE_SAMPLE_STATS",
+                        "mitoforge",
+                        "0.1.0dev"
+                    ]
+                ],
+                "contigs_stats": [
+                    [
+                        {
+                            "id": "ilDeiPorc1",
+                            "platform": "hifi",
+                            "genetic_code": 5,
+                            "ref_fa": null
+                        },
+                        "ilDeiPorc1.contigs_stats.tsv:md5,581362162678f0e56e03493c317cb564"
+                    ]
+                ],
+                "summary": [
+                    [
+                        {
+                            "id": "ilDeiPorc1",
+                            "platform": "hifi",
+                            "genetic_code": 5,
+                            "ref_fa": null
+                        },
+                        "ilDeiPorc1.summary.tsv:md5,32d674fc3a0c7738d4f2ae32dbefa87d"
+                    ]
+                ],
+                "versions_mitoforge": [
+                    [
+                        "MITOFORGE_SAMPLE_STATS",
+                        "mitoforge",
+                        "0.1.0dev"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-09-22T12:04:39.252568311",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    }
+}

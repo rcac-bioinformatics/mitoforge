@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "assemble_hifi"
+description: Assemble a mitogenome from PacBio HiFi reads with MitoHiFi in reads mode
+keywords:
+  - assembly
+  - mitogenome
+  - pacbio
+  - hifi
+components:
+  - samtools/fastq
+  - mitohifi/mitohifi
+input:
+  - ch_reads:
+      type: file
+      description: |
+        HiFi samples whose reads are already FASTA or FASTQ.
+        Structure: [ val(meta), [ path(reads) ] ]
+  - ch_bam:
+      type: file
+      description: |
+        HiFi samples whose reads are in an unaligned PacBio BAM.
+        Structure: [ val(meta), [ path(bam) ] ]
+output:
+  - assembly:
+      type: file
+      description: |
+        The assembled mitogenome.
+        Structure: [ val(meta), path(final_mitogenome.fasta) ]
+  - stats:
+      type: file
+      description: |
+        MitoHiFi's per-contig table, which lists the rejected candidates as well.
+        Structure: [ val(meta), path(contigs_stats.tsv) ]
+authors:
+  - "Arun Seetharam"
+maintainers:
+  - "Arun Seetharam"

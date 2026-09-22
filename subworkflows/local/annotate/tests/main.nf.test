@@ -1,0 +1,67 @@
+nextflow_workflow {
+
+    name "Test subworkflow ANNOTATE"
+    script "../main.nf"
+    workflow "ANNOTATE"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "annotate"
+
+    // ANNOTATE is a stub. The contract it has to keep is that whatever goes in comes
+    // out unchanged, with the meta map intact, whether or not it is skipped. Anyone
+    // filling the stub in should keep these tests passing.
+
+    test("passes assemblies through unchanged when skipped") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id: 'ilDeiPorc1', platform: 'hifi', genetic_code: 5 ],
+                    file("\${projectDir}/testdata/hifi/ilDeiPorc1.final_mitogenome.fasta", checkIfExists: true)
+                ])
+                input[1] = true
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.assembly.size() == 1 },
+                { assert workflow.out.assembly[0][0].id == 'ilDeiPorc1' },
+                { assert workflow.out.assembly[0][1].toString().endsWith('ilDeiPorc1.final_mitogenome.fasta') }
+            )
+        }
+    }
+
+    test("passes assemblies through unchanged when not skipped") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id: 'ilDeiPorc1', platform: 'hifi', genetic_code: 5 ],
+                    file("\${projectDir}/testdata/hifi/ilDeiPorc1.final_mitogenome.fasta", checkIfExists: true)
+                ])
+                input[1] = false
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.assembly.size() == 1 },
+                { assert workflow.out.assembly[0][1].toString().endsWith('ilDeiPorc1.final_mitogenome.fasta') }
+            )
+        }
+    }
+}

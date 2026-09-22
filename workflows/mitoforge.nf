@@ -3,6 +3,12 @@
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+include { INPUT_CHECK            } from '../subworkflows/local/input_check'
+include { PREPARE_REFERENCE      } from '../subworkflows/local/prepare_reference'
+include { ASSEMBLE_HIFI          } from '../subworkflows/local/assemble_hifi'
+include { FINALIZE               } from '../subworkflows/local/finalize'
+include { ANNOTATE               } from '../subworkflows/local/annotate'
+include { SUMMARY                } from '../subworkflows/local/summary'
 include { MULTIQC                } from '../modules/nf-core/multiqc/main'
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -28,6 +34,54 @@ workflow MITOFORGE {
 
     def ch_versions = channel.empty()
     def ch_multiqc_files = channel.empty()
+
+    //
+    // SUBWORKFLOW: samplesheet rows -> meta maps
+    //
+    INPUT_CHECK ( ch_samplesheet, params.genetic_code )
+
+    //
+    // SUBWORKFLOW: give every sample a reference mitogenome
+    //
+    PREPARE_REFERENCE ( INPUT_CHECK.out.samples )
+
+    //
+    // Put the resolved reference back onto each sample. The reference channel carries
+    // the enriched meta (ref_fa and ref_gb are now files), so join on the sample id
+    // and keep that copy of meta.
+    //
+    def ch_with_reference = PREPARE_REFERENCE.out.reference
+        .map { meta, _ref_fa, _ref_gb -> [ meta.id, meta ] }
+        .join( INPUT_CHECK.out.samples.map { meta, files -> [ meta.id, files ] } )
+        .map { _id, meta, files -> [ meta, files ] }
+
+    def ch_by_platform = ch_with_reference.branch { meta, _files ->
+        hifi_bam:   meta.platform == 'hifi' && meta.input_type == 'bam'
+        hifi_reads: meta.platform == 'hifi'
+        illumina:   meta.platform == 'illumina'
+    }
+
+    //
+    // SUBWORKFLOW: assemble the HiFi samples
+    //
+    ASSEMBLE_HIFI ( ch_by_platform.hifi_reads, ch_by_platform.hifi_bam )
+
+    //
+    // SUBWORKFLOW: one finishing step for every assembly, whatever made it
+    //
+    FINALIZE ( ASSEMBLE_HIFI.out.assembly )
+
+    //
+    // SUBWORKFLOW: stub, see subworkflows/local/annotate
+    //
+    ANNOTATE ( FINALIZE.out.assembly, params.skip_annotation )
+
+    //
+    // SUBWORKFLOW: gather everything into one report
+    //
+    SUMMARY ( ANNOTATE.out.assembly, FINALIZE.out.stats, ASSEMBLE_HIFI.out.stats )
+
+    ch_multiqc_files = ch_multiqc_files.mix( SUMMARY.out.multiqc )
 
     //
     // Collate and save software versions
@@ -84,7 +138,9 @@ workflow MITOFORGE {
             ]
         }
     )
-    emit:multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
+
+    emit:
+    multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
 }
 

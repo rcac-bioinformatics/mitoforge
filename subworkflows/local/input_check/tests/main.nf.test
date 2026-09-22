@@ -1,0 +1,246 @@
+nextflow_workflow {
+
+    name "Test subworkflow INPUT_CHECK"
+    script "../main.nf"
+    workflow "INPUT_CHECK"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "input_check"
+
+    // The rows below imitate what nf-schema hands over after it has checked the
+    // samplesheet: a meta map, then fastq_1, fastq_2, bam, ref_fa, ref_gb. Empty
+    // cells arrive as [] for file columns and null for string columns.
+    //
+    // These cases test routing and validation, not read content, so the same small
+    // public read file stands in wherever a readable path is needed.
+
+    test("hifi row with reference files") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id: 'ilDeiPorc1', platform: 'hifi', species: null, genetic_code: 5 ],
+                    file("\${projectDir}/testdata/hifi/ilDeiPorc1.reads.100.fa", checkIfExists: true),
+                    [],
+                    [],
+                    "\${projectDir}/testdata/hifi/MW539688.1.fasta",
+                    "\${projectDir}/testdata/hifi/MW539688.1.gb"
+                ])
+                input[1] = 2
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.samples.size() == 1 },
+                { assert workflow.out.samples[0][0].id == 'ilDeiPorc1' },
+                { assert workflow.out.samples[0][0].platform == 'hifi' },
+                { assert workflow.out.samples[0][0].genetic_code == 5 },
+                { assert workflow.out.samples[0][0].ref_source == 'file' },
+                { assert workflow.out.samples[0][0].input_type == 'fastq' },
+                { assert workflow.out.samples[0][0].single_end },
+                { assert workflow.out.samples[0][1].size() == 1 }
+            )
+        }
+    }
+
+    test("blank genetic_code falls back to the parameter") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id: 'sampleA', platform: 'hifi', species: 'Deilephila porcellus', genetic_code: null ],
+                    file("\${projectDir}/testdata/hifi/ilDeiPorc1.reads.100.fa", checkIfExists: true),
+                    [], [], null, null
+                ])
+                input[1] = 2
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.samples[0][0].genetic_code == 2 },
+                { assert workflow.out.samples[0][0].ref_source == 'species' }
+            )
+        }
+    }
+
+    test("a bam row is routed as a bam") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id: 'sampleA', platform: 'hifi', species: 'Deilephila porcellus', genetic_code: null ],
+                    [], [],
+                    file("\${projectDir}/testdata/bam/alz.ccs.bam", checkIfExists: true),
+                    null, null
+                ])
+                input[1] = 5
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.samples[0][0].input_type == 'bam' },
+                { assert workflow.out.samples[0][1][0].toString().endsWith('.bam') }
+            )
+        }
+    }
+
+    test("rejects a row with neither reads nor a bam") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id: 'sampleA', platform: 'hifi', species: 'Deilephila porcellus', genetic_code: null ],
+                    [], [], [], null, null
+                ])
+                input[1] = 2
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert workflow.errorReport.contains("row 2 (sample 'sampleA')") },
+                { assert workflow.errorReport.contains("no reads") }
+            )
+        }
+    }
+
+    test("rejects a repeated sample name") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                def row = [
+                    [ id: 'sampleA', platform: 'hifi', species: 'Deilephila porcellus', genetic_code: 5 ],
+                    file("\${projectDir}/testdata/hifi/ilDeiPorc1.reads.100.fa", checkIfExists: true),
+                    [], [], null, null
+                ]
+                input[0] = channel.of(row, row)
+                input[1] = 2
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert workflow.errorReport.contains("repeats a name already used on row 2") }
+            )
+        }
+    }
+
+    test("rejects a reference with no matching GenBank file") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id: 'sampleA', platform: 'hifi', species: null, genetic_code: 5 ],
+                    file("\${projectDir}/testdata/hifi/ilDeiPorc1.reads.100.fa", checkIfExists: true),
+                    [], [],
+                    "\${projectDir}/testdata/hifi/MW539688.1.fasta",
+                    null
+                ])
+                input[1] = 2
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert workflow.errorReport.contains("column 'ref_gb' is empty") }
+            )
+        }
+    }
+
+    test("rejects hifi:<sample> that names a sample which is not in the sheet") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id: 'shortA', platform: 'illumina', species: null, genetic_code: 5 ],
+                    file("\${projectDir}/testdata/hifi/ilDeiPorc1.reads.100.fa", checkIfExists: true),
+                    file("\${projectDir}/testdata/hifi/ilDeiPorc1.reads.100.fa", checkIfExists: true),
+                    [],
+                    'hifi:nosuchsample',
+                    null
+                ])
+                input[1] = 2
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert workflow.errorReport.contains("which is not in this samplesheet") }
+            )
+        }
+    }
+
+    test("rejects hifi:<sample> on a hifi row") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id: 'hifiA', platform: 'hifi', species: null, genetic_code: 5 ],
+                    file("\${projectDir}/testdata/hifi/ilDeiPorc1.reads.100.fa", checkIfExists: true),
+                    [], [],
+                    'hifi:hifiA',
+                    null
+                ])
+                input[1] = 2
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert workflow.errorReport.contains("only for illumina rows") }
+            )
+        }
+    }
+}

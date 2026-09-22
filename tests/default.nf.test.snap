@@ -1,0 +1,124 @@
+{
+    "-profile test": {
+        "content": [
+            {
+                "MITOFORGE_SAMPLE_STATS": {
+                    "mitoforge": "0.1.0dev"
+                },
+                "MITOFORGE_SUMMARY": {
+                    "mitoforge": "0.1.0dev"
+                },
+                "MITOHIFI_FINALIZE": {
+                    "mitohifi": "3.2.3"
+                },
+                "MITOHIFI_MITOHIFI": {
+                    "mitohifi": "3.2.3"
+                },
+                "Workflow": {
+                    "rcac-bioinformatics/mitoforge": "v0.1.0dev"
+                }
+            },
+            [
+                "mitogenomes",
+                "mitogenomes/ilDeiPorc1.fasta",
+                "mitogenomes/ilDeiPorc1.gb",
+                "multiqc",
+                "multiqc/multiqc_data",
+                "multiqc/multiqc_data/llms-full.txt",
+                "multiqc/multiqc_data/multiqc.log",
+                "multiqc/multiqc_data/multiqc.parquet",
+                "multiqc/multiqc_data/multiqc_citations.txt",
+                "multiqc/multiqc_data/multiqc_data.json",
+                "multiqc/multiqc_data/multiqc_software_versions.txt",
+                "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_report.html",
+                "pipeline_info",
+                "pipeline_info/mitoforge_software_mqc_versions.yml",
+                "samples",
+                "samples/ilDeiPorc1",
+                "samples/ilDeiPorc1/assembly",
+                "samples/ilDeiPorc1/assembly/all_potential_contigs.fa",
+                "samples/ilDeiPorc1/assembly/contigs_annotations.png",
+                "samples/ilDeiPorc1/assembly/contigs_circularization",
+                "samples/ilDeiPorc1/assembly/contigs_circularization/all_contigs.circularisationCheck.txt",
+                "samples/ilDeiPorc1/assembly/contigs_filtering",
+                "samples/ilDeiPorc1/assembly/contigs_filtering/contigs.blastn",
+                "samples/ilDeiPorc1/assembly/contigs_filtering/contigs_ids.txt",
+                "samples/ilDeiPorc1/assembly/contigs_filtering/parsed_blast.txt",
+                "samples/ilDeiPorc1/assembly/contigs_filtering/parsed_blast_all.txt",
+                "samples/ilDeiPorc1/assembly/contigs_stats.tsv",
+                "samples/ilDeiPorc1/assembly/coverage_mapping",
+                "samples/ilDeiPorc1/assembly/coverage_mapping/HiFi-vs-final_mitogenome.bam",
+                "samples/ilDeiPorc1/assembly/coverage_mapping/HiFi-vs-final_mitogenome.sorted.bam",
+                "samples/ilDeiPorc1/assembly/coverage_mapping/HiFi-vs-final_mitogenome.sorted.bam.bai",
+                "samples/ilDeiPorc1/assembly/coverage_mapping/HiFi-vs-potential_contigs.bam",
+                "samples/ilDeiPorc1/assembly/coverage_mapping/HiFi-vs-potential_contigs.sorted.bam",
+                "samples/ilDeiPorc1/assembly/coverage_mapping/HiFi-vs-potential_contigs.sorted.bam.bai",
+                "samples/ilDeiPorc1/assembly/coverage_plot.png",
+                "samples/ilDeiPorc1/assembly/final_mitogenome.annotation.png",
+                "samples/ilDeiPorc1/assembly/final_mitogenome.coverage.png",
+                "samples/ilDeiPorc1/assembly/final_mitogenome.fasta",
+                "samples/ilDeiPorc1/assembly/final_mitogenome.gb",
+                "samples/ilDeiPorc1/assembly/final_mitogenome_choice",
+                "samples/ilDeiPorc1/assembly/final_mitogenome_choice/all_mitogenomes.rotated.aligned.aln",
+                "samples/ilDeiPorc1/assembly/final_mitogenome_choice/all_mitogenomes.rotated.fa",
+                "samples/ilDeiPorc1/assembly/final_mitogenome_choice/cdhit.out",
+                "samples/ilDeiPorc1/assembly/final_mitogenome_choice/cdhit.out.clstr",
+                "samples/ilDeiPorc1/assembly/ilDeiPorc1.log",
+                "samples/ilDeiPorc1/assembly/shared_genes.tsv",
+                "samples/ilDeiPorc1/final",
+                "samples/ilDeiPorc1/final/contigs_annotations.png",
+                "samples/ilDeiPorc1/final/contigs_circularization",
+                "samples/ilDeiPorc1/final/contigs_circularization/all_contigs.circularisationCheck.txt",
+                "samples/ilDeiPorc1/final/contigs_filtering",
+                "samples/ilDeiPorc1/final/contigs_filtering/contigs.blastn",
+                "samples/ilDeiPorc1/final/contigs_filtering/contigs_ids.txt",
+                "samples/ilDeiPorc1/final/contigs_filtering/parsed_blast.txt",
+                "samples/ilDeiPorc1/final/contigs_filtering/parsed_blast_all.txt",
+                "samples/ilDeiPorc1/final/contigs_stats.tsv",
+                "samples/ilDeiPorc1/final/coverage_mapping",
+                "samples/ilDeiPorc1/final/final_mitogenome.annotation.png",
+                "samples/ilDeiPorc1/final/final_mitogenome.fasta",
+                "samples/ilDeiPorc1/final/final_mitogenome.gb",
+                "samples/ilDeiPorc1/final/final_mitogenome_choice",
+                "samples/ilDeiPorc1/final/final_mitogenome_choice/all_mitogenomes.rotated.aligned.aln",
+                "samples/ilDeiPorc1/final/final_mitogenome_choice/all_mitogenomes.rotated.fa",
+                "samples/ilDeiPorc1/final/final_mitogenome_choice/cdhit.out",
+                "samples/ilDeiPorc1/final/final_mitogenome_choice/cdhit.out.clstr",
+                "samples/ilDeiPorc1/final/ilDeiPorc1.log",
+                "samples/ilDeiPorc1/final/shared_genes.tsv",
+                "summary",
+                "summary/all_contigs_stats.tsv",
+                "summary/mitoforge_summary.tsv",
+                "summary/mitoforge_summary_mqc.tsv"
+            ],
+            [
+                "ilDeiPorc1.fasta:md5,b7a8cdee48f393291d19bd0574090ee0",
+                "ilDeiPorc1.gb:md5,637b1eabd0872a87651430094a7b7f8b",
+                "all_potential_contigs.fa:md5,e47f67c9113d894ec6b2544e5b1a2884",
+                "contigs_stats.tsv:md5,4227e7245f396feedc4b0e042fc8ab7c",
+                "final_mitogenome.fasta:md5,1aa211668c0f43e644cb809cdd72fd73",
+                "final_mitogenome.gb:md5,4bb9e91bcc1291dabc76c95f3fd44b7d",
+                "all_mitogenomes.rotated.fa:md5,1aa211668c0f43e644cb809cdd72fd73",
+                "cdhit.out:md5,1aa211668c0f43e644cb809cdd72fd73",
+                "cdhit.out.clstr:md5,0ac6f5cd2f1178e25139643a2c888aad",
+                "shared_genes.tsv:md5,5f5c7498ab370f4a2c9b8e5f8b43befa",
+                "contigs_stats.tsv:md5,e3c9c6ee6905a0c95f202cb76829a796",
+                "final_mitogenome.fasta:md5,b7a8cdee48f393291d19bd0574090ee0",
+                "final_mitogenome.gb:md5,637b1eabd0872a87651430094a7b7f8b",
+                "all_mitogenomes.rotated.fa:md5,b7a8cdee48f393291d19bd0574090ee0",
+                "cdhit.out:md5,b7a8cdee48f393291d19bd0574090ee0",
+                "cdhit.out.clstr:md5,a278bb09a1a63639956e60ce07d68b8f",
+                "shared_genes.tsv:md5,67368a84f6f37db1c212700be0930a5d",
+                "all_contigs_stats.tsv:md5,b57dd3b5a0edbcf43db6f680c21fbd13",
+                "mitoforge_summary.tsv:md5,483ef43778c405cbd3ce509851c7c639",
+                "mitoforge_summary_mqc.tsv:md5,1d2988475a9c5ee083a2d653db44343e"
+            ]
+        ],
+        "timestamp": "2026-09-22T12:19:04.264613985",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    }
+}

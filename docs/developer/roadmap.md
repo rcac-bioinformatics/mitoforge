@@ -19,6 +19,10 @@ Open an issue before starting on any of it.
   the alternatives by hand, but it does not quantify variants.
 - **NUMT filtering beyond MitoHiFi's own.** Coverage-based screening of the candidate
   contigs.
+- **Renaming FASTA headers to the sample name.** The finished mitogenome keeps the
+  contig name MitoHiFi gave it, e.g. `>ptg000001l.rc.rotated.rotated.rotated_rotated`.
+  For a phylogenetic analysis across a hundred samples you want `>ilDeiPorc1` instead.
+  Doing it properly means renaming in the FASTA, the GenBank file and the GFF together.
 - **A `test_full` profile.** Would need a real, sizeable public dataset and somewhere to
   run it.
 

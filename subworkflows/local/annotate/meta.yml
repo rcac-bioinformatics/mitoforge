@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "annotate"
+description: Placeholder for a standalone annotation stage; passes assemblies through unchanged
+keywords:
+  - annotation
+  - stub
+  - mitogenome
+components: []
+input:
+  - ch_assembly:
+      type: file
+      description: |
+        The finished mitogenome.
+        Structure: [ val(meta), path(fasta) ]
+  - skip:
+      type: boolean
+      description: Whether the stage is skipped. It behaves identically either way in this version.
+output:
+  - assembly:
+      type: file
+      description: |
+        The same assemblies, unchanged.
+        Structure: [ val(meta), path(fasta) ]
+authors:
+  - "Arun Seetharam"
+maintainers:
+  - "Arun Seetharam"

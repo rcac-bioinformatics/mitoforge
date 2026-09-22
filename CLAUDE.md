@@ -66,3 +66,29 @@ Known broken / deferred:
 - `WARN: Unrecognized config option 'validation.monochromeLogs'` on every run. The option is real and honoured by nf-schema 2.5.1; Nextflow 26.04's config-schema validator just does not know about it. Cosmetic.
 - `workflows/mitoforge.nf` is still the template body (MultiQC only).
 - Lint warnings that stay until later phases: TODOs in `docs/usage.md`, `docs/output.md` (Phase 4) and `CHANGELOG.md` (Phase 5).
+
+### Phase 1 - HiFi path: done
+
+Done:
+
+- `INPUT_CHECK` validates the whole samplesheet in one pass and names the row and column for every problem. It covers what the JSON schema cannot: one of fastq_1/bam, platform-specific read layout, a reference or a species, and `hifi:<sample>` pointing at a real hifi row.
+- `PREPARE_REFERENCE` resolves a reference from samplesheet files or from a species name via `findMitoReference.py`. `hifi:<sample>` rows come out on a separate `needs_hifi` channel and are wired up in Phase 2.
+- `ASSEMBLE_HIFI` runs MitoHiFi `-r`, converting an unaligned PacBio BAM first when needed.
+- `FINALIZE` runs MitoHiFi `-c` on every assembly. `ANNOTATE` is the documented pass-through stub.
+- `SUMMARY` writes `summary/mitoforge_summary.tsv` and `summary/all_contigs_stats.tsv`, and feeds the summary to MultiQC as custom content. Two local modules: `MITOFORGE_SAMPLE_STATS`, `MITOFORGE_SUMMARY`.
+- Outputs land in `results/mitogenomes/<sample>.{fasta,gb,gff}`, `results/samples/<sample>/{reference,assembly,final}/` and `results/summary/`.
+
+Tested:
+
+- `nextflow run . -profile test,docker --outdir results` - green, and the pipeline-level nf-test snapshot is reproducible across runs.
+- `nf-test test modules/local subworkflows/local` - 24 tests, all green. Includes real MitoHiFi runs for ASSEMBLE_HIFI and FINALIZE, eight INPUT_CHECK validation cases, and a regression test pinning the samtools-fastq channel that PacBio BAM reads come out of.
+- `nf-core pipelines lint` - 0 failures.
+
+Things worth knowing:
+
+- **BAM input.** Records in an unaligned PacBio BAM carry flag 4 and neither READ1 nor READ2, so `samtools fastq` routes every read to the file given to `-0`, which the nf-core module publishes on `other`, not `fastq`. Verified against a real PacBio CCS BAM and pinned by `subworkflows/local/assemble_hifi/tests/samtools_fastq_routing.nf.test`.
+- **Circularity.** MitoHiFi `-r` trims the circular overlap, so the later `-c` pass reports `was_circular False` for a mitogenome that really is circular. The summary therefore reports circularity as true if any stage found it.
+- **publishDir.** The MitoHiFi module emits `path("*")`, which also matches staged input reads. Every MitoHiFi publishDir names what it wants. `potential_contigs/` is not published because MitoFinder leaves a symlink in it pointing at a path that only existed inside the container; `reads_mapping_and_assembly/` is not published because it is large.
+- **Process selectors** in `conf/modules.config` are written `'.*STAGE:PROCESS'` with no leading colon, so they also match when a subworkflow is run on its own under nf-test.
+- The finished mitogenome keeps MitoHiFi's contig name in its FASTA header, not the sample name. Noted in docs/developer/roadmap.md.
+- The `hifi:<sample>` reference is still unresolved: it validates, and PREPARE_REFERENCE routes it aside, but nothing consumes `needs_hifi` until Phase 2.

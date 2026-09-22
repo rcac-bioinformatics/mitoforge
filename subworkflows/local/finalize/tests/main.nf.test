@@ -1,0 +1,79 @@
+nextflow_workflow {
+
+    name "Test subworkflow FINALIZE"
+    script "../main.nf"
+    workflow "FINALIZE"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "finalize"
+
+    // Contig and reference pair from MitoHiFi's own documented contigs-mode example:
+    // a Phalera bucephala contig finished against Phalera flavescens (NC_016067.1).
+
+    test("finishes an assembled contig into a circular mitogenome") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [
+                        id:           'ilPhaBuce1',
+                        platform:     'hifi',
+                        genetic_code: 5,
+                        ref_fa:       file("\${projectDir}/testdata/contigs/NC_016067.1.fasta", checkIfExists: true),
+                        ref_gb:       file("\${projectDir}/testdata/contigs/NC_016067.1.gb", checkIfExists: true)
+                    ],
+                    file("\${projectDir}/testdata/contigs/ilPhaBuce1_contig.fa", checkIfExists: true)
+                ])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.assembly.size() == 1 },
+                { assert path(workflow.out.assembly[0][1]).exists() },
+                { assert path(workflow.out.assembly[0][1]).text.startsWith('>') },
+                { assert workflow.out.stats[0][1] != null },
+                { assert path(workflow.out.stats[0][1]).text.contains('final_mitogenome') }
+            )
+        }
+    }
+
+    test("stub") {
+
+        options "-stub"
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [
+                        id:           'ilPhaBuce1',
+                        platform:     'hifi',
+                        genetic_code: 5,
+                        ref_fa:       file("\${projectDir}/testdata/contigs/NC_016067.1.fasta", checkIfExists: true),
+                        ref_gb:       file("\${projectDir}/testdata/contigs/NC_016067.1.gb", checkIfExists: true)
+                    ],
+                    file("\${projectDir}/testdata/contigs/ilPhaBuce1_contig.fa", checkIfExists: true)
+                ])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.assembly.size() == 1 }
+            )
+        }
+    }
+}

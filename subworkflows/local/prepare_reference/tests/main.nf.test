@@ -1,0 +1,91 @@
+nextflow_workflow {
+
+    name "Test subworkflow PREPARE_REFERENCE"
+    script "../main.nf"
+    workflow "PREPARE_REFERENCE"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "prepare_reference"
+
+    // The 'species' branch queries NCBI, so it is not exercised here: a unit test that
+    // depends on what NCBI returns today would neither be reproducible nor runnable on
+    // a compute node. It is covered by the pipeline-level test when a samplesheet uses
+    // the species column.
+
+    test("reference files named in the samplesheet are passed through") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [
+                        id:           'ilDeiPorc1',
+                        platform:     'hifi',
+                        genetic_code: 5,
+                        species:      null,
+                        ref_source:   'file',
+                        ref_fa:       "\${projectDir}/testdata/hifi/MW539688.1.fasta",
+                        ref_gb:       "\${projectDir}/testdata/hifi/MW539688.1.gb",
+                        single_end:   true,
+                        input_type:   'fastq'
+                    ],
+                    [ file("\${projectDir}/testdata/hifi/ilDeiPorc1.reads.100.fa", checkIfExists: true) ]
+                ])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.reference.size() == 1 },
+                // meta.ref_fa and meta.ref_gb are now files, not the strings the user typed
+                { assert workflow.out.reference[0][0].ref_fa.toString().endsWith('MW539688.1.fasta') },
+                { assert workflow.out.reference[0][0].ref_gb.toString().endsWith('MW539688.1.gb') },
+                { assert workflow.out.reference[0][1].toString().endsWith('MW539688.1.fasta') },
+                { assert workflow.out.reference[0][2].toString().endsWith('MW539688.1.gb') },
+                { assert workflow.out.needs_hifi.size() == 0 }
+            )
+        }
+    }
+
+    test("a hifi:<sample> reference is held back for later resolution") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [
+                        id:           'shortA',
+                        platform:     'illumina',
+                        genetic_code: 5,
+                        species:      null,
+                        ref_source:   'hifi',
+                        ref_fa:       'hifi:ilDeiPorc1',
+                        ref_gb:       null,
+                        single_end:   false,
+                        input_type:   'fastq'
+                    ],
+                    [ file("\${projectDir}/testdata/hifi/ilDeiPorc1.reads.100.fa", checkIfExists: true) ]
+                ])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.reference.size() == 0 },
+                { assert workflow.out.needs_hifi.size() == 1 },
+                { assert workflow.out.needs_hifi[0][0].ref_fa == 'hifi:ilDeiPorc1' }
+            )
+        }
+    }
+}

@@ -1,0 +1,84 @@
+nextflow_workflow {
+
+    name "Test subworkflow ASSEMBLE_HIFI"
+    script "../main.nf"
+    workflow "ASSEMBLE_HIFI"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "assemble_hifi"
+
+    test("assembles a mitogenome from HiFi reads") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [
+                        id:           'ilDeiPorc1',
+                        platform:     'hifi',
+                        genetic_code: 5,
+                        ref_fa:       file("\${projectDir}/testdata/hifi/MW539688.1.fasta", checkIfExists: true),
+                        ref_gb:       file("\${projectDir}/testdata/hifi/MW539688.1.gb", checkIfExists: true),
+                        single_end:   true,
+                        input_type:   'fastq'
+                    ],
+                    [ file("\${projectDir}/testdata/hifi/ilDeiPorc1.reads.100.fa", checkIfExists: true) ]
+                ])
+                input[1] = channel.empty()
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.assembly.size() == 1 },
+                { assert path(workflow.out.assembly[0][1]).exists() },
+                // A lepidopteran mitogenome is around 15 kb. Assert a range rather than
+                // an exact size: the assembly depends on the tool version, not on us.
+                { assert path(workflow.out.assembly[0][1]).text.replaceAll(/>.*\n/, '').replaceAll(/\s/, '').length() > 14000 },
+                { assert path(workflow.out.assembly[0][1]).text.replaceAll(/>.*\n/, '').replaceAll(/\s/, '').length() < 17000 },
+                { assert path(workflow.out.stats[0][1]).text.contains('final_mitogenome') }
+            )
+        }
+    }
+
+    test("stub") {
+
+        options "-stub"
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [
+                        id:           'ilDeiPorc1',
+                        platform:     'hifi',
+                        genetic_code: 5,
+                        ref_fa:       file("\${projectDir}/testdata/hifi/MW539688.1.fasta", checkIfExists: true),
+                        ref_gb:       file("\${projectDir}/testdata/hifi/MW539688.1.gb", checkIfExists: true),
+                        single_end:   true,
+                        input_type:   'fastq'
+                    ],
+                    [ file("\${projectDir}/testdata/hifi/ilDeiPorc1.reads.100.fa", checkIfExists: true) ]
+                ])
+                input[1] = channel.empty()
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.assembly.size() == 1 }
+            )
+        }
+    }
+}
