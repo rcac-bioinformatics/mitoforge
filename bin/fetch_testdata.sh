@@ -112,6 +112,17 @@ shortB,illumina,${OUTDIR}/illumina/SRR5201683_1.fastq.gz,${OUTDIR}/illumina/SRR5
 EOF
 echo "  ${OUTDIR}/samplesheet_hifi_reference.csv"
 
+# A third samplesheet for the robustness test. 'nothingmaps' is a real file - a moth
+# contig - handed to the HiFi path with a vole mitogenome as its reference, so nothing
+# maps and MitoHiFi gives up on it. The run must still finish and still report the
+# other sample, with 'nothingmaps' listed as failed.
+cat > "${OUTDIR}/samplesheet_failure.csv" <<EOF
+sample,platform,fastq_1,fastq_2,bam,species,ref_fa,ref_gb,genetic_code
+ilDeiPorc1,hifi,${OUTDIR}/hifi/ilDeiPorc1.reads.100.fa,,,,${OUTDIR}/hifi/MW539688.1.fasta,${OUTDIR}/hifi/MW539688.1.gb,5
+nothingmaps,hifi,${OUTDIR}/contigs/ilPhaBuce1_contig.fa,,,,${OUTDIR}/illumina/PZ790849.fasta,${OUTDIR}/illumina/PZ790849.gb,2
+EOF
+echo "  ${OUTDIR}/samplesheet_failure.csv"
+
 echo
 echo "Total size:"
 du -sh "${OUTDIR}"

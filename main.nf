@@ -80,6 +80,7 @@ workflow {
     //
     PIPELINE_COMPLETION (
         params.monochrome_logs,
+        params.outdir,
     )
 }
 

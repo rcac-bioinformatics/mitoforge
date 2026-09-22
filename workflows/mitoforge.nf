@@ -108,6 +108,7 @@ workflow MITOFORGE {
     //
     FINALIZE_SHORT ( ASSEMBLE_SHORT.out.assembly )
 
+    def ch_assembled      = ASSEMBLE_HIFI.out.assembly.mix( ASSEMBLE_SHORT.out.assembly )
     def ch_finished       = FINALIZE_HIFI.out.assembly.mix( FINALIZE_SHORT.out.assembly )
     def ch_finished_stats = FINALIZE_HIFI.out.stats.mix( FINALIZE_SHORT.out.stats )
 
@@ -117,9 +118,21 @@ workflow MITOFORGE {
     ANNOTATE ( ch_finished, params.skip_annotation )
 
     //
-    // SUBWORKFLOW: gather everything into one report
+    // SUBWORKFLOW: gather everything into one report.
     //
-    SUMMARY ( ANNOTATE.out.assembly, ch_finished_stats, ASSEMBLE_HIFI.out.stats )
+    // A sample that fails is dropped rather than killing the run, so it stops
+    // appearing in the channels downstream of wherever it failed. SUMMARY is given
+    // the samplesheet and each stage's output so it can say which samples are
+    // missing and where they stopped.
+    //
+    SUMMARY (
+        INPUT_CHECK.out.samples,
+        PREPARE_REFERENCE.out.reference,
+        ch_assembled,
+        ANNOTATE.out.assembly,
+        ch_finished_stats,
+        ASSEMBLE_HIFI.out.stats
+    )
 
     ch_multiqc_files = ch_multiqc_files.mix( SUMMARY.out.multiqc )
     ch_multiqc_files = ch_multiqc_files.mix( ASSEMBLE_SHORT.out.fastp_json.map { _meta, json -> json } )

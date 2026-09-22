@@ -8,8 +8,10 @@ nextflow_process {
     tag "modules_local"
     tag "mitoforge_summary"
 
-    // Inputs are built by MITOFORGE_SAMPLE_STATS, so two of those runs are chained in
-    // front of this one rather than hand-writing per-sample files.
+    // Per-sample inputs are built by MITOFORGE_SAMPLE_STATS, so two of those runs are
+    // chained in front of this one rather than hand-writing per-sample files. A third
+    // sample, sampleC, is in the manifest but never reaches those runs: that is what a
+    // failed sample looks like from here.
 
     setup {
         run("MITOFORGE_SAMPLE_STATS") {
@@ -18,15 +20,15 @@ nextflow_process {
                 """
                 input[0] = channel.of(
                     [
-                        [ id: 'sampleB', platform: 'hifi', genetic_code: 5, ref_fa: file("\${projectDir}/testdata/hifi/MW539688.1.fasta", checkIfExists: true) ],
-                        file("\${projectDir}/testdata/hifi/ilDeiPorc1.final_mitogenome.fasta", checkIfExists: true),
-                        file("\${projectDir}/modules/local/mitoforge_sample_stats/tests/final_contigs_stats.tsv", checkIfExists: true),
-                        file("\${projectDir}/modules/local/mitoforge_sample_stats/tests/assembly_contigs_stats.tsv", checkIfExists: true)
+                        [ id: 'sampleB', platform: 'hifi', genetic_code: 5, ref_fa: file("${projectDir}/testdata/hifi/MW539688.1.fasta", checkIfExists: true) ],
+                        file("${projectDir}/testdata/hifi/ilDeiPorc1.final_mitogenome.fasta", checkIfExists: true),
+                        file("${projectDir}/modules/local/mitoforge_sample_stats/tests/final_contigs_stats.tsv", checkIfExists: true),
+                        file("${projectDir}/modules/local/mitoforge_sample_stats/tests/assembly_contigs_stats.tsv", checkIfExists: true)
                     ],
                     [
-                        [ id: 'sampleA', platform: 'illumina', genetic_code: 2, ref_fa: file("\${projectDir}/testdata/hifi/MW539688.1.fasta", checkIfExists: true) ],
-                        file("\${projectDir}/testdata/hifi/ilDeiPorc1.final_mitogenome.fasta", checkIfExists: true),
-                        file("\${projectDir}/modules/local/mitoforge_sample_stats/tests/final_contigs_stats.tsv", checkIfExists: true),
+                        [ id: 'sampleA', platform: 'illumina', genetic_code: 2, ref_fa: file("${projectDir}/testdata/hifi/MW539688.1.fasta", checkIfExists: true) ],
+                        file("${projectDir}/testdata/hifi/ilDeiPorc1.final_mitogenome.fasta", checkIfExists: true),
+                        file("${projectDir}/modules/local/mitoforge_sample_stats/tests/final_contigs_stats.tsv", checkIfExists: true),
                         []
                     ]
                 )
@@ -35,7 +37,7 @@ nextflow_process {
         }
     }
 
-    test("stacks every sample into one summary and one contig table") {
+    test("stacks the samples that finished and names the one that did not") {
 
         when {
             params {
@@ -43,8 +45,19 @@ nextflow_process {
             }
             process {
                 """
-                input[0] = MITOFORGE_SAMPLE_STATS.out.summary.map { _meta, tsv -> tsv }.collect()
-                input[1] = MITOFORGE_SAMPLE_STATS.out.contigs_stats.map { _meta, tsv -> tsv }.collect()
+                input[0] = channel.of(
+                        'sampleA\tillumina\t2\tMW539688.1.fasta',
+                        'sampleB\thifi\t5\tMW539688.1.fasta',
+                        'sampleC\thifi\t5\tspecies:Deilephila porcellus'
+                    ).collectFile(name: 'samples.tsv', newLine: true, sort: true)
+                // sampleC got as far as having a reference and then stopped
+                input[1] = channel.of(
+                        'sampleA\tinput', 'sampleA\treference', 'sampleA\tassembly', 'sampleA\tfinal',
+                        'sampleB\tinput', 'sampleB\treference', 'sampleB\tassembly', 'sampleB\tfinal',
+                        'sampleC\tinput', 'sampleC\treference'
+                    ).collectFile(name: 'progress.tsv', newLine: true, sort: true)
+                input[2] = MITOFORGE_SAMPLE_STATS.out.summary.map { _meta, tsv -> tsv }.collect()
+                input[3] = MITOFORGE_SAMPLE_STATS.out.contigs_stats.map { _meta, tsv -> tsv }.collect()
                 """
             }
         }
@@ -56,10 +69,16 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert summary[0] == 'sample\tplatform\tgenetic_code\treference\tlength_bp\tgenes\tcircular\tframeshifts\tstatus' },
-                { assert summary.size() == 3 },
-                // sorted by sample name, so the table is stable between runs
+                // every samplesheet row appears, including the one that failed
+                { assert summary.size() == 4 },
                 { assert summary[1].startsWith('sampleA\t') },
                 { assert summary[2].startsWith('sampleB\t') },
+                { assert summary[3].startsWith('sampleC\t') },
+                { assert summary[1].split('\t').last() == 'pass' },
+                { assert summary[2].split('\t').last() == 'pass' },
+                // sampleC had a reference but never assembled, and the table says so
+                { assert summary[3].split('\t').last() == 'failed: assembly' },
+                { assert summary[3].split('\t')[3] == 'species:Deilephila porcellus' },
                 // one header, then every sample's contig rows
                 { assert contigs[0].startsWith('sample\tstage\t') },
                 { assert contigs.findAll { line -> line.startsWith('sample\tstage\t') }.size() == 1 },
@@ -68,6 +87,35 @@ nextflow_process {
                 // the MultiQC copy carries the custom-content header
                 { assert mqc[0].contains('rcac-bioinformatics-mitoforge-summary') },
                 { assert mqc.any { line -> line.startsWith('# plot_type: "table"') } }
+            )
+        }
+    }
+
+    test("every sample failed") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = channel.of('sampleC\thifi\t5\tspecies:Deilephila porcellus')
+                    .collectFile(name: 'samples.tsv', newLine: true, sort: true)
+                input[1] = channel.of('sampleC\tinput')
+                    .collectFile(name: 'progress.tsv', newLine: true, sort: true)
+                input[2] = []
+                input[3] = []
+                """
+            }
+        }
+
+        then {
+            def summary = path(process.out.summary[0]).readLines()
+            assertAll(
+                { assert process.success },
+                { assert summary.size() == 2 },
+                { assert summary[1].split('\t').last() == 'failed: no reference' },
+                { assert path(process.out.all_contigs_stats[0]).readLines().size() == 1 }
             )
         }
     }
@@ -82,8 +130,12 @@ nextflow_process {
             }
             process {
                 """
-                input[0] = MITOFORGE_SAMPLE_STATS.out.summary.map { _meta, tsv -> tsv }.collect()
-                input[1] = MITOFORGE_SAMPLE_STATS.out.contigs_stats.map { _meta, tsv -> tsv }.collect()
+                input[0] = channel.of('sampleA\tillumina\t2\tMW539688.1.fasta')
+                    .collectFile(name: 'samples.tsv', newLine: true, sort: true)
+                input[1] = channel.of('sampleA\tfinal')
+                    .collectFile(name: 'progress.tsv', newLine: true, sort: true)
+                input[2] = MITOFORGE_SAMPLE_STATS.out.summary.map { _meta, tsv -> tsv }.collect()
+                input[3] = MITOFORGE_SAMPLE_STATS.out.contigs_stats.map { _meta, tsv -> tsv }.collect()
                 """
             }
         }

@@ -132,8 +132,6 @@
                 "samples/SRR5201683/final/contigs_stats.tsv",
                 "samples/SRR5201683/final/coverage_mapping",
                 "samples/SRR5201683/final/final_mitogenome.annotation.png",
-                "samples/SRR5201683/final/final_mitogenome.fasta",
-                "samples/SRR5201683/final/final_mitogenome.gb",
                 "samples/SRR5201683/final/final_mitogenome_choice",
                 "samples/SRR5201683/final/final_mitogenome_choice/all_mitogenomes.rotated.aligned.aln",
                 "samples/SRR5201683/final/final_mitogenome_choice/all_mitogenomes.rotated.fa",
@@ -187,8 +185,6 @@
                 "samples/ilDeiPorc1/final/contigs_stats.tsv",
                 "samples/ilDeiPorc1/final/coverage_mapping",
                 "samples/ilDeiPorc1/final/final_mitogenome.annotation.png",
-                "samples/ilDeiPorc1/final/final_mitogenome.fasta",
-                "samples/ilDeiPorc1/final/final_mitogenome.gb",
                 "samples/ilDeiPorc1/final/final_mitogenome_choice",
                 "samples/ilDeiPorc1/final/final_mitogenome_choice/all_mitogenomes.rotated.aligned.aln",
                 "samples/ilDeiPorc1/final/final_mitogenome_choice/all_mitogenomes.rotated.fa",
@@ -225,8 +221,6 @@
                 "SRR5201683.animal_mt.K85.complete.graph1.selected_graph.gfa:md5,14dcf1b12f40a4bd7043f7ad0cce88e5",
                 "SRR5201683.animal_mt.fasta.gz:md5,2fbc136c31e603935eb0614a2190bd7b",
                 "contigs_stats.tsv:md5,9b0bc977e56911cc753e95d2b9569e68",
-                "final_mitogenome.fasta:md5,ab598912d64173540494fd2370a5d7f4",
-                "final_mitogenome.gb:md5,ed371a5f720bf57143d79fda3b48162e",
                 "all_mitogenomes.rotated.fa:md5,ab598912d64173540494fd2370a5d7f4",
                 "cdhit.out:md5,ab598912d64173540494fd2370a5d7f4",
                 "cdhit.out.clstr:md5,15120ba1a4740257f90bd9356924a9c9",
@@ -241,18 +235,16 @@
                 "cdhit.out.clstr:md5,0ac6f5cd2f1178e25139643a2c888aad",
                 "shared_genes.tsv:md5,5f5c7498ab370f4a2c9b8e5f8b43befa",
                 "contigs_stats.tsv:md5,e3c9c6ee6905a0c95f202cb76829a796",
-                "final_mitogenome.fasta:md5,b7a8cdee48f393291d19bd0574090ee0",
-                "final_mitogenome.gb:md5,637b1eabd0872a87651430094a7b7f8b",
                 "all_mitogenomes.rotated.fa:md5,b7a8cdee48f393291d19bd0574090ee0",
                 "cdhit.out:md5,b7a8cdee48f393291d19bd0574090ee0",
                 "cdhit.out.clstr:md5,a278bb09a1a63639956e60ce07d68b8f",
                 "shared_genes.tsv:md5,67368a84f6f37db1c212700be0930a5d",
                 "all_contigs_stats.tsv:md5,c7df22b88ffb035db9127cd3043f74d7",
                 "mitoforge_summary.tsv:md5,6d43143185e9987058fd9bc59bbf37b6",
-                "mitoforge_summary_mqc.tsv:md5,07c08cc00ac79d63096f670e23d78eb0"
+                "mitoforge_summary_mqc.tsv:md5,3acbc7fd274da9d686ce64ff1c6b6b81"
             ]
         ],
-        "timestamp": "2026-09-22T13:59:49.844438076",
+        "timestamp": "2026-09-22T14:47:06.9342056",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"

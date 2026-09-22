@@ -114,14 +114,16 @@ workflow PIPELINE_COMPLETION {
 
     take:
     monochrome_logs // boolean: Disable ANSI colour codes in log output
+    outdir          //  string: The output directory where the results were written
 
     main:
 
     //
-    // Completion email and summary
+    // Completion summary
     //
     workflow.onComplete {
 
+        reportFailedSamples(outdir)
         completionSummary(monochrome_logs)
 
     }
@@ -160,6 +162,37 @@ def validateClusterParams() {
             "        --cluster_account myaccount --cluster_queue cpu\n"
         )
     }
+}
+
+//
+// A failed sample is dropped rather than killing the run, which is easy to miss in a
+// hundred-sample log that ends with "Pipeline completed successfully". Say plainly, at
+// the end, which samples did not finish.
+//
+def reportFailedSamples(outdir) {
+    def summary = file("${outdir}/summary/mitoforge_summary.tsv")
+    if (!summary.exists()) {
+        return
+    }
+    def rows = summary.readLines().drop(1).findAll { line -> line.trim() }
+    if (!rows) {
+        return
+    }
+    def failed = rows.findAll { line -> line.tokenize('\t').last().startsWith('failed') }
+    if (!failed) {
+        log.info("All ${rows.size()} sample${rows.size() == 1 ? '' : 's'} finished. Mitogenomes are in ${outdir}/mitogenomes/")
+        return
+    }
+    log.warn(
+        "${failed.size()} of ${rows.size()} samples did not finish:\n" +
+        failed.collect { line ->
+            def fields = line.tokenize('\t')
+            "    ${fields[0]}  ${fields.last()}"
+        }.join('\n') +
+        "\n\nThe rest finished; their mitogenomes are in ${outdir}/mitogenomes/\n" +
+        "Full table: ${outdir}/summary/mitoforge_summary.tsv\n" +
+        "What to do next: https://rcac-bioinformatics.github.io/mitoforge/cases/failed-sample/"
+    )
 }
 
 //

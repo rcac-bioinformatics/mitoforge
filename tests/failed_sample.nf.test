@@ -1,0 +1,42 @@
+nextflow_pipeline {
+
+    name "A failed sample does not kill the run"
+    script "../main.nf"
+    tag "pipeline"
+
+    // 'nothingmaps' is given a real moth contig as its HiFi reads and a vole
+    // mitogenome as its reference. Nothing maps, so MitoHiFi gives up on it. The rule
+    // being tested is that one bad sample out of a hundred must not take the other
+    // ninety-nine with it, and that the bad one is named rather than silently missing
+    // from the results.
+
+    test("the good sample finishes and the bad one is reported") {
+
+        when {
+            params {
+                input  = "${projectDir}/testdata/samplesheet_failure.csv"
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def summary = path("$outputDir/summary/mitoforge_summary.tsv").readLines()
+            def good = summary.find { line -> line.startsWith('ilDeiPorc1\t') }
+            def bad  = summary.find { line -> line.startsWith('nothingmaps\t') }
+            assertAll(
+                { assert workflow.success },
+                // both samples are in the table, not just the one that worked
+                { assert summary.size() == 3 },
+                { assert good.split('\t').last() == 'pass' },
+                { assert bad.split('\t').last().startsWith('failed') },
+                // and the table says where the bad one stopped
+                { assert bad.split('\t').last().contains('assembly') },
+                // the good sample still produced everything it should
+                { assert path("$outputDir/mitogenomes/ilDeiPorc1.fasta").exists() },
+                { assert !path("$outputDir/mitogenomes/nothingmaps.fasta").exists() },
+                // the failed sample contributed no tool versions, and the rest did
+                { assert snapshot(removeNextflowVersion("$outputDir/pipeline_info/mitoforge_software_mqc_versions.yml")).match() }
+            )
+        }
+    }
+}

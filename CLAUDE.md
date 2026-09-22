@@ -125,3 +125,25 @@ Other things worth knowing:
 - MitoHiFi's contigs mode rejects any assembly shorter than 80% of the reference. A partial short-read assembly therefore fails FINALIZE rather than producing a fragment.
 - `nf-test.config` ignores `.venv/**`: the nf-core tools package ships a copy of the pipeline template, complete with its own nf-tests, and nf-test will happily run those from inside a virtualenv in the repo.
 - Circularity in the summary is true if any stage reported it: a stats table saying `was_circular True`, or GetOrganelle's `(circular)` marker in the sequence name. Neither finishing pass sees an overlap that the assembler already trimmed.
+
+### Phase 3 - robustness: done
+
+Done:
+
+- **One failed sample never kills the run.** `conf/base.config` retries twice on the exit codes that mean out-of-memory or out-of-time (`task.attempt` scales every request), and otherwise drops the sample and carries on. Run-level processes - `MITOFORGE_SUMMARY`, `MULTIQC` - are set back to `finish`, and `GETORGANELLE_CONFIG` retries then finishes, because every short-read sample depends on that one download.
+- **Failed samples are named.** A dropped sample simply stops appearing in the channels downstream of where it failed, so SUMMARY is given the samplesheet plus each stage's output and reconstructs how far each sample got: `failed: no reference`, `failed: assembly`, `failed: finishing`, `failed: reporting`. Every samplesheet row appears in `summary/mitoforge_summary.tsv` whether or not it finished, and `PIPELINE_COMPLETION` prints the failures at the end of the log.
+- **Resource labels.** Sized for ~35 Gb HiFi per sample; `MITOHIFI_FINALIZE` is pulled down from `process_high` to 4 CPU / 16 GB because contigs mode only ever handles a finished 16 kb assembly.
+- trace, report, timeline and DAG were already on by default.
+
+Output layout changed: the finished mitogenome, GenBank and GFF live only in `results/mitogenomes/<sample>.{fasta,gb,gff}`; `results/samples/<sample>/final/` keeps the working output (stats, plots, `final_mitogenome_choice/`, log). They used to be in both.
+
+Tested:
+
+- `nf-test test` - 29 tests green, including `tests/failed_sample.nf.test`, which gives one sample a moth contig as its HiFi reads and a vole mitogenome as its reference, and checks that the other sample still finishes and the bad one is reported.
+- `-resume` verified: a second run caches 10 of 11 tasks. Only MULTIQC re-runs, because the parameter summary it embeds contains `trace_report_suffix`, which is the run timestamp. That is nf-core template behaviour.
+- `nf-core pipelines lint` - 0 failures.
+
+Things worth knowing:
+
+- **`publishDir` must be a single map, not a list, wherever a closure mentions `meta`.** Nextflow 26 cannot render a list of publishDir maps to JSON when one of them closes over `meta`, so `nextflow config -o json` fails and `nf-core pipelines lint` aborts on it. `MITOHIFI_FINALIZE` therefore uses one publishDir rooted at `params.outdir` whose `saveAs` routes each file, rather than two entries.
+- `errorStrategy` closures and `meta` inside a single publishDir map are both fine.

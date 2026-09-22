@@ -1,0 +1,31 @@
+{
+    "the good sample finishes and the bad one is reported": {
+        "content": [
+            {
+                "GETORGANELLE_CONFIG": {
+                    "getorganelle": "1.7.7.1"
+                },
+                "MITOFORGE_SAMPLE_STATS": {
+                    "mitoforge": "0.1.0dev"
+                },
+                "MITOFORGE_SUMMARY": {
+                    "mitoforge": "0.1.0dev"
+                },
+                "MITOHIFI_FINALIZE": {
+                    "mitohifi": "3.2.3"
+                },
+                "MITOHIFI_MITOHIFI": {
+                    "mitohifi": "3.2.3"
+                },
+                "Workflow": {
+                    "rcac-bioinformatics/mitoforge": "v0.1.0dev"
+                }
+            }
+        ],
+        "timestamp": "2026-09-22T14:52:18.119415963",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    }
+}
