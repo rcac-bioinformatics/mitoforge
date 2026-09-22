@@ -11,3 +11,6 @@ bin/
 .nf-test/
 modules/nf-core/
 subworkflows/nf-core/
+
+# kept exactly as written by the maintainer
+ROADMAP.md

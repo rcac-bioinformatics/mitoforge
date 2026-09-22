@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/rcac-bioinformatics/mitoforge/master/assets/schema_input.json",
     "title": "rcac-bioinformatics/mitoforge pipeline - params.input schema",
-    "description": "Schema for the file provided with params.input",
+    "description": "Schema for the samplesheet provided with --input",
     "type": "array",
     "items": {
         "type": "object",
@@ -10,24 +10,60 @@
             "sample": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "Sample name must be provided and cannot contain spaces",
+                "errorMessage": "Column 'sample': a sample name is required and must not contain spaces.",
                 "meta": ["id"]
+            },
+            "platform": {
+                "type": "string",
+                "enum": ["hifi", "illumina"],
+                "errorMessage": "Column 'platform': must be exactly 'hifi' (PacBio HiFi reads) or 'illumina' (paired-end short reads).",
+                "meta": ["platform"]
             },
             "fastq_1": {
                 "type": "string",
                 "format": "file-path",
                 "exists": true,
-                "pattern": "^([\\S\\s]*\\/)?[^\\s\\/]+\\.f(ast)?q\\.gz$",
-                "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+                "pattern": "^\\S+\\.(fa|fas|fasta|fna|fq|fastq)(\\.gz)?$",
+                "errorMessage": "Column 'fastq_1': must be an existing read file ending in .fa/.fasta/.fna/.fq/.fastq, optionally gzipped, with no spaces in the path."
             },
             "fastq_2": {
                 "type": "string",
                 "format": "file-path",
                 "exists": true,
-                "pattern": "^([\\S\\s]*\\/)?[^\\s\\/]+\\.f(ast)?q\\.gz$",
-                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+                "pattern": "^\\S+\\.(fa|fas|fasta|fna|fq|fastq)(\\.gz)?$",
+                "errorMessage": "Column 'fastq_2': must be an existing read file ending in .fa/.fasta/.fna/.fq/.fastq, optionally gzipped, with no spaces in the path."
+            },
+            "bam": {
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+\\.bam$",
+                "errorMessage": "Column 'bam': must be an existing PacBio unaligned BAM file ending in .bam, with no spaces in the path."
+            },
+            "species": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z .'-]+$",
+                "errorMessage": "Column 'species': must be a scientific name such as 'Deilephila porcellus'. Used to look up a reference mitogenome at NCBI.",
+                "meta": ["species"]
+            },
+            "ref_fa": {
+                "type": "string",
+                "pattern": "^(hifi:\\S+|\\S+\\.(fa|fas|fasta|fna)(\\.gz)?)$",
+                "errorMessage": "Column 'ref_fa': must be either a path to a reference mitogenome FASTA (.fa/.fasta/.fna, optionally gzipped) or the string 'hifi:<sample>' naming a hifi sample in this samplesheet whose finalised mitogenome should be used."
+            },
+            "ref_gb": {
+                "type": "string",
+                "pattern": "^\\S+\\.(gb|gbk|gbff|genbank)$",
+                "errorMessage": "Column 'ref_gb': must be a path to the GenBank flat file (.gb/.gbk/.gbff/.genbank) matching ref_fa."
+            },
+            "genetic_code": {
+                "type": "integer",
+                "default": 2,
+                "enum": [1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14, 16, 21, 22, 23, 24, 25],
+                "errorMessage": "Column 'genetic_code': must be an NCBI translation table number. Common animal choices: 2 = vertebrate mitochondrial (default), 5 = invertebrate mitochondrial, 9 = echinoderm and flatworm mitochondrial.",
+                "meta": ["genetic_code"]
             }
         },
-        "required": ["sample", "fastq_1"]
+        "required": ["sample", "platform"]
     }
 }

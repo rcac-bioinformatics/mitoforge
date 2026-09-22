@@ -9,7 +9,7 @@
             "title": "Input/output options",
             "type": "object",
             "fa_icon": "fas fa-terminal",
-            "description": "Define where the pipeline should find input data and save output data.",
+            "description": "Where the pipeline finds your samples and where it writes the results.",
             "required": ["input", "outdir"],
             "properties": {
                 "input": {
@@ -19,20 +19,114 @@
                     "schema": "assets/schema_input.json",
                     "mimetype": "text/csv",
                     "pattern": "^\\S+\\.csv$",
-                    "description": "Path to comma-separated file containing information about the samples in the experiment.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.",
+                    "description": "Path to the samplesheet CSV describing your samples.",
+                    "help_text": "A comma-separated file with the header row `sample,platform,fastq_1,fastq_2,bam,species,ref_fa,ref_gb,genetic_code`. Every column is documented at https://rcac-bioinformatics.github.io/mitoforge/samplesheet/",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "outdir": {
                     "type": "string",
                     "format": "directory-path",
-                    "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
+                    "description": "Directory where the results will be written.",
                     "fa_icon": "fas fa-folder-open"
                 },
                 "multiqc_title": {
                     "type": "string",
-                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
+                    "description": "Title to print at the top of the MultiQC report.",
                     "fa_icon": "fas fa-file-signature"
+                }
+            }
+        },
+        "reference_options": {
+            "title": "Reference mitogenome options",
+            "type": "object",
+            "fa_icon": "fas fa-dna",
+            "description": "How the close-relative reference mitogenome is chosen for each sample.",
+            "properties": {
+                "genetic_code": {
+                    "type": "integer",
+                    "default": 2,
+                    "enum": [1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14, 16, 21, 22, 23, 24, 25],
+                    "description": "NCBI translation table used for annotation when the samplesheet does not give one.",
+                    "help_text": "2 = vertebrate mitochondrial (default), 5 = invertebrate mitochondrial, 9 = echinoderm and flatworm mitochondrial. A `genetic_code` value in the samplesheet always wins over this parameter.",
+                    "fa_icon": "fas fa-table"
+                },
+                "min_ref_length": {
+                    "type": "integer",
+                    "default": 14000,
+                    "minimum": 1000,
+                    "description": "Minimum length of a candidate reference mitogenome fetched from NCBI by species name.",
+                    "help_text": "Passed to MitoHiFi's findMitoReference.py as `--min_length`. Raise it if the search keeps returning partial mitogenomes.",
+                    "fa_icon": "fas fa-ruler-horizontal"
+                }
+            }
+        },
+        "assembly_options": {
+            "title": "Assembly options",
+            "type": "object",
+            "fa_icon": "fas fa-puzzle-piece",
+            "description": "Which assembler runs on each platform, and how it is tuned.",
+            "properties": {
+                "long_assembler": {
+                    "type": "string",
+                    "default": "mitohifi",
+                    "enum": ["mitohifi"],
+                    "description": "Assembler used for `platform: hifi` rows.",
+                    "help_text": "Only `mitohifi` is available in v1. The parameter exists so that another long-read assembler can be added without changing the samplesheet format.",
+                    "fa_icon": "fas fa-cogs"
+                },
+                "short_assembler": {
+                    "type": "string",
+                    "default": "getorganelle",
+                    "enum": ["getorganelle"],
+                    "description": "Assembler used for `platform: illumina` rows.",
+                    "help_text": "Only `getorganelle` is available in v1. The parameter exists so that another short-read assembler can be added without changing the samplesheet format.",
+                    "fa_icon": "fas fa-cogs"
+                },
+                "mitohifi_percent_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "description": "MitoHiFi `-p`: percentage of a contig that must match the reference mitogenome for the contig to be kept.",
+                    "help_text": "Leave unset to use the MitoHiFi default (50). Lowering it helps when the only available reference is distant; raising it helps when NUMTs are being picked up. See the troubleshooting page.",
+                    "fa_icon": "fas fa-percent"
+                },
+                "skip_trimming": {
+                    "type": "boolean",
+                    "description": "Skip fastp adapter and quality trimming of Illumina reads.",
+                    "fa_icon": "fas fa-forward"
+                }
+            }
+        },
+        "annotation_options": {
+            "title": "Annotation options",
+            "type": "object",
+            "fa_icon": "fas fa-tags",
+            "description": "The standalone ANNOTATE stage. Not implemented in v1.",
+            "properties": {
+                "skip_annotation": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Skip the ANNOTATE stage.",
+                    "help_text": "ANNOTATE is a stub in v1: it passes assemblies through unchanged. Every sample is still annotated inside the FINALIZE step by MitoHiFi. See docs/developer/extending.md.",
+                    "fa_icon": "fas fa-forward"
+                }
+            }
+        },
+        "cluster_options": {
+            "title": "Cluster options",
+            "type": "object",
+            "fa_icon": "fas fa-server",
+            "description": "Required by the negishi, bell and anvil profiles.",
+            "properties": {
+                "cluster_account": {
+                    "type": "string",
+                    "description": "SLURM account to charge jobs to, e.g. the name printed by `slist`.",
+                    "fa_icon": "fas fa-id-card"
+                },
+                "cluster_queue": {
+                    "type": "string",
+                    "description": "SLURM partition to submit to. Defaults to the cluster's standard partition.",
+                    "fa_icon": "fas fa-stream"
                 }
             }
         },
@@ -40,8 +134,7 @@
             "title": "Generic options",
             "type": "object",
             "fa_icon": "fas fa-file-import",
-            "description": "Less common options for the pipeline, typically set in a config file.",
-            "help_text": "These options are common to all nf-core pipelines and allow you to customise some of the core preferences for how the pipeline runs.\n\nTypically these options would be set in a Nextflow config file loaded for all pipeline runs, such as `~/.nextflow/config`.",
+            "description": "Less common options, typically set in a config file.",
             "properties": {
                 "version": {
                     "type": "boolean",
@@ -88,20 +181,14 @@
                 "multiqc_methods_description": {
                     "type": "string",
                     "description": "Custom MultiQC yaml file containing HTML including a methods description.",
-                    "fa_icon": "fas fa-cog"
+                    "fa_icon": "fas fa-cog",
+                    "hidden": true
                 },
                 "validate_params": {
                     "type": "boolean",
                     "description": "Boolean whether to validate parameters against the schema at runtime",
                     "default": true,
                     "fa_icon": "fas fa-check-square",
-                    "hidden": true
-                },
-                "pipelines_testdata_base_path": {
-                    "type": "string",
-                    "fa_icon": "far fa-check-circle",
-                    "description": "Base URL or local path to location of pipeline test dataset files",
-                    "default": "https://raw.githubusercontent.com/nf-core/test-datasets/",
                     "hidden": true
                 },
                 "trace_report_suffix": {
@@ -126,11 +213,11 @@
         }
     },
     "allOf": [
-        {
-            "$ref": "#/$defs/input_output_options"
-        },
-        {
-            "$ref": "#/$defs/generic_options"
-        }
+        { "$ref": "#/$defs/input_output_options" },
+        { "$ref": "#/$defs/reference_options" },
+        { "$ref": "#/$defs/assembly_options" },
+        { "$ref": "#/$defs/annotation_options" },
+        { "$ref": "#/$defs/cluster_options" },
+        { "$ref": "#/$defs/generic_options" }
     ]
 }

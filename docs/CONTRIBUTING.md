@@ -31,10 +31,6 @@ To contribute code to any nf-core pipeline:
 
 If you are not used to this workflow with Git, see the [GitHub documentation](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests) or [Git resources](https://try.github.io/) for more information.
 
-
-
-
-
 ### Testing
 
 Once you have made your changes, run the pipeline with nf-test to test them locally.
@@ -156,4 +152,4 @@ If you update images or graphics, follow the nf-core [style guidelines](https://
 
 ## Pipeline specific contribution guidelines
 
-<!-- TODO nf-core: Add any pipeline specific contribution guidelines here, such as coding styles, procedures, checklists etc. -->
+Please run `nextflow run . -profile test,docker` and `nf-core pipelines lint` before opening a pull request, and add an nf-test case for any module or subworkflow you add.

@@ -8,3 +8,10 @@ testing*
 *.pyc
 null/
 .lineage/
+
+# local developer toolchain and fetched test data (see bin/fetch_testdata.sh)
+.tools/
+.venv/
+testdata/
+.nf-test/
+.nf-test.log

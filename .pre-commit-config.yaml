@@ -44,6 +44,12 @@ repos:
         args: ["-output", "json"]
   - repo: local
     hooks:
+      - id: nf-core-lint
+        name: nf-core pipelines lint
+        entry: nf-core pipelines lint
+        language: system
+        pass_filenames: false
+        files: '\.(nf|config|json|yml)$'
       - id: block-pipeline-outdir
         name: Prevent committing output from pipeline test runs to the pipeline code itself
         entry: ./.hooks/block_pipeline_outdir.sh

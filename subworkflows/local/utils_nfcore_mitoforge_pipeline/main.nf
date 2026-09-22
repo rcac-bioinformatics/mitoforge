@@ -9,9 +9,7 @@
 */
 
 include { UTILS_NFSCHEMA_PLUGIN     } from '../../nf-core/utils_nfschema_plugin'
-include { paramsSummaryMap          } from 'plugin/nf-schema'
 include { samplesheetToList         } from 'plugin/nf-schema'
-include { paramsHelp                } from 'plugin/nf-schema'
 include { completionSummary         } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NFCORE_PIPELINE     } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NEXTFLOW_PIPELINE   } from '../../nf-core/utils_nextflow_pipeline'
@@ -59,7 +57,7 @@ workflow PIPELINE_INITIALISATION {
         before_text = before_text.replaceAll(/\033\[[0-9;]*m/, '')
     }
 
-    command = "nextflow run ${workflow.manifest.name} -profile <docker/singularity/.../institute> --input samplesheet.csv --outdir <OUTDIR>"
+    command = "nextflow run ${workflow.manifest.name} -profile <negishi|bell|anvil|docker> --input samplesheet.csv --outdir results"
 
     UTILS_NFSCHEMA_PLUGIN (
         workflow,
@@ -82,28 +80,24 @@ workflow PIPELINE_INITIALISATION {
     )
 
     //
+    // Check the SLURM settings the cluster profiles need
+    //
+    validateClusterParams()
+
+    //
+    // Check that -profile test has its data
+    //
+    validateTestProfile()
+
+    //
     // Create channel from input file provided through params.input
     //
 
-    channel
+    // The samplesheet is parsed and type/format checked here by nf-schema. Semantic
+    // checks that the schema cannot express (e.g. "exactly one of fastq_1 or bam")
+    // are done by the INPUT_CHECK subworkflow, which names the offending row.
+    def ch_samplesheet = channel
         .fromList(samplesheetToList(input, "${projectDir}/assets/schema_input.json"))
-        .map {
-            meta, fastq_1, fastq_2 ->
-                if (!fastq_2) {
-                    return [ meta.id, meta + [ single_end:true ], [ fastq_1 ] ]
-                } else {
-                    return [ meta.id, meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
-                }
-        }
-        .groupTuple()
-        .map { samplesheet ->
-            validateInputSamplesheet(samplesheet)
-        }
-        .map {
-            meta, fastqs ->
-                return [ meta, fastqs.flatten() ]
-        }
-        .set { ch_samplesheet }
 
     emit:
     samplesheet = ch_samplesheet
@@ -133,7 +127,7 @@ workflow PIPELINE_COMPLETION {
     }
 
     workflow.onError {
-        log.error "Pipeline failed. Please refer to troubleshooting docs for common issues: https://nf-co.re/docs/running/troubleshooting"
+        log.error "Pipeline failed. See https://rcac-bioinformatics.github.io/mitoforge/troubleshooting/ for the common causes."
     }
 }
 
@@ -144,26 +138,53 @@ workflow PIPELINE_COMPLETION {
 */
 
 //
-// Validate channels from input samplesheet
+// The negishi/bell/anvil profiles submit to SLURM, which needs an account and a
+// partition. Fail before any job is submitted, and say exactly how to find them.
 //
-def validateInputSamplesheet(input) {
-    def (metas, fastqs) = input[1..2]
-
-    // Check that multiple runs of the same sample are of the same datatype i.e. single-end / paired-end
-    def endedness_ok = metas.collect{ meta -> meta.single_end }.unique().size == 1
-    if (!endedness_ok) {
-        error("Please check input samplesheet -> Multiple runs of a sample must be of the same datatype i.e. single-end or paired-end: ${metas[0].id}")
+def validateClusterParams() {
+    def cluster_profiles = ['negishi', 'bell', 'anvil']
+    def active = workflow.profile.tokenize(',').intersect(cluster_profiles)
+    if (!active) {
+        return
     }
-
-    return [ metas[0], fastqs ]
+    def missing = []
+    if (!params.cluster_account) { missing << '--cluster_account <allocation>  (run `slist` to see yours)' }
+    if (!params.cluster_queue)   { missing << '--cluster_queue <partition>     (run `sinfo -s` to see yours)' }
+    if (missing) {
+        error(
+            "The '${active.first()}' profile submits jobs to SLURM and is missing:\n" +
+            missing.collect { m -> "    ${m}" }.join('\n') + "\n\n" +
+            "Add them to your command line, for example:\n" +
+            "    nextflow run ${workflow.manifest.name} -profile ${active.first()},apptainer \\\n" +
+            "        --input samplesheet.csv --outdir results \\\n" +
+            "        --cluster_account myaccount --cluster_queue cpu\n"
+        )
+    }
 }
+
+//
+// -profile test runs on real public data that is too large to keep in git. Say so
+// plainly instead of letting the schema complain about a missing file.
+//
+def validateTestProfile() {
+    if (!workflow.profile.tokenize(',').contains('test')) {
+        return
+    }
+    def samplesheet = file("${projectDir}/testdata/samplesheet_test.csv")
+    if (!samplesheet.exists()) {
+        error(
+            "-profile test needs the public test data, which is not committed to this repository.\n" +
+            "Fetch it once (about 1 MB) with:\n\n" +
+            "    bin/fetch_testdata.sh\n"
+        )
+    }
+}
+
 //
 // Generate methods description for MultiQC
 //
 def toolCitationText() {
-    // TODO nf-core: Optionally add in-text citation tools to this list.
-    // Can use ternary operators to dynamically construct based conditions, e.g. params["run_xyz"] ? "Tool (Foo et al. 2023)" : "",
-    // Uncomment function in methodsDescriptionText to render in MultiQC report
+    // Keep this in step with CITATIONS.md as stages are added.
     def citation_text = [
             "Tools used in the workflow included:",
             "MultiQC (Ewels et al. 2016)",
@@ -174,9 +195,7 @@ def toolCitationText() {
 }
 
 def toolBibliographyText() {
-    // TODO nf-core: Optionally add bibliographic entries to this list.
-    // Can use ternary operators to dynamically construct based conditions, e.g. params["run_xyz"] ? "<li>Author (2023) Pub name, Journal, DOI</li>" : "",
-    // Uncomment function in methodsDescriptionText to render in MultiQC report
+    // Keep this in step with CITATIONS.md as stages are added.
     def reference_text = [
             "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics , 32(19), 3047–3048. doi: /10.1093/bioinformatics/btw354</li>"
         ].join(' ').trim()
@@ -205,12 +224,9 @@ def methodsDescriptionText(mqc_methods_yaml) {
     meta["nodoi_text"] = meta.manifest_map.doi ? "" : "<li>If available, make sure to update the text to include the Zenodo DOI of version of the pipeline used. </li>"
 
     // Tool references
-    meta["tool_citations"] = ""
-    meta["tool_bibliography"] = ""
 
-    // TODO nf-core: Only uncomment below if logic in toolCitationText/toolBibliographyText has been filled!
-    // meta["tool_citations"] = toolCitationText().replaceAll(", \\.", ".").replaceAll("\\. \\.", ".").replaceAll(", \\.", ".")
-    // meta["tool_bibliography"] = toolBibliographyText()
+    meta["tool_citations"] = toolCitationText().replaceAll(", \\.", ".").replaceAll("\\. \\.", ".").replaceAll(", \\.", ".")
+    meta["tool_bibliography"] = toolBibliographyText()
 
 
     def methods_text = mqc_methods_yaml.text
