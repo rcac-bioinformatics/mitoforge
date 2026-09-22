@@ -1,0 +1,96 @@
+nextflow_workflow {
+
+    name "Test subworkflow ASSEMBLE_SHORT"
+    script "../main.nf"
+    workflow "ASSEMBLE_SHORT"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "assemble_short"
+
+    // GETORGANELLE_CONFIG downloads the animal_mt seed and label databases, so this
+    // test needs the internet. On a cluster it would only run on a login node.
+
+    test("assembles a complete mitogenome from Illumina reads") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [
+                        id:           'SRR5201683',
+                        platform:     'illumina',
+                        genetic_code: 2,
+                        ref_fa:       file("\${projectDir}/testdata/illumina/PZ790849.fasta", checkIfExists: true),
+                        ref_gb:       file("\${projectDir}/testdata/illumina/PZ790849.gb", checkIfExists: true),
+                        single_end:   false,
+                        input_type:   'fastq'
+                    ],
+                    [
+                        file("\${projectDir}/testdata/illumina/SRR5201683_1.fastq.gz", checkIfExists: true),
+                        file("\${projectDir}/testdata/illumina/SRR5201683_2.fastq.gz", checkIfExists: true)
+                    ]
+                ])
+                input[1] = false
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.assembly.size() == 1 },
+                // uncompressed, because MitoHiFi contigs mode cannot read gzip
+                { assert workflow.out.assembly[0][1].toString().endsWith('.fasta') },
+                // a rodent mitogenome is around 16 kb
+                { assert path(workflow.out.assembly[0][1]).text.replaceAll(/>.*\n/, '').replaceAll(/\s/, '').length() > 15000 },
+                { assert path(workflow.out.assembly[0][1]).text.replaceAll(/>.*\n/, '').replaceAll(/\s/, '').length() < 18000 },
+                // GetOrganelle marks a closed assembly path in the sequence name
+                { assert path(workflow.out.assembly[0][1]).text.contains('(circular)') },
+                { assert workflow.out.fastp_json.size() == 1 }
+            )
+        }
+    }
+
+    test("stub, trimming skipped") {
+
+        options "-stub"
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = channel.of([
+                    [
+                        id:           'SRR5201683',
+                        platform:     'illumina',
+                        genetic_code: 2,
+                        ref_fa:       file("\${projectDir}/testdata/illumina/PZ790849.fasta", checkIfExists: true),
+                        ref_gb:       file("\${projectDir}/testdata/illumina/PZ790849.gb", checkIfExists: true),
+                        single_end:   false,
+                        input_type:   'fastq'
+                    ],
+                    [
+                        file("\${projectDir}/testdata/illumina/SRR5201683_1.fastq.gz", checkIfExists: true),
+                        file("\${projectDir}/testdata/illumina/SRR5201683_2.fastq.gz", checkIfExists: true)
+                    ]
+                ])
+                input[1] = true
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.assembly.size() == 1 },
+                { assert workflow.out.fastp_json.size() == 0 }
+            )
+        }
+    }
+}

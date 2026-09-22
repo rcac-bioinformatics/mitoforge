@@ -11,6 +11,8 @@ pipeline_info/*.{html,json,txt,yml}
 multiqc/multiqc_data/multiqc_citations.txt
 samples/*/*/*.png
 samples/*/*/*.log
+samples/*/*/*.log.txt
+samples/*/*/*.html
 samples/*/*/coverage_mapping/**
 samples/*/*/contigs_circularization/**
 samples/*/*/contigs_filtering/**

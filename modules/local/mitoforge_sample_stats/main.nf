@@ -62,6 +62,13 @@ process MITOFORGE_SAMPLE_STATS {
         fi
     done
 
+    #    GetOrganelle has no stats table at all, but it marks a closed path by putting
+    #    "(circular)" in the sequence name, and that name survives into the finished
+    #    mitogenome's header.
+    if grep -q '(circular)' ${fasta}; then
+        circular=True
+    fi
+
     # 3. If MitoHiFi wrote no 'final_mitogenome' row, measure the FASTA instead so the
     #    summary still says how big the assembly is.
     if [ "\${length_bp}" = "NA" ]; then
@@ -94,9 +101,13 @@ process MITOFORGE_SAMPLE_STATS {
     """
 
     stub:
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    // The stub keeps the real columns, including which reference the sample was given,
+    // so that stub-mode pipeline tests can check how samples were wired together.
+    def prefix    = task.ext.prefix ?: "${meta.id}"
+    def reference = meta.ref_fa ? file(meta.ref_fa).name : 'NA'
     """
-    printf '%s\\t%s\\t%s\\tNA\\t0\\t0\\tNA\\tNA\\tpass\\n' '${meta.id}' '${meta.platform}' '${meta.genetic_code}' > ${prefix}.summary.tsv
+    printf '%s\\t%s\\t%s\\t%s\\t0\\t0\\tNA\\tNA\\tpass\\n' \\
+        '${meta.id}' '${meta.platform}' '${meta.genetic_code}' '${reference}' > ${prefix}.summary.tsv
     printf 'sample\\tstage\\tcontig_id\\n%s\\tfinal\\tfinal_mitogenome\\n' '${meta.id}' > ${prefix}.contigs_stats.tsv
     """
 }

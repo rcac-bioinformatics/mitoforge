@@ -3,13 +3,13 @@
         "content": [
             {
                 "0": [
-                    "mitoforge_summary.tsv:md5,ae63ff7578e95760920ed5ab1002c243"
+                    "mitoforge_summary.tsv:md5,bcdde8da68713a55bda339d4167d2867"
                 ],
                 "1": [
-                    "all_contigs_stats.tsv:md5,920940e4da94bdd6793c21c1c8e8272e"
+                    "all_contigs_stats.tsv:md5,100cd2626c17dd75afb3dbb2d107b730"
                 ],
                 "2": [
-                    "mitoforge_summary_mqc.tsv:md5,ae63ff7578e95760920ed5ab1002c243"
+                    "mitoforge_summary_mqc.tsv:md5,bcdde8da68713a55bda339d4167d2867"
                 ],
                 "3": [
                     [
@@ -19,13 +19,13 @@
                     ]
                 ],
                 "all_contigs_stats": [
-                    "all_contigs_stats.tsv:md5,920940e4da94bdd6793c21c1c8e8272e"
+                    "all_contigs_stats.tsv:md5,100cd2626c17dd75afb3dbb2d107b730"
                 ],
                 "mqc": [
-                    "mitoforge_summary_mqc.tsv:md5,ae63ff7578e95760920ed5ab1002c243"
+                    "mitoforge_summary_mqc.tsv:md5,bcdde8da68713a55bda339d4167d2867"
                 ],
                 "summary": [
-                    "mitoforge_summary.tsv:md5,ae63ff7578e95760920ed5ab1002c243"
+                    "mitoforge_summary.tsv:md5,bcdde8da68713a55bda339d4167d2867"
                 ],
                 "versions_mitoforge": [
                     [
@@ -36,7 +36,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-09-22T12:04:55.234995668",
+        "timestamp": "2026-09-22T13:07:08.310642579",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"

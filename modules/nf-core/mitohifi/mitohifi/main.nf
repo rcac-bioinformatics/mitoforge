@@ -6,8 +6,14 @@ process MITOHIFI_MITOHIFI {
     container 'ghcr.io/marcelauliano/mitohifi:3.2.3'
 
     input:
-    tuple val(meta) , path(input, arity: '1..*')
-    tuple val(meta2), path(ref_fa), path(ref_gb)
+    // Staged into subdirectories on purpose. MitoHiFi writes final_mitogenome.fasta
+    // into its working directory, and both of these inputs can carry exactly that
+    // name: the assembly handed to contigs mode, and a finished mitogenome being used
+    // as the reference for another sample. Staged flat, MitoHiFi opens the staged
+    // symlink for writing and silently overwrites the file in the upstream task's
+    // work directory.
+    tuple val(meta) , path(input, arity: '1..*', stageAs: 'input/*')
+    tuple val(meta2), path(ref_fa, stageAs: 'reference/*'), path(ref_gb, stageAs: 'reference/*')
     val input_mode
     val mito_code
 

@@ -1,0 +1,49 @@
+nextflow_pipeline {
+
+    name "Test the ref_fa: hifi:<sample> dependency"
+    script "../main.nf"
+    tag "pipeline"
+
+    // This runs in stub mode on purpose. What is under test is the dependency between
+    // samples: two Illumina rows say 'ref_fa: hifi:ilDeiPorc1', so they must wait for
+    // that HiFi sample to be assembled and finished, then both use its mitogenome and
+    // its annotation as their reference. Running the assemblers for real would need
+    // Illumina reads from something close to the HiFi sample, which no public test
+    // dataset gives us; stub mode exercises the wiring without pretending otherwise.
+
+    test("two short-read samples share one HiFi sample's finished mitogenome") {
+
+        options "-stub"
+
+        when {
+            params {
+                input  = "${projectDir}/testdata/samplesheet_hifi_reference.csv"
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def summary = path("$outputDir/summary/mitoforge_summary.tsv").readLines()
+            assertAll(
+                { assert workflow.success },
+                // all three samples came through
+                { assert summary.size() == 4 },
+                { assert summary.any { line -> line.startsWith('ilDeiPorc1\t') } },
+                { assert summary.any { line -> line.startsWith('shortA\t') } },
+                { assert summary.any { line -> line.startsWith('shortB\t') } },
+                // both short-read samples were finished against the HiFi sample's
+                // mitogenome rather than a samplesheet reference
+                { assert summary.find { line -> line.startsWith('shortA\t') }.split('\t')[3] == 'final_mitogenome.fasta' },
+                { assert summary.find { line -> line.startsWith('shortB\t') }.split('\t')[3] == 'final_mitogenome.fasta' },
+                { assert summary.find { line -> line.startsWith('ilDeiPorc1\t') }.split('\t')[3] == 'MW539688.1.fasta' },
+                // and each one produced its own output
+                { assert path("$outputDir/mitogenomes/shortA.fasta").exists() },
+                { assert path("$outputDir/mitogenomes/shortB.fasta").exists() },
+                { assert path("$outputDir/mitogenomes/ilDeiPorc1.fasta").exists() },
+                // Nextflow's own version is stripped, because the pipeline is tested
+                // against more than one Nextflow release
+                { assert snapshot(removeNextflowVersion("$outputDir/pipeline_info/mitoforge_software_mqc_versions.yml")).match() }
+            )
+        }
+    }
+}

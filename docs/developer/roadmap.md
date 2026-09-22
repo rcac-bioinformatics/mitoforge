@@ -26,6 +26,26 @@ Open an issue before starting on any of it.
 - **A `test_full` profile.** Would need a real, sizeable public dataset and somewhere to
   run it.
 
+## Worth reporting upstream
+
+Two things found while building this pipeline that belong in nf-core/modules or in
+MitoHiFi itself, not here:
+
+- **nf-core/modules, mitohifi/mitohifi.** The module staged its inputs flat, next to
+  where MitoHiFi writes its own output. Both the contigs input and the reference can be
+  called `final_mitogenome.fasta` - the first when contigs mode is handed the output of
+  reads mode, the second when one sample's finished mitogenome is the reference for
+  another. MitoHiFi then opens the staged symlink for writing and overwrites the file in
+  the upstream task's work directory. mitoforge carries a patch that stages them into
+  `input/` and `reference/`; the fix belongs upstream.
+- **MitoHiFi.** `src/getGenesList.py` reads `/gene=` off every CDS in the reference
+  GenBank file, and raises `KeyError: 'gene'` if a CDS has none. Plenty of real
+  mitogenome submissions annotate CDS features with `/product=` only - the bank vole
+  RefSeq record NC_024538 is one - and MitoHiFi then dies on its very last step, after
+  it has already written the finished mitogenome. A pre-flight check on the reference,
+  or falling back to `/product=`, would save people a whole run. Until then, see the
+  troubleshooting page.
+
 ## Deliberately out of scope
 
 - Reimplementing any wrapped tool. If a tool is wrong, fix it upstream or swap it out.

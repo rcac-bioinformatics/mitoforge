@@ -188,6 +188,8 @@ def toolCitationText() {
     def citation_text = [
             "Tools used in the workflow included:",
             "MitoHiFi (Uliano-Silva et al. 2023),",
+            "GetOrganelle (Jin et al. 2020),",
+            "fastp (Chen et al. 2018),",
             "samtools (Danecek et al. 2021)",
             "and MultiQC (Ewels et al. 2016)",
             "."
@@ -200,6 +202,8 @@ def toolBibliographyText() {
     // Keep this in step with CITATIONS.md as stages are added.
     def reference_text = [
             "<li>Uliano-Silva, M., Ferreira, J. G. R. N., Krasheninnikova, K., Darwin Tree of Life Consortium, Formenti, G., Abueg, L., Torrance, J., Myers, E. W., Durbin, R., Blaxter, M., & McCarthy, S. A. (2023). MitoHiFi: a python pipeline for mitochondrial genome assembly from PacBio high fidelity reads. BMC Bioinformatics, 24(1), 288. doi: 10.1186/s12859-023-05385-y</li>",
+            "<li>Jin, J. J., Yu, W. B., Yang, J. B., Song, Y., dePamphilis, C. W., Yi, T. S., & Li, D. Z. (2020). GetOrganelle: a fast and versatile toolkit for accurate de novo assembly of organelle genomes. Genome Biology, 21(1), 241. doi: 10.1186/s13059-020-02154-5</li>",
+            "<li>Chen, S., Zhou, Y., Chen, Y., & Gu, J. (2018). fastp: an ultra-fast all-in-one FASTQ preprocessor. Bioinformatics, 34(17), i884-i890. doi: 10.1093/bioinformatics/bty560</li>",
             "<li>Danecek, P., Bonfield, J. K., Liddle, J., Marshall, J., Ohan, V., Pollard, M. O., Whitwham, A., Keane, T., McCarthy, S. A., Davies, R. M., & Li, H. (2021). Twelve years of SAMtools and BCFtools. GigaScience, 10(2), giab008. doi: 10.1093/gigascience/giab008</li>",
             "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics , 32(19), 3047-3048. doi: 10.1093/bioinformatics/btw354</li>"
         ].join(' ').trim()

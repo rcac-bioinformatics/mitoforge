@@ -10,6 +10,7 @@ process GETORGANELLE_FROMREADS {
     input:
     tuple val(meta), path(fastq)
     tuple val(organelle_type), path(db)
+    path seed
 
     output:
     tuple val(meta), path("results/${prefix}.${organelle_type}.fasta.gz"), emit: fasta, optional: true
@@ -21,11 +22,13 @@ process GETORGANELLE_FROMREADS {
 
     script:
     def args = task.ext.args ?: ''
+    def seed_arg = seed ? "-s ${seed}" : ''
     prefix = task.ext.prefix ?: "${meta.id}"
 
     """
     get_organelle_from_reads.py \\
         ${args} \\
+        ${seed_arg} \\
         --prefix ${meta.id}. \\
         -F ${organelle_type} \\
         --config-dir ${db} \\

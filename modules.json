@@ -18,6 +18,12 @@
                     "getorganelle/fromreads": {
                         "branch": "master",
                         "git_sha": "ffd937afa727698ce50700a6a9e4748ded247a00",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/getorganelle/fromreads/getorganelle-fromreads.diff"
+                    },
+                    "gunzip": {
+                        "branch": "master",
+                        "git_sha": "0902eac3012baaf4f9ab6513c8c55acc9353c96c",
                         "installed_by": ["modules"]
                     },
                     "mitohifi/findmitoreference": {
@@ -28,7 +34,8 @@
                     "mitohifi/mitohifi": {
                         "branch": "master",
                         "git_sha": "5909fc046b4b2062e4b4173808aacd2424e0866a",
-                        "installed_by": ["modules"]
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/mitohifi/mitohifi/mitohifi-mitohifi.diff"
                     },
                     "multiqc": {
                         "branch": "master",

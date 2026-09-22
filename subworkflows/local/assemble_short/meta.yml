@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "assemble_short"
+description: Assemble a mitogenome from Illumina paired-end reads with GetOrganelle
+keywords:
+  - assembly
+  - mitogenome
+  - illumina
+  - getorganelle
+components:
+  - fastp
+  - getorganelle/config
+  - getorganelle/fromreads
+  - gunzip
+input:
+  - ch_reads:
+      type: file
+      description: |
+        Illumina samples, with meta.ref_fa pointing at the reference mitogenome to seed
+        the bait step with.
+        Structure: [ val(meta), [ path(read_1), path(read_2) ] ]
+  - skip_trimming:
+      type: boolean
+      description: Skip fastp adapter and quality trimming.
+output:
+  - assembly:
+      type: file
+      description: |
+        The assembled mitogenome, uncompressed because MitoHiFi cannot read gzipped
+        input in contigs mode.
+        Structure: [ val(meta), path(fasta) ]
+  - fastp_json:
+      type: file
+      description: |
+        fastp's report, for MultiQC. Empty when trimming is skipped.
+        Structure: [ val(meta), path(json) ]
+authors:
+  - "Arun Seetharam"
+maintainers:
+  - "Arun Seetharam"

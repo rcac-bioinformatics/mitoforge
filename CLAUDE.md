@@ -92,3 +92,36 @@ Things worth knowing:
 - **Process selectors** in `conf/modules.config` are written `'.*STAGE:PROCESS'` with no leading colon, so they also match when a subworkflow is run on its own under nf-test.
 - The finished mitogenome keeps MitoHiFi's contig name in its FASTA header, not the sample name. Noted in docs/developer/roadmap.md.
 - The `hifi:<sample>` reference is still unresolved: it validates, and PREPARE_REFERENCE routes it aside, but nothing consumes `needs_hifi` until Phase 2.
+
+### Phase 2 - short-read path: done
+
+Done:
+
+- `ASSEMBLE_SHORT`: optional fastp trimming (`--skip_trimming`), `GETORGANELLE_CONFIG` once per run, `GETORGANELLE_FROMREADS` seeded with the sample's reference, then `GUNZIP` because MitoHiFi cannot read gzipped input in contigs mode.
+- `ref_fa: hifi:<sample>` is resolved: those rows wait for the named HiFi sample to be finished, then take its `final_mitogenome.fasta` and `.gb`. `combine(by: 0)`, not `join`, so many short-read samples can share one HiFi reference.
+- FINALIZE is invoked twice, as `FINALIZE_HIFI` and `FINALIZE_SHORT`. One invocation over the mixture would be a cycle, because the short-read assemblies depend on the finished HiFi ones. Both are the same subworkflow with the same settings, so every sample is still finished identically.
+- Test profile now covers both platforms in one run.
+
+Test data (all real, all fetched by `bin/fetch_testdata.sh`, 50 MB total):
+
+- HiFi: MitoHiFi's shipped _Deilephila porcellus_ reads against MW539688.1, code 5.
+- Illumina: the first 250,000 read pairs of SRA run **SRR5201683** (_Myodes glareolus_, bank vole), the reduced set the GetOrganelle authors publish and document, md5-checked against the values in their wiki. Reference **PZ790849** (_Caryomys eva_, same tribe), code 2.
+- Why not the bank vole's own RefSeq record NC_024538: it annotates no `/gene=` qualifiers, and MitoHiFi needs them (see below).
+
+Tested:
+
+- `nextflow run . -profile test,docker --outdir results` - green, both platforms.
+- `nf-test test` - 27 tests, all green; the pipeline snapshot is reproducible across runs.
+- `nf-core pipelines lint` - 0 failures.
+
+Two real bugs found and worked around (both written up in docs/developer/roadmap.md for reporting upstream):
+
+- **The nf-core mitohifi module corrupted upstream work directories.** It staged inputs flat, and MitoHiFi writes `final_mitogenome.fasta` into its working directory. When contigs mode is handed reads mode's output - or when one sample's finished mitogenome is another's reference - the staged symlink has that exact name, and MitoHiFi writes straight through it into the upstream task's work directory. The symptom was a contig name growing an extra `.rotated` on every run. Patched (`modules/nf-core/mitohifi/mitohifi/mitohifi-mitohifi.diff`) to stage into `input/` and `reference/`.
+- **MitoHiFi needs `/gene=` on the reference's CDS features.** `getGenesList.py` raises `KeyError: 'gene'` otherwise, on the very last step, after the finished mitogenome has already been written. Many real submissions annotate `/product=` only.
+
+Other things worth knowing:
+
+- `modules/nf-core/getorganelle/fromreads` is patched to take an optional `seed` input, so GetOrganelle can be given `-s <reference>`. The unpatched module has no way to stage a seed file.
+- MitoHiFi's contigs mode rejects any assembly shorter than 80% of the reference. A partial short-read assembly therefore fails FINALIZE rather than producing a fragment.
+- `nf-test.config` ignores `.venv/**`: the nf-core tools package ships a copy of the pipeline template, complete with its own nf-tests, and nf-test will happily run those from inside a virtualenv in the repo.
+- Circularity in the summary is true if any stage reported it: a stats table saying `was_circular True`, or GetOrganelle's `(circular)` marker in the sequence name. Neither finishing pass sees an overlap that the assembler already trimmed.

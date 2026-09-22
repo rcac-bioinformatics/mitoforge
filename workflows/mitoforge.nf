@@ -6,7 +6,9 @@
 include { INPUT_CHECK            } from '../subworkflows/local/input_check'
 include { PREPARE_REFERENCE      } from '../subworkflows/local/prepare_reference'
 include { ASSEMBLE_HIFI          } from '../subworkflows/local/assemble_hifi'
-include { FINALIZE               } from '../subworkflows/local/finalize'
+include { ASSEMBLE_SHORT         } from '../subworkflows/local/assemble_short'
+include { FINALIZE as FINALIZE_HIFI  } from '../subworkflows/local/finalize'
+include { FINALIZE as FINALIZE_SHORT } from '../subworkflows/local/finalize'
 include { ANNOTATE               } from '../subworkflows/local/annotate'
 include { SUMMARY                } from '../subworkflows/local/summary'
 include { MULTIQC                } from '../modules/nf-core/multiqc/main'
@@ -67,21 +69,60 @@ workflow MITOFORGE {
     ASSEMBLE_HIFI ( ch_by_platform.hifi_reads, ch_by_platform.hifi_bam )
 
     //
-    // SUBWORKFLOW: one finishing step for every assembly, whatever made it
+    // SUBWORKFLOW: finish the HiFi assemblies
     //
-    FINALIZE ( ASSEMBLE_HIFI.out.assembly )
+    FINALIZE_HIFI ( ASSEMBLE_HIFI.out.assembly )
+
+    //
+    // Resolve 'ref_fa: hifi:<sample>'. Those rows waited for the sample they name to
+    // be assembled and finished; now that it has been, hand them its mitogenome and
+    // its annotation. combine() rather than join(), because many short-read samples
+    // may share one HiFi reference.
+    //
+    // This is also why the finishing step is invoked twice rather than once on the
+    // mixture: the short-read assemblies depend on the finished HiFi ones, and a
+    // single invocation would be a cycle. Both invocations are the same subworkflow
+    // with the same settings, so every sample is still finished identically.
+    //
+    def ch_hifi_references = FINALIZE_HIFI.out.assembly
+        .join( FINALIZE_HIFI.out.gb )
+        .map { meta, fasta, gb -> [ meta.id, fasta, gb ] }
+
+    def ch_short_from_hifi = PREPARE_REFERENCE.out.needs_hifi
+        .map { meta, files -> [ meta.ref_fa.substring('hifi:'.length()), meta, files ] }
+        .combine( ch_hifi_references, by: 0 )
+        .map { _target, meta, files, ref_fa, ref_gb ->
+            [ meta + [ ref_fa: ref_fa, ref_gb: ref_gb ], files ]
+        }
+
+    //
+    // SUBWORKFLOW: assemble the Illumina samples
+    //
+    ASSEMBLE_SHORT (
+        ch_by_platform.illumina.mix( ch_short_from_hifi ),
+        params.skip_trimming
+    )
+
+    //
+    // SUBWORKFLOW: finish the short-read assemblies, the same way
+    //
+    FINALIZE_SHORT ( ASSEMBLE_SHORT.out.assembly )
+
+    def ch_finished       = FINALIZE_HIFI.out.assembly.mix( FINALIZE_SHORT.out.assembly )
+    def ch_finished_stats = FINALIZE_HIFI.out.stats.mix( FINALIZE_SHORT.out.stats )
 
     //
     // SUBWORKFLOW: stub, see subworkflows/local/annotate
     //
-    ANNOTATE ( FINALIZE.out.assembly, params.skip_annotation )
+    ANNOTATE ( ch_finished, params.skip_annotation )
 
     //
     // SUBWORKFLOW: gather everything into one report
     //
-    SUMMARY ( ANNOTATE.out.assembly, FINALIZE.out.stats, ASSEMBLE_HIFI.out.stats )
+    SUMMARY ( ANNOTATE.out.assembly, ch_finished_stats, ASSEMBLE_HIFI.out.stats )
 
     ch_multiqc_files = ch_multiqc_files.mix( SUMMARY.out.multiqc )
+    ch_multiqc_files = ch_multiqc_files.mix( ASSEMBLE_SHORT.out.fastp_json.map { _meta, json -> json } )
 
     //
     // Collate and save software versions

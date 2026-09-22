@@ -49,9 +49,14 @@ process MITOFORGE_SUMMARY {
     """
 
     stub:
+    // The stub still stacks the per-sample rows, because that is what stub-mode
+    // pipeline tests look at to check which samples ran and how they were wired.
     """
-    printf 'sample\\tplatform\\tgenetic_code\\treference\\tlength_bp\\tgenes\\tcircular\\tframeshifts\\tstatus\\n' > mitoforge_summary.tsv
-    printf 'sample\\tcontig_id\\n' > all_contigs_stats.tsv
+    {
+        printf 'sample\\tplatform\\tgenetic_code\\treference\\tlength_bp\\tgenes\\tcircular\\tframeshifts\\tstatus\\n'
+        cat per_sample/*.summary.tsv | sort -k1,1
+    } > mitoforge_summary.tsv
+    printf 'sample\\tstage\\tcontig_id\\n' > all_contigs_stats.tsv
     cp mitoforge_summary.tsv mitoforge_summary_mqc.tsv
     """
 }
