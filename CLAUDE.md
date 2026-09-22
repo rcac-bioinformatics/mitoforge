@@ -147,3 +147,23 @@ Things worth knowing:
 
 - **`publishDir` must be a single map, not a list, wherever a closure mentions `meta`.** Nextflow 26 cannot render a list of publishDir maps to JSON when one of them closes over `meta`, so `nextflow config -o json` fails and `nf-core pipelines lint` aborts on it. `MITOHIFI_FINALIZE` therefore uses one publishDir rooted at `params.outdir` whose `saveAs` routes each file, rather than two entries.
 - `errorStrategy` closures and `meta` inside a single publishDir map are both fine.
+
+### Phase 4 - docs: done
+
+Done:
+
+- MkDocs Material site in `docs/`, `mkdocs.yml` in the repo root, deployed to GitHub Pages by `.github/workflows/docs.yml`. The build runs with `--strict` on pull requests too, so a broken internal link or a page missing from the nav fails before merge.
+- Pages: quick start (five commands for Negishi), samplesheet reference (every column, every rule), eight case pages, output reference (every file), troubleshooting, citations, and a four-page developer guide.
+- `assets/samplesheet_example.csv` is a real, copyable starting point covering all five ways of specifying a row.
+- `docs/usage.md` and `docs/README.md` are kept because nf-core lint wants them; `usage.md` is now an index into the site, and `README.md` is excluded from the built site (it would collide with `index.md`).
+
+Corrected while writing the docs:
+
+- **`-preview` does not pull containers.** It builds the DAG and stops. The pre-pull advice is therefore to run `-profile test,apptainer` on the login node, which exercises both paths and pulls everything except the samtools image, or to use `nextflow inspect` and `apptainer pull` for exactly what a given samplesheet needs.
+- `assets/samplesheet_example.csv` cannot be used as a real `--input`: its paths are placeholders and nf-schema checks that files exist.
+
+Tested:
+
+- `mkdocs build --strict` with anchor and link validation on - clean.
+- `nf-core pipelines lint` - 0 failures, warnings down to 10.
+- `nextflow run . -profile test,docker` - still green.

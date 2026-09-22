@@ -15,3 +15,6 @@ null/
 testdata/
 .nf-test/
 .nf-test.log
+
+# mkdocs build output
+site/

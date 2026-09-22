@@ -1,0 +1,6 @@
+sample,platform,fastq_1,fastq_2,bam,species,ref_fa,ref_gb,genetic_code
+HIFI_WITH_SPECIES,hifi,/path/to/sampleA.hifi.fastq.gz,,,Deilephila porcellus,,,5
+HIFI_WITH_REFERENCE,hifi,/path/to/sampleB.hifi.fastq.gz,,,,/path/to/MW539688.1.fasta,/path/to/MW539688.1.gb,5
+HIFI_FROM_BAM,hifi,,,/path/to/sampleC.hifi_reads.bam,,/path/to/MW539688.1.fasta,/path/to/MW539688.1.gb,5
+SHORT_WITH_REFERENCE,illumina,/path/to/sampleD_R1.fastq.gz,/path/to/sampleD_R2.fastq.gz,,,/path/to/PZ790849.fasta,/path/to/PZ790849.gb,2
+SHORT_USING_HIFI,illumina,/path/to/sampleE_R1.fastq.gz,/path/to/sampleE_R2.fastq.gz,,,hifi:HIFI_WITH_REFERENCE,,2

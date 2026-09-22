@@ -1,8 +1,13 @@
-# rcac-bioinformatics/mitoforge: Documentation
+# mitoforge documentation
 
-The rcac-bioinformatics/mitoforge documentation is split into the following pages:
+These pages are published at <https://rcac-bioinformatics.github.io/mitoforge/>.
 
-- [Usage](usage.md)
-  - An overview of how the pipeline works, how to run it and a description of all of the different command-line flags.
-- [Output](output.md)
-  - An overview of the different results produced by the pipeline and how to interpret them.
+To build them locally:
+
+```bash
+pip install mkdocs-material
+mkdocs serve          # http://127.0.0.1:8000
+```
+
+`mkdocs.yml` in the repository root defines the navigation. Adding a page means adding
+the file here and a line to the `nav:` block there.
