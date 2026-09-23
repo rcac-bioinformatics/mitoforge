@@ -92,11 +92,23 @@ jobs:
           done
           echo "::endgroup::"
 
+          # GetOrganelle's own log points at slim.log.txt for the real error, and the
+          # label database it slims against is built by a separate task, so both have
+          # to be captured or the failure is unreadable.
           echo "::group::Assembler logs"
-          find . -name "*.get_org.log.txt" -o -name "*.log" -path "*work*" 2>/dev/null \
-            | head -20 | while read -r log; do
-                echo "===== ${log} ====="
+          find . \( -name "*.log.txt" -o -name "*.log" \) 2>/dev/null \
+            | head -40 | while read -r log; do
+                echo "===== ${log} ($(wc -c < "${log}") bytes) ====="
                 tail -n 40 "${log}"
+              done
+          echo "::endgroup::"
+
+          echo "::group::GetOrganelle databases"
+          find . -type d -name "LabelDatabase" -o -type d -name "SeedDatabase" 2>/dev/null \
+            | head -10 | while read -r db; do
+                echo "===== ${db} ====="
+                ls -la "${db}"
+                [ -f "${db}/VERSION" ] && cat "${db}/VERSION"
               done
           echo "::endgroup::"
 
