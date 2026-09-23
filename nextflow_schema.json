@@ -125,6 +125,62 @@
                 }
             }
         },
+        "institutional_config_options": {
+            "title": "Institutional config options",
+            "type": "object",
+            "fa_icon": "fas fa-university",
+            "description": "Parameters used to describe centralised config profiles. These should not be edited.",
+            "help_text": "The centralised nf-core configuration profiles use a handful of pipeline parameters to describe themselves. This information is then printed to the Nextflow log when you run a pipeline. You should not need to change these values when you run a pipeline.",
+            "properties": {
+                "custom_config_version": {
+                    "type": "string",
+                    "default": "master",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog",
+                    "description": "Git branch/tag/commit of nf-core/configs to take institutional profiles from."
+                },
+                "custom_config_base": {
+                    "type": "string",
+                    "hidden": true,
+                    "default": "https://raw.githubusercontent.com/nf-core/configs/master",
+                    "fa_icon": "fas fa-users-cog",
+                    "description": "Base path or URL for the nf-core/configs institutional profiles.",
+                    "help_text": "This provides -profile purdue_gautschi. Set NXF_OFFLINE=true, or point this at a local checkout, to avoid fetching it at launch."
+                },
+                "config_profile_name": {
+                    "type": "string",
+                    "description": "Institutional config name.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_description": {
+                    "type": "string",
+                    "description": "Institutional config description.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_contact": {
+                    "type": "string",
+                    "description": "Institutional config contact information.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_url": {
+                    "type": "string",
+                    "description": "Institutional config URL link.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "igenomes_base": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Directory / URL base for iGenomes references.",
+                    "help_text": "mitoforge does not use iGenomes. It is declared here only because the shared institutional profiles set it, and an undeclared parameter is reported as invalid input at launch.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-cloud-download-alt"
+                }
+            }
+        },
         "generic_options": {
             "title": "Generic options",
             "type": "object",
@@ -203,21 +259,6 @@
                 "show_hidden": {
                     "type": "boolean",
                     "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided)."
-                },
-                "custom_config_version": {
-                    "type": "string",
-                    "default": "master",
-                    "hidden": true,
-                    "fa_icon": "fas fa-users-cog",
-                    "description": "Git branch/tag/commit of nf-core/configs to take institutional profiles from."
-                },
-                "custom_config_base": {
-                    "type": "string",
-                    "hidden": true,
-                    "default": "https://raw.githubusercontent.com/nf-core/configs/master",
-                    "fa_icon": "fas fa-users-cog",
-                    "description": "Base path or URL for the nf-core/configs institutional profiles.",
-                    "help_text": "This provides -profile purdue_gautschi. Set NXF_OFFLINE=true, or point this at a local checkout, to avoid fetching it at launch."
                 }
             }
         }
@@ -237,6 +278,9 @@
         },
         {
             "$ref": "#/$defs/cluster_options"
+        },
+        {
+            "$ref": "#/$defs/institutional_config_options"
         },
         {
             "$ref": "#/$defs/generic_options"
