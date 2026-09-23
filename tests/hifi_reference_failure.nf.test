@@ -1,0 +1,57 @@
+nextflow_pipeline {
+
+    name "A hifi:<sample> row that fails at the assembler says so"
+    script "../main.nf"
+    tag "pipeline"
+
+    // This one runs for real, because the bug it guards against only appears when a
+    // 'hifi:<sample>' row gets its reference and then fails further on. In stub mode
+    // nothing fails, so the wiring under test never fires.
+    //
+    // 'shortfails' is the vole Illumina library seeded with the moth sample's finished
+    // mitogenome. GetOrganelle runs, baits nothing across that distance, and emits no
+    // FASTA, which is optional in the module. The sample therefore drops out after the
+    // reference stage.
+    //
+    // It used to be reported as 'failed: no reference', which named the wrong stage:
+    // the reference resolved perfectly. A 'hifi:<sample>' row cannot come out of
+    // PREPARE_REFERENCE, because its reference does not exist until the HiFi sample it
+    // names has been finished, so it never recorded reaching the reference stage and
+    // fell back to the first one.
+
+    test("a hifi:<sample> row that gets its reference and then fails is reported at the right stage") {
+
+        when {
+            params {
+                input  = "${projectDir}/testdata/samplesheet_hifi_reference_failure.csv"
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            def summary = path("$outputDir/summary/mitoforge_summary.tsv").readLines()
+            def good = summary.find { line -> line.startsWith('ilDeiPorc1\t') }
+            def bad  = summary.find { line -> line.startsWith('shortfails\t') }
+            assertAll(
+                { assert workflow.success },
+                // both rows are in the table
+                { assert summary.size() == 3 },
+                { assert good.split('\t').last() == 'pass' },
+                // the HiFi sample it depended on did finish, so the reference was there
+                { assert path("$outputDir/mitogenomes/ilDeiPorc1.fasta").exists() },
+                // the dependent row failed
+                { assert bad.split('\t').last().startsWith('failed') },
+                { assert !path("$outputDir/mitogenomes/shortfails.fasta").exists() },
+                // and it is named at the stage it actually reached, not the first one
+                { assert bad.split('\t').last().contains('assembly') },
+                { assert !bad.split('\t').last().contains('no reference') },
+                // the table still shows what it asked for as its reference
+                { assert bad.split('\t')[3] == 'hifi:ilDeiPorc1' },
+                // the failed sample contributed no tool versions, and the rest did.
+                // Nextflow's own version is stripped, because the pipeline is tested
+                // against more than one Nextflow release
+                { assert snapshot(removeNextflowVersion("$outputDir/pipeline_info/mitoforge_software_mqc_versions.yml")).match() }
+            )
+        }
+    }
+}

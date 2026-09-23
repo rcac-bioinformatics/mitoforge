@@ -90,6 +90,13 @@ That is a fragmented assembly, and the finishing step rejects anything shorter t
 of the reference rather than handing you a fragment. More reads, or a closer seed
 reference, are the fixes.
 
+If GetOrganelle's log shows it finished without ever reporting a coverage estimate, it
+found nothing to extend. On a row whose `ref_fa` is `hifi:<sample>`, check how closely
+related that HiFi sample actually is. The finished mitogenome is the bait, so pairing a
+library with a sample from another order leaves nothing to catch and the assembler
+exits without writing a thing. See
+[Short reads using HiFi mitogenomes](/mitoforge/cases/short-reads-from-hifi/).
+
 ## `failed: finishing`
 
 The assembly exists but MitoHiFi could not finish it. The assembly is still there:

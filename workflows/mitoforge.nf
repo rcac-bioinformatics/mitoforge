@@ -96,6 +96,17 @@ workflow MITOFORGE {
         }
 
     //
+    // Every sample that ended up with a reference, whichever of the three routes gave
+    // it one. PREPARE_REFERENCE cannot emit the 'hifi:<sample>' rows, because theirs
+    // does not exist until the HiFi sample it names has been finished, so they are
+    // added here. SUMMARY uses this to decide how far a sample got: without them, a
+    // 'hifi:<sample>' row that failed at assembly was reported as 'failed: no
+    // reference', which pointed at the wrong stage entirely.
+    //
+    def ch_resolved_references = PREPARE_REFERENCE.out.reference
+        .mix( ch_short_from_hifi.map { meta, _files -> [ meta, meta.ref_fa, meta.ref_gb ] } )
+
+    //
     // SUBWORKFLOW: assemble the Illumina samples
     //
     ASSEMBLE_SHORT (
@@ -127,7 +138,7 @@ workflow MITOFORGE {
     //
     SUMMARY (
         INPUT_CHECK.out.samples,
-        PREPARE_REFERENCE.out.reference,
+        ch_resolved_references,
         ch_assembled,
         ANNOTATE.out.assembly,
         ch_finished_stats,

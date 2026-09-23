@@ -88,7 +88,12 @@ meaning "use the finished mitogenome of that sample in this samplesheet". The na
 sample must be a `hifi` row, `ref_gb` must be empty (the GenBank file comes from that
 sample too), and only `illumina` rows may use it. mitoforge works out the order for
 you: the HiFi samples are assembled and finished first, and the short-read samples that
-point at them wait. See
+point at them wait.
+
+What the validator cannot check is whether the two are related closely enough to be
+worth pairing. The HiFi mitogenome is used as the bait that pulls mitochondrial reads
+out of the Illumina library, so it has to be a near relative. Point an Illumina row at
+a HiFi sample from another order and the row will fail at the assembler. See
 [Short reads using HiFi mitogenomes](/mitoforge/cases/short-reads-from-hifi/).
 
 :::danger[Not every GenBank file works]

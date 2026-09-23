@@ -72,6 +72,18 @@ and never start. They appear in the summary as `failed: no reference`. Fix the H
 sample and rerun with `-resume`; everything that already worked is cached.
 :::
 
+:::caution[The HiFi sample has to be a close relative of the Illumina ones]
+"Close" means close enough for the mitogenome to bait reads out of a whole-genome
+library. Same species is ideal, same genus is usually fine, same family is often
+enough. Across an order or a phylum it does not work at all.
+
+When the distance is too great, nothing fails loudly. GetOrganelle runs, exits 0,
+finds no mitochondrial reads to extend, and writes no assembly at all, because its
+FASTA output is optional. The row is then reported as `failed: assembly`. If you see
+that on a row whose HiFi sample finished perfectly well, the pairing is the first
+thing to check, not the reads.
+:::
+
 :::tip[Keep the HiFi samples first in the file]
 It makes no difference to the pipeline, the dependency is resolved from the names,
 not the order, but it makes the samplesheet much easier for a human to read.

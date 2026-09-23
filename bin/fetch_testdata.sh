@@ -165,6 +165,19 @@ nothingmaps,hifi,${OUTDIR}/contigs/ilPhaBuce1_contig.fa,,,,${OUTDIR}/illumina/PZ
 EOF
 echo "  ${OUTDIR}/samplesheet_failure.csv"
 
+# A fourth samplesheet: a 'hifi:<sample>' row that gets its reference and then fails at
+# the assembler. The vole Illumina library is seeded with the moth sample's finished
+# mitogenome, so GetOrganelle baits nothing and emits no FASTA. The rule being tested is
+# that such a row is reported as 'failed: assembly'. It used to say 'failed: no
+# reference', because a hifi:<sample> row is resolved after PREPARE_REFERENCE and so
+# never recorded reaching the reference stage.
+cat > "${OUTDIR}/samplesheet_hifi_reference_failure.csv" <<EOF
+sample,platform,fastq_1,fastq_2,bam,species,ref_fa,ref_gb,genetic_code
+ilDeiPorc1,hifi,${OUTDIR}/hifi/ilDeiPorc1.reads.100.fa,,,,${OUTDIR}/hifi/MW539688.1.fasta,${OUTDIR}/hifi/MW539688.1.gb,5
+shortfails,illumina,${OUTDIR}/illumina/SRR5201683_1.fastq.gz,${OUTDIR}/illumina/SRR5201683_2.fastq.gz,,,hifi:ilDeiPorc1,,2
+EOF
+echo "  ${OUTDIR}/samplesheet_hifi_reference_failure.csv"
+
 echo
 echo "Total size:"
 du -sh "${OUTDIR}"

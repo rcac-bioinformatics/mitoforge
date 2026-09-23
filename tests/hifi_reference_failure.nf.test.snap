@@ -1,0 +1,37 @@
+{
+    "a hifi:<sample> row that gets its reference and then fails is reported at the right stage": {
+        "content": [
+            {
+                "FASTP": {
+                    "fastp": "1.3.6"
+                },
+                "GETORGANELLE_CONFIG": {
+                    "getorganelle": "1.7.7.1"
+                },
+                "GETORGANELLE_FROMREADS": {
+                    "getorganelle": "1.7.7.1"
+                },
+                "MITOFORGE_SAMPLE_STATS": {
+                    "mitoforge": "0.1.0"
+                },
+                "MITOFORGE_SUMMARY": {
+                    "mitoforge": "0.1.0"
+                },
+                "MITOHIFI_FINALIZE": {
+                    "mitohifi": "3.2.3"
+                },
+                "MITOHIFI_MITOHIFI": {
+                    "mitohifi": "3.2.3"
+                },
+                "Workflow": {
+                    "rcac-bioinformatics/mitoforge": "v0.1.0"
+                }
+            }
+        ],
+        "timestamp": "2026-09-23T16:23:08.364893586",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    }
+}
