@@ -14,6 +14,11 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      test_path:
+        description: "Limit nf-test to this path, e.g. subworkflows/local/assemble_short. Blank runs the whole suite."
+        required: false
+        default: ""
 
 # A newer run on the same branch cancels this one.
 concurrency:
@@ -74,8 +79,11 @@ jobs:
         id: nf_test
         # Nextflow's edge release is allowed to fail without failing the workflow.
         continue-on-error: ${{ matrix.NXF_VER == 'latest-everything' }}
-        # nf-test.config already sets `profile = "test,docker"`.
-        run: nf-test test --ci --verbose --tap=test.tap
+        # Via the environment, not string interpolation, so a dispatch input cannot
+        # inject shell. nf-test.config already sets `profile = "test,docker"`.
+        env:
+          TEST_PATH: ${{ inputs.test_path }}
+        run: nf-test test ${TEST_PATH} --ci --verbose --tap=test.tap
 
       # When a test fails here it is almost never the pipeline logic - it is the
       # environment, and the evidence lives in files that die with the runner.
@@ -95,11 +103,23 @@ jobs:
           # GetOrganelle's own log points at slim.log.txt for the real error, and the
           # label database it slims against is built by a separate task, so both have
           # to be captured or the failure is unreadable.
+          # Name the logs wanted rather than globbing *.log: Nextflow's own binary
+          # cache under .nextflow/ holds dozens of .log files and swallowed the
+          # budget last time, so the assembler log never got printed.
           echo "::group::Assembler logs"
-          find . \( -name "*.log.txt" -o -name "*.log" \) 2>/dev/null \
-            | head -40 | while read -r log; do
+          find . \( -name "*get_org.log.txt" -o -name "slim.log.txt" \) \
+               -not -path "*/.nextflow/*" 2>/dev/null \
+            | while read -r log; do
                 echo "===== ${log} ($(wc -c < "${log}") bytes) ====="
-                tail -n 40 "${log}"
+                cat "${log}"
+              done
+          echo "::endgroup::"
+
+          echo "::group::MitoHiFi logs"
+          find . -name "*.log" -path "*output*" -not -path "*/.nextflow/*" -size +0 2>/dev/null \
+            | head -10 | while read -r log; do
+                echo "===== ${log} ====="
+                tail -n 30 "${log}"
               done
           echo "::endgroup::"
 
