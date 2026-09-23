@@ -26,8 +26,8 @@ MITOFORGE_ACCOUNT=myaccount bin/run.sh samplesheet.csv purdue_gautschi
 
 1. `findMitoReference.py` looks up `Deilephila porcellus` at NCBI, takes the nearest
    available mitogenome of at least `--min_ref_length` bases (14,000 by default), and
-   downloads it as FASTA and GenBank. **This runs on the login node**, because compute
-   nodes have no internet.
+   downloads it as FASTA and GenBank. This reaches the internet, which Gautschi's
+   compute nodes can do.
 2. MitoHiFi maps the reads to that reference with minimap2, throws away anything longer
    than the reference, which is the NUMT filter, and assembles the rest with hifiasm.
 3. The assembly goes through the finishing step: circularise, trim the overlap, rotate

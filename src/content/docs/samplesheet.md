@@ -63,10 +63,10 @@ mitogenome at NCBI with MitoHiFi's `findMitoReference.py`.
 Fill this in **or** `ref_fa` + `ref_gb`. If you give both, the files win.
 
 :::caution[This one reaches the internet]
-On the cluster profiles the lookup is pinned to the login node, because compute
-nodes have no route out. It still means your run depends on NCBI being up and on
-what NCBI happens to hold today. If you want a run you can reproduce exactly, fetch
-the reference once and use `ref_fa` + `ref_gb` instead.
+Gautschi's compute nodes can reach NCBI, so the lookup runs inside the job like any
+other step. It does mean your run depends on NCBI being up and on what NCBI happens
+to hold today. If you want a run you can reproduce exactly, fetch the reference once
+and use `ref_fa` + `ref_gb` instead.
 :::
 
 ### `ref_fa`, `ref_gb`

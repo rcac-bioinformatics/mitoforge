@@ -39,7 +39,7 @@ workflow ASSEMBLE_SHORT {
 
     //
     // GetOrganelle's seed and label databases. Downloaded once per run, and it reaches
-    // the internet, so the cluster profiles pin it to the login node.
+    // the internet, which Gautschi's compute nodes can do.
     //
     GETORGANELLE_CONFIG ( 'animal_mt' )
 

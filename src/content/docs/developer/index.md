@@ -70,9 +70,10 @@ These are not style preferences. Breaking one will bite someone.
    Pin every container by tag or digest.
 3. **Every assembly goes through the same finishing step**, whatever assembled it. That
    is what makes the output directories identical across platforms.
-4. **Compute nodes have no internet.** Anything that fetches runs with
-   `executor = 'local'` in the cluster profiles, or is a documented login-node
-   pre-step.
+4. **Gautschi's compute nodes can reach the internet**, so steps that fetch run
+   inside the job like any other. On a cluster whose nodes are walled off, pin them
+   with `executor = 'local'`. See
+   [Adding a cluster profile](/mitoforge/developer/adding-a-cluster-profile/).
 5. **One failed sample never kills the run**, and it is named in the summary.
 6. **Nothing fabricated.** No invented test data, URLs, versions or accessions.
 

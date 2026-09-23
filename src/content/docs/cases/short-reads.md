@@ -50,7 +50,7 @@ MITOFORGE_ACCOUNT=myaccount bin/run.sh samplesheet.csv purdue_gautschi results -
 
 1. fastp trims adapters and low-quality ends, unless you passed `--skip_trimming`.
 2. GetOrganelle downloads its `animal_mt` seed and label databases once for the whole
-   run. **This runs on the login node**; compute nodes have no internet.
+   run. This reaches the internet, which Gautschi's compute nodes can do.
 3. GetOrganelle baits mitochondrial reads out of the library using both its own seed
    database and your reference, extends them, and assembles with SPAdes.
 4. The assembly is uncompressed and goes through the same finishing step as the HiFi

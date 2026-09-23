@@ -112,8 +112,8 @@ host the pipeline actually contacts. Two steps need it:
 | `MITOHIFI_FINDMITOREFERENCE` | `eutils.ncbi.nlm.nih.gov` |
 | `GETORGANELLE_CONFIG`        | `gitlab.com`, `gitee.com` |
 
-If you add a cluster whose compute nodes are walled off, pin those two to the login
-node in your config:
+If you add a cluster whose compute nodes are walled off, pin those two to the node
+Nextflow itself runs on:
 
 ```groovy
 process {
@@ -122,5 +122,6 @@ process {
 }
 ```
 
-That only works when Nextflow itself is launched from a login node. A new stage that
-reaches the network has to be added to that list as well, which is easy to forget.
+That only works when Nextflow itself is launched somewhere with a route out. A new
+stage that reaches the network has to be added to that list as well, which is easy to
+forget.

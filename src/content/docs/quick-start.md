@@ -26,9 +26,11 @@ or to `highmem` based on how much memory it asked for.
 git clone https://github.com/rcac-bioinformatics/mitoforge.git
 cd mitoforge
 
-# 2. On the LOGIN NODE, run the built-in test. This pulls every container into a
-#    shared cache and proves the install works. Compute nodes have no internet.
+# 2. Grab an INTERACTIVE NODE and run the built-in test there. This pulls every
+#    container into a shared cache and proves the install works.
 #    Both caches have to live on scratch. $HOME is far too small for these images.
+sinteractive -A <account> -N 1 -n 8 -p <partition> -t 2:00:00
+
 export APPTAINER_CACHEDIR="$RCAC_SCRATCH/.apptainer/cache"
 export NXF_APPTAINER_CACHEDIR="$RCAC_SCRATCH/.apptainer_cache"
 bin/fetch_testdata.sh
@@ -46,12 +48,21 @@ column -t -s$'\t' results/summary/mitoforge_summary.tsv
 ```
 
 :::tip[Step 2 in plain words]
-Compute nodes at RCAC cannot reach the internet, so the container images have to be
-in the cache before any job is submitted. The test profile exercises both the HiFi
-and the short-read path, so running it on the login node pulls everything you need
-and tells you the installation is sound. It downloads about 50 MB of real public
-data and takes a few minutes. See
-[Troubleshooting](/mitoforge/troubleshooting/#no-internet-on-compute-nodes).
+Getting the container images into a shared cache before you submit real work saves
+every later job from pulling them, and a cold MitoHiFi pull is several gigabytes. The
+test profile exercises both the HiFi and the short-read path, so it pulls everything
+you need and tells you the installation is sound. It downloads about 50 MB of real
+public data and takes a few minutes.
+
+Do this on an interactive node rather than a login node. Login nodes are shared, and
+unpacking multi-gigabyte images on one is antisocial. If you prefer `salloc`:
+
+```bash
+salloc --account=<account> --partition=<partition> --nodes=1 --ntasks=8 --time=02:00:00
+```
+
+`--partition` is required on both forms. See
+[Troubleshooting](/mitoforge/troubleshooting/#pulling-containers).
 
 The one container the test does not pull is samtools, which is only used for BAM
 input. If your samplesheet has a `bam` column filled in, add:

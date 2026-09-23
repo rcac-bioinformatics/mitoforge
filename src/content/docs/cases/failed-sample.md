@@ -36,8 +36,9 @@ grep -r "findMitoReference" .nextflow.log | head
 - Check the spelling of the scientific name. Synonyms and common names will not match.
 - Lower `--min_ref_length` if the group only has partial mitogenomes deposited:
   `-- --min_ref_length 12000`
-- On a cluster, check the lookup really ran on the login node. If you see a network
-  error, see [Troubleshooting](/mitoforge/troubleshooting/#no-internet-on-compute-nodes).
+- If you see a network error rather than a "no reference found" one, NCBI was
+  unreachable or rate-limiting. See
+  [Troubleshooting](/mitoforge/troubleshooting/#pulling-containers).
 - Most reliable fix: download a reference yourself and use `ref_fa` + `ref_gb`.
 
 **If the row used `hifi:<sample>`:** the HiFi sample it depends on failed. Fix that

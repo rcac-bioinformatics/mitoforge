@@ -183,7 +183,7 @@ def validateClusterParams() {
         error(
             "The 'purdue_gautschi' profile submits jobs to SLURM and needs an account:\n\n" +
             "    --cluster_account <allocation>\n\n" +
-            "Run `slist` on a Gautschi login node to see the ones you belong to, then:\n" +
+            "Run `slist` on Gautschi to see the ones you belong to, then:\n" +
             "    nextflow run ${workflow.manifest.name} -profile purdue_gautschi \\\n" +
             "        --input samplesheet.csv --outdir results \\\n" +
             "        --cluster_account myaccount\n\n" +

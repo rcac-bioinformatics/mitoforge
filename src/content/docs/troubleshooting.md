@@ -7,21 +7,37 @@ The things that actually go wrong, and what to do about them.
 If a single sample failed rather than the whole run, start with
 [When a sample fails](/mitoforge/cases/failed-sample/) instead.
 
-## No internet on compute nodes
+## Pulling containers
 
-Purdue's compute nodes cannot reach the internet. Two steps in mitoforge need to, and
-both are pinned to the login node in the cluster profiles:
+Three steps in mitoforge reach the internet:
 
 - `MITOHIFI_FINDMITOREFERENCE`, looks up a reference at NCBI by species name
 - `GETORGANELLE_CONFIG`, downloads GetOrganelle's seed and label databases
+- pulling the container images themselves
 
-A third thing needs the internet and is **not** handled for you: pulling the containers.
-Do that once, on the login node, before you submit anything.
+Gautschi's compute nodes can reach the internet, so the first two look after themselves
+inside a normal job. The images are the one thing worth doing up front, because every
+task needs them and a cold pull of MitoHiFi is several gigabytes.
+
+Do it on an **interactive node**, not a login node. Login nodes are shared and are not
+the place to unpack multi-gigabyte images.
+
+```bash
+sinteractive -A <account> -N 1 -n 8 -p <partition> -t 2:00:00
+```
+
+or:
+
+```bash
+salloc --account=<account> --partition=<partition> --nodes=1 --ntasks=8 --time=02:00:00
+```
+
+`--partition` is required, on both forms.
 
 ### Pre-pulling containers
 
-The easy way is to run the built-in test on the login node. It exercises both the HiFi
-and the short-read path, so it pulls everything except the samtools image:
+The easy way is to run the built-in test there. It exercises both the HiFi and the
+short-read path, so it pulls everything except the samtools image:
 
 ```bash
 export APPTAINER_CACHEDIR="$RCAC_SCRATCH/.apptainer/cache"
@@ -69,7 +85,8 @@ FATAL: Unable to get library client configuration: no authentication token
 Error executing process > 'MITOHIFI_MITOHIFI (sampleA)'
 ```
 
-on a compute node means the image was not cached. Pre-pull and rerun with `-resume`.
+means the image was not cached and the pull did not succeed from inside the job.
+Pre-pull on an interactive node and rerun with `-resume`.
 
 ## Apptainer cache problems
 
@@ -287,7 +304,7 @@ ERROR ~ The 'purdue_gautschi' profile submits jobs to SLURM and needs an account
     --cluster_account <allocation>
 ```
 
-Exactly what it says. Run `slist` on a Gautschi login node to see the accounts you
+Exactly what it says. Run `slist` on Gautschi to see the accounts you
 belong to:
 
 ```bash

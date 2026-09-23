@@ -34,8 +34,8 @@ workflow PREPARE_REFERENCE {
     }
 
     //
-    // Reference looked up at NCBI by species name. This reaches the internet, so on
-    // the cluster profiles it is pinned to the login node (see conf/<cluster>.config).
+    // Reference looked up at NCBI by species name. This reaches the internet, which
+    // Gautschi's compute nodes can do, so it runs inside the job like any other step.
     //
     MITOHIFI_FINDMITOREFERENCE (
         ch_by_source.from_species.map { meta, _files -> [ meta, meta.species ] }
