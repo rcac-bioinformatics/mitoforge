@@ -1,4 +1,6 @@
-# Short reads using HiFi mitogenomes
+---
+title: "Short reads using HiFi mitogenomes"
+---
 
 You have a handful of HiFi samples and a lot of Illumina ones, from the same species or
 close relatives. The best reference for the Illumina samples is not something from NCBI
@@ -65,17 +67,20 @@ HiFi-derived reference rather than a file from the samplesheet.
 
 ## Things to know
 
-!!! warning "A failed HiFi sample takes its dependants with it"
+:::caution[A failed HiFi sample takes its dependants with it]
 If `speciesA_hifi` does not finish, `A_short_01` and `A_short_02` have no reference
 and never start. They appear in the summary as `failed: no reference`. Fix the HiFi
 sample and rerun with `-resume`; everything that already worked is cached.
+:::
 
-!!! tip "Keep the HiFi samples first in the file"
+:::tip[Keep the HiFi samples first in the file]
 It makes no difference to the pipeline — the dependency is resolved from the names,
 not the order — but it makes the samplesheet much easier for a human to read.
+:::
 
-!!! info "Why the finishing step runs twice"
+:::note[Why the finishing step runs twice]
 Internally the finishing step is invoked once for the HiFi assemblies and once for
 the short-read ones, because the short-read assemblies depend on the finished HiFi
 ones and a single invocation would be a cycle. Both use the same settings, so every
 sample is still finished identically.
+:::

@@ -1,4 +1,6 @@
-# When a sample fails
+---
+title: "When a sample fails"
+---
 
 One failed sample never stops the run. The others finish, and the failed one is named in
 the summary and in the log:
@@ -35,7 +37,7 @@ grep -r "findMitoReference" .nextflow.log | head
 - Lower `--min_ref_length` if the group only has partial mitogenomes deposited:
   `-- --min_ref_length 12000`
 - On a cluster, check the lookup really ran on the login node. If you see a network
-  error, see [Troubleshooting](../troubleshooting.md#no-internet-on-compute-nodes).
+  error, see [Troubleshooting](/mitoforge/troubleshooting/#no-internet-on-compute-nodes).
 - Most reliable fix: download a reference yourself and use `ref_fa` + `ref_gb`.
 
 **If the row used `hifi:<sample>`:** the HiFi sample it depends on failed. Fix that
@@ -101,7 +103,7 @@ Common causes:
 - **`'parsed_blast.txt' files are empty`** — the assembly did not match the reference
   well enough, or is shorter than 80% of it. Check its length against the reference.
 - **`KeyError: 'gene'`** — the reference GenBank file has no `/gene=` qualifiers. See
-  [Troubleshooting](../troubleshooting.md#keyerror-gene). This one is worth checking
+  [Troubleshooting](/mitoforge/troubleshooting/#keyerror-gene). This one is worth checking
   first, because it fails right at the end after everything else worked.
 
 ## `failed: reporting`
@@ -138,13 +140,14 @@ bin/run.sh samplesheet.csv negishi
 `bin/run.sh` always passes `-resume`. Everything that worked is cached; only the fixed
 samples run again.
 
-!!! tip "Rerunning one sample on its own"
+:::tip[Rerunning one sample on its own]
 Put that one row in its own samplesheet and give it a different `--outdir`. It will
 still reuse the cache, because the cache is keyed on the task, not the run.
+:::
 
 ## When a run fails entirely
 
 If the pipeline stops rather than dropping one sample, the failure is run-level, not
 sample-level: a bad parameter, a samplesheet that does not validate, an unreachable
 container registry, or the GetOrganelle database download failing three times. Those
-are in [Troubleshooting](../troubleshooting.md).
+are in [Troubleshooting](/mitoforge/troubleshooting/).

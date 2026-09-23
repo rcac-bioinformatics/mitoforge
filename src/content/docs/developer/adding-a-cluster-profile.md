@@ -1,4 +1,6 @@
-# Adding a cluster profile
+---
+title: "Adding a cluster profile"
+---
 
 `conf/negishi.config`, `conf/bell.config` and `conf/anvil.config` are the same file with
 a different name. Adding a fourth cluster is copying one and changing what is actually

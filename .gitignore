@@ -16,8 +16,10 @@ testdata/
 .nf-test/
 .nf-test.log
 
-# mkdocs build output
-site/
+# Astro / Starlight docs site
+node_modules/
+dist/
+.astro/
 CLAUDE.md
 ROADMAP.md
 nextsteps.md

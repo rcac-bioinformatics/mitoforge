@@ -1,4 +1,6 @@
-# Many species at once
+---
+title: "Many species at once"
+---
 
 Nothing in mitoforge assumes your samples are the same species. Reference and genetic
 code are per row, so a single samplesheet can mix moths, voles and sea urchins.
@@ -75,12 +77,14 @@ cut -f1,3,4,6 results/summary/mitoforge_summary.tsv | column -t
 
 ## Things to know
 
-!!! tip "Sort the summary by gene count to find the odd ones out"
+:::tip[Sort the summary by gene count to find the odd ones out]
 `bash
     sort -t$'\t' -k6,6n results/summary/mitoforge_summary.tsv | column -t -s$'\t'
     `
 An animal mitogenome has 36–37 genes. Anything much below that is worth looking at.
+:::
 
-!!! warning "One reference per row, not per species"
+:::caution[One reference per row, not per species]
 There is no "species group" concept. If twenty samples share a reference, that path
 appears twenty times. Generate the samplesheet with a script rather than by hand.
+:::

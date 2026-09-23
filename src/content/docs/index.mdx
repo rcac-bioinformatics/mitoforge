@@ -1,4 +1,8 @@
-# mitoforge
+---
+title: "mitoforge"
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 
 Assemble, circularise and annotate animal mitochondrial genomes from PacBio HiFi or
 Illumina paired-end reads, for many samples at once.
@@ -27,17 +31,34 @@ ends up with the same files in the same places.
 
 ## Where to go next
 
-<div class="grid cards" markdown>
-
-- **[Quick start](quick-start.md)** — five commands, from clone to results.
-- **[Samplesheet](samplesheet.md)** — every column, what it means, what is required.
-- **[Cases](cases/index.md)** — a worked example for each kind of input, with the
-  command to copy.
-- **[Output reference](output.md)** — every file the pipeline writes, and what it means.
-- **[Troubleshooting](troubleshooting.md)** — the things that actually go wrong.
-- **[Citations](citations.md)** — the tools mitoforge wraps. Please cite them.
-
-</div>
+<CardGrid>
+    <LinkCard title="Quick start" href="/mitoforge/quick-start/" description="Five commands, from clone to results." />
+    <LinkCard
+        title="Samplesheet"
+        href="/mitoforge/samplesheet/"
+        description="Every column, what it means, what is required."
+    />
+    <LinkCard
+        title="Cases"
+        href="/mitoforge/cases/"
+        description="A worked example for each kind of input, with the command to copy."
+    />
+    <LinkCard
+        title="Output reference"
+        href="/mitoforge/output/"
+        description="Every file the pipeline writes, and what it means."
+    />
+    <LinkCard
+        title="Troubleshooting"
+        href="/mitoforge/troubleshooting/"
+        description="The things that actually go wrong."
+    />
+    <LinkCard
+        title="Citations"
+        href="/mitoforge/citations/"
+        description="The tools mitoforge wraps. Please cite them."
+    />
+</CardGrid>
 
 ## What it is built on
 
@@ -55,16 +76,17 @@ exactly the same software.
 | Negishi, Bell, Anvil (Purdue RCAC) | `negishi`, `bell`, `anvil` | Apptainer        |
 | Your laptop                        | `docker`                   | Docker           |
 
-!!! warning "The cluster profiles are untested on cluster"
+:::caution[The cluster profiles are untested on cluster]
 They were written from documentation on a machine with no SLURM. They should work,
 and the design is conservative, but you are the first person to run them. Please
 [open an issue](https://github.com/rcac-bioinformatics/mitoforge/issues) with
 anything that does not.
+:::
 
 ## Getting help
 
-- Something went wrong: start with [Troubleshooting](troubleshooting.md) and
-  [When a sample fails](cases/failed-sample.md).
+- Something went wrong: start with [Troubleshooting](/mitoforge/troubleshooting/) and
+  [When a sample fails](/mitoforge/cases/failed-sample/).
 - Something is missing or broken:
   [open an issue](https://github.com/rcac-bioinformatics/mitoforge/issues).
 - You are at Purdue: mitoforge is maintained by Arun Seetharam at RCAC.

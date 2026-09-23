@@ -1,4 +1,6 @@
-# Adding a stage
+---
+title: "Adding a stage"
+---
 
 Worked example: filling in the `ANNOTATE` stub with a real annotator.
 
@@ -89,10 +91,11 @@ process MYANNOTATOR {
 }
 ```
 
-!!! warning "Pin the container, and stage inputs carefully"
+:::caution[Pin the container, and stage inputs carefully]
 Never use a floating tag. And if your tool writes an output file with the same name
 as one of its inputs, stage the input into a subdirectory — see the patch on
 `modules/nf-core/mitohifi/mitohifi` for what happens otherwise.
+:::
 
 ## Step 2: fill in the subworkflow
 
@@ -124,9 +127,10 @@ workflow ANNOTATE {
 The important part is that `assembly` is still `[meta, fasta]`, with `meta` untouched.
 `SUMMARY` and everything after it keep working unchanged.
 
-!!! tip "Skipping is not the same as doing nothing"
+:::tip[Skipping is not the same as doing nothing]
 Keep the `skip` branch returning the input channel. It is what lets people turn your
 stage off without editing code, and it keeps the existing tests passing.
+:::
 
 ## Step 3: give it a meta.yml
 
@@ -175,7 +179,7 @@ withName: 'MYANNOTATOR' {
 ```
 
 One map, not a list, if any closure in it mentions `meta`. See the
-[two traps](index.md#two-traps-worth-knowing-about).
+[two traps](/mitoforge/developer/#two-traps-worth-knowing-about).
 
 ## Step 5: make the parameter real
 

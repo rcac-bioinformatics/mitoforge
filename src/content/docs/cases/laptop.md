@@ -1,4 +1,6 @@
-# On a laptop with Docker
+---
+title: "On a laptop with Docker"
+---
 
 Everything mitoforge does runs in containers, so a laptop works exactly like the
 cluster. The only differences are the profile name and how much patience you need.
@@ -79,17 +81,19 @@ nextflow run . -profile docker -c laptop.config \
 
 ## Things to know
 
-!!! warning "A real HiFi sample is not a laptop job"
+:::caution[A real HiFi sample is not a laptop job]
 The test data is 100 reads. A real sample is ~35 Gb of HiFi, and MitoHiFi maps all
 of it against the reference before assembling. That is hours on a laptop and days
 for a batch. Use a laptop to check your samplesheet and your references; use the
 cluster for the run.
+:::
 
-!!! tip "File ownership"
+:::tip[File ownership]
 The `docker` profile runs containers as your own user (`-u $(id -u):$(id -g)`), so
 output files belong to you and not to root.
+:::
 
-!!! info "Apple Silicon and other arm64 machines"
+:::note[Apple Silicon and other arm64 machines]
 The MitoHiFi container is published for amd64 only. On arm64 it has to run under
 emulation:
 
@@ -97,15 +101,19 @@ emulation:
     nextflow run . -profile docker,emulate_amd64 --input samplesheet.csv --outdir results
     ```
 
+:::
+
     Emulated, MitoHiFi runs several times slower than native. It is fine for the test
     profile and for checking a samplesheet; it is not a way to process real samples.
 
-!!! tip "Reclaiming disk"
+:::tip[Reclaiming disk]
 The work directory is where everything goes. Once you have your results:
 
     ```bash
     nextflow clean -f -before $(nextflow log -q | tail -1)   # keep only the last run
     rm -rf work                                              # or just delete it
     ```
+
+:::
 
     Deleting `work/` means the next run cannot use `-resume`.

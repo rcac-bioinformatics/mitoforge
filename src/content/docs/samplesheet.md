@@ -1,4 +1,6 @@
-# Samplesheet
+---
+title: "Samplesheet"
+---
 
 One comma-separated file. One row per sample. This header, exactly:
 
@@ -47,10 +49,11 @@ Accepted extensions: `.fa`, `.fas`, `.fasta`, `.fna`, `.fq`, `.fastq`, optionall
 ### `bam`
 
 An **unaligned** PacBio BAM, as the instrument produces it, instead of `fastq_1`. Only
-for `hifi` rows. See [HiFi from a PacBio BAM](cases/hifi-from-bam.md).
+for `hifi` rows. See [HiFi from a PacBio BAM](/mitoforge/cases/hifi-from-bam/).
 
-!!! info "Exactly one of `fastq_1` or `bam`"
+:::note[Exactly one of `fastq_1` or `bam`]
 Give the reads one way or the other. Both empty, or both filled in, is an error.
+:::
 
 ### `species`
 
@@ -59,11 +62,12 @@ mitogenome at NCBI with MitoHiFi's `findMitoReference.py`.
 
 Fill this in **or** `ref_fa` + `ref_gb`. If you give both, the files win.
 
-!!! warning "This one reaches the internet"
+:::caution[This one reaches the internet]
 On the cluster profiles the lookup is pinned to the login node, because compute
 nodes have no route out. It still means your run depends on NCBI being up and on
 what NCBI happens to hold today. If you want a run you can reproduce exactly, fetch
 the reference once and use `ref_fa` + `ref_gb` instead.
+:::
 
 ### `ref_fa`, `ref_gb`
 
@@ -85,9 +89,9 @@ sample must be a `hifi` row, `ref_gb` must be empty (the GenBank file comes from
 sample too), and only `illumina` rows may use it. mitoforge works out the order for
 you: the HiFi samples are assembled and finished first, and the short-read samples that
 point at them wait. See
-[Short reads using HiFi mitogenomes](cases/short-reads-from-hifi.md).
+[Short reads using HiFi mitogenomes](/mitoforge/cases/short-reads-from-hifi/).
 
-!!! danger "Not every GenBank file works"
+:::danger[Not every GenBank file works]
 MitoHiFi reads the `/gene=` qualifier off every CDS in your `ref_gb`. Plenty of real
 submissions annotate CDS features with `/product=` only, and MitoHiFi then fails on
 its very last step. Check before you commit to a reference:
@@ -96,7 +100,9 @@ its very last step. Check before you commit to a reference:
     grep -c '/gene=' my_reference.gb    # must be greater than 0
     ```
 
-    See [Troubleshooting](troubleshooting.md#keyerror-gene).
+:::
+
+    See [Troubleshooting](/mitoforge/troubleshooting/#keyerror-gene).
 
 ### `genetic_code`
 
@@ -157,4 +163,4 @@ voleB,illumina,/data/voleB_R1.fastq.gz,/data/voleB_R2.fastq.gz,,,hifi:voleA,,2
 voleC,illumina,/data/voleC_R1.fastq.gz,/data/voleC_R2.fastq.gz,,,hifi:voleA,,2
 ```
 
-More in [Cases](cases/index.md).
+More in [Cases](/mitoforge/cases/).

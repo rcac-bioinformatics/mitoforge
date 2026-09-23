@@ -1,4 +1,6 @@
-# HiFi with an NCBI reference
+---
+title: "HiFi with an NCBI reference"
+---
 
 The simplest case: you have PacBio HiFi reads and you know what the animal is. mitoforge
 asks NCBI for the closest mitogenome it can find and assembles against that.
@@ -50,17 +52,20 @@ ilDeiPorc1  hifi      5             OQ694980.1.fasta  15316    36     True      
 
 ## Things to know
 
-!!! warning "The reference you get today may not be the reference you get next year"
+:::caution[The reference you get today may not be the reference you get next year]
 `findMitoReference.py` searches NCBI live. As more mitogenomes are deposited, the
 nearest relative changes, and so does your reference. If you need a run you can
 reproduce exactly, download the reference once and name it in `ref_fa` and `ref_gb`
-instead — see [Short reads with your own reference](short-reads.md) for the shape.
+instead — see [Short reads with your own reference](/mitoforge/cases/short-reads/) for the shape.
+:::
 
-!!! tip "Check the reference before you trust the result"
+:::tip[Check the reference before you trust the result]
 `results/summary/mitoforge_summary.tsv` names the reference each sample used. If it
 is something surprisingly distant, raise `--min_ref_length` or supply your own.
+:::
 
-!!! danger "Some NCBI records make MitoHiFi fail at the last step"
+:::danger[Some NCBI records make MitoHiFi fail at the last step]
 MitoHiFi needs `/gene=` qualifiers on the reference's CDS features. Many records
 only have `/product=`. If a sample fails right at the end, see
-[Troubleshooting](../troubleshooting.md#keyerror-gene).
+[Troubleshooting](/mitoforge/troubleshooting/#keyerror-gene).
+:::

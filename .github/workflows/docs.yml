@@ -22,17 +22,24 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-node@v6
         with:
-          python-version: "3.12"
+          # Astro 7 requires Node >= 22.12. Keep this in step with what a
+          # developer gets from .tools/, so the site builds the same in both.
+          node-version: "22"
+          cache: npm
 
-      - name: Install MkDocs
-        run: pip install mkdocs-material
+      - name: Install
+        run: npm ci
 
-      # --strict turns broken internal links and pages missing from the nav into
-      # errors, so a pull request that breaks the docs fails before it is merged.
       - name: Build
-        run: mkdocs build --strict
+        run: npm run build
+
+      # Astro has no equivalent of `mkdocs build --strict`, so the link check is
+      # explicit: every internal href in the built HTML has to resolve to a page or
+      # an asset that exists. A pull request that breaks a link fails here.
+      - name: Check internal links
+        run: node scripts/check-links.mjs
 
       # Everything but a pull request deploys: a push to master, and a manual
       # workflow_dispatch. Gating on `push` alone made a dispatched run build the
@@ -40,7 +47,7 @@ jobs:
       - uses: actions/upload-pages-artifact@v4
         if: github.event_name != 'pull_request'
         with:
-          path: site
+          path: dist
 
   deploy:
     name: Deploy to GitHub Pages

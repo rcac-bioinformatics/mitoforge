@@ -1,4 +1,6 @@
-# Adding an assembler
+---
+title: "Adding an assembler"
+---
 
 `--long_assembler` and `--short_assembler` each accept exactly one value today. They
 exist as parameters so that a second one can be added without changing the samplesheet
@@ -33,7 +35,7 @@ nf-core modules install novoplasty/novoplasty
 ```
 
 If there is no nf-core module, write a local one — see
-[Adding a stage](extending.md#step-1-get-the-module) for the shape.
+[Adding a stage](/mitoforge/developer/extending/#step-1-get-the-module) for the shape.
 
 ## Step 3: branch inside the subworkflow
 

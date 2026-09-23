@@ -1,4 +1,6 @@
-# Developer guide
+---
+title: "Developer guide"
+---
 
 How mitoforge is put together, and how to change it without breaking it.
 
@@ -78,9 +80,12 @@ These are not style preferences. Breaking one will bite someone.
 
 ```bash
 # toolchain
-python -m venv .venv && .venv/bin/pip install nf-core pre-commit mkdocs-material
+python -m venv .venv && .venv/bin/pip install nf-core pre-commit
 curl -s https://get.nextflow.io | bash
 curl -fsSL https://code.askimed.com/install/nf-test | bash
+
+# the documentation site (Astro 7 needs Node >= 22.12)
+npm install
 
 # hooks: prettier, whitespace, nextflow-lint, nf-core lint
 pre-commit install
@@ -99,21 +104,23 @@ nf-core pipelines lint                                  # zero failures
 
 ### Two traps worth knowing about
 
-!!! warning "`publishDir` must be a single map wherever a closure mentions `meta`"
+:::caution[`publishDir` must be a single map wherever a closure mentions `meta`]
 Nextflow 26 cannot render a _list_ of publishDir maps to JSON when one of them
 closes over `meta`. `nextflow config -o json` then fails, and `nf-core pipelines
     lint` aborts on it. Use one map whose `saveAs` routes each file instead. See
 `MITOHIFI_FINALIZE` in `conf/modules.config`.
+:::
 
-!!! warning "Process selectors have no leading colon"
+:::caution[Process selectors have no leading colon]
 Write `withName: 'MITOHIFI_MITOHIFI'`, not `withName: '.*:ASSEMBLE_HIFI:MITOHIFI_MITOHIFI'`.
 The qualified form does not match when a subworkflow is run on its own under
 nf-test, and the config silently stops applying.
+:::
 
 ## Where to go next
 
-- [Adding a stage](extending.md) — worked example: filling in the ANNOTATE stub
-- [Adding an assembler](adding-an-assembler.md)
-- [Adding a cluster profile](adding-a-cluster-profile.md)
-- [Roadmap](roadmap.md) — what is deliberately not here yet
-- [Contributing](../CONTRIBUTING.md)
+- [Adding a stage](/mitoforge/developer/extending/) — worked example: filling in the ANNOTATE stub
+- [Adding an assembler](/mitoforge/developer/adding-an-assembler/)
+- [Adding a cluster profile](/mitoforge/developer/adding-a-cluster-profile/)
+- [Roadmap](/mitoforge/developer/roadmap/) — what is deliberately not here yet
+- [Contributing](/mitoforge/contributing/)

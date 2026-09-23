@@ -1,4 +1,6 @@
-# Output reference
+---
+title: "Output reference"
+---
 
 Everything mitoforge writes, and what it means. This is the tree from a run with one
 HiFi sample (`ilDeiPorc1`) and one Illumina sample (`SRR5201683`).
@@ -40,7 +42,7 @@ This is what you came for. One set of files per sample, named after the sample.
 | `<sample>.gb`    | Its annotation, in GenBank format. This is what you submit or load into a genome browser            |
 | `<sample>.gff`   | The same annotation in GFF, when MitoHiFi produces one. Often absent                                |
 
-!!! note "The FASTA header is not the sample name"
+:::note[The FASTA header is not the sample name]
 It is the contig name MitoHiFi gave it, something like
 `>ptg000001l.rc.rotated_rotated`. Rename it yourself if you are about to build a
 phylogeny from a hundred of these:
@@ -51,6 +53,8 @@ phylogeny from a hundred of these:
         sed "1s/.*/>$s/" "$f" > "renamed/$s.fasta"
     done
     ```
+
+:::
 
 ## `summary/` — how the run went
 
@@ -85,13 +89,14 @@ The `status` values for a sample that did not finish are:
 | `failed: finishing`    | It assembled, but MitoHiFi could not finish it                       |
 | `failed: reporting`    | It finished, but the statistics step failed. The mitogenome is there |
 
-[When a sample fails](cases/failed-sample.md) says what to do about each.
+[When a sample fails](/mitoforge/cases/failed-sample/) says what to do about each.
 
-!!! info "`circular` is true if _any_ step found it"
+:::note[`circular` is true if _any_ step found it]
 MitoHiFi's reads mode trims the circular overlap, so by the time the finishing step
 sees the sequence there is no overlap left and its own table says `False`. The
 summary therefore reports circularity from the assembly step too, and from
 GetOrganelle's `(circular)` marker.
+:::
 
 ### `all_contigs_stats.tsv`
 
@@ -109,7 +114,7 @@ columns in front.
 
 The `assembly` rows are the interesting ones: they list the candidates that were
 _not_ chosen, which is where NUMTs and heteroplasmic variants show up. See
-[Heteroplasmy and NUMTs](cases/heteroplasmy-and-numts.md).
+[Heteroplasmy and NUMTs](/mitoforge/cases/heteroplasmy-and-numts/).
 
 ### `mitoforge_summary_mqc.tsv`
 
@@ -185,11 +190,12 @@ MitoHiFi contigs mode, run on whatever the assembler produced. Same files as the
 | `*.png`                                                               | Annotation drawings                         |
 | `<sample>.log`                                                        | MitoHiFi's log for the finishing step       |
 
-!!! info "Two directories MitoHiFi writes that are not published"
+:::note[Two directories MitoHiFi writes that are not published]
 `potential_contigs/` holds MitoFinder's per-contig working directories, one of which
 contains a symlink into a path that only existed inside the container - nothing can
 copy it out. `reads_mapping_and_assembly/` holds hifiasm intermediates and is large
 on a real sample. Both are in the Nextflow work directory if you need them.
+:::
 
 ## `multiqc/`
 

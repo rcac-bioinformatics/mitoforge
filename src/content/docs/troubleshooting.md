@@ -1,9 +1,11 @@
-# Troubleshooting
+---
+title: "Troubleshooting"
+---
 
 The things that actually go wrong, and what to do about them.
 
 If a single sample failed rather than the whole run, start with
-[When a sample fails](cases/failed-sample.md) instead.
+[When a sample fails](/mitoforge/cases/failed-sample/) instead.
 
 ## No internet on compute nodes
 
@@ -135,13 +137,15 @@ process {
 The labels are in `conf/base.config`: `process_single`, `process_low`, `process_medium`,
 `process_high`. `MITOHIFI_MITOHIFI` and `GETORGANELLE_FROMREADS` are the heavy ones.
 
-!!! warning "Asking for more than a node has"
+:::caution[Asking for more than a node has]
 If your partition's nodes are smaller than the request, the job will never schedule
 and will sit in the queue forever. Cap it instead:
 
     ```groovy
     process.resourceLimits = [ cpus: 64, memory: '240.GB', time: '48.h' ]
     ```
+
+:::
 
 ## Gzipped input problems
 
@@ -201,7 +205,7 @@ Two real examples, both _Myodes glareolus_:
 ```
 
 This is a MitoHiFi limitation, not a mitoforge one; it is
-[written up for reporting upstream](developer/roadmap.md#worth-reporting-upstream).
+[written up for reporting upstream](/mitoforge/developer/roadmap/#worth-reporting-upstream).
 
 ## MitoHiFi `-p` tuning
 
@@ -226,7 +230,7 @@ answer.
 
 The setting applies to both the assembly and the finishing step.
 
-See [Heteroplasmy and NUMTs](cases/heteroplasmy-and-numts.md) for how to tell whether a
+See [Heteroplasmy and NUMTs](/mitoforge/cases/heteroplasmy-and-numts/) for how to tell whether a
 candidate is a NUMT before you start tuning.
 
 ## The samplesheet will not validate
@@ -241,7 +245,7 @@ ERROR ~ Found 2 problems in the samplesheet:
   - row 5 (sample 'sampleD'): column 'ref_fa': file not found: /refs/typo.fasta
 ```
 
-The full rules are in the [samplesheet reference](samplesheet.md#the-rules-in-one-place).
+The full rules are in the [samplesheet reference](/mitoforge/samplesheet/#the-rules-in-one-place).
 
 Two that catch people out:
 
@@ -287,9 +291,10 @@ bin/run.sh samplesheet.csv negishi
 - **You changed a parameter.** Anything that changes a command line invalidates that
   task and everything after it.
 
-!!! info "MultiQC always reruns, and that is normal"
+:::note[MultiQC always reruns, and that is normal]
 The parameter summary MultiQC embeds contains the run timestamp, so it differs every
 time. Everything else caches.
+:::
 
 ## Warnings you can ignore
 

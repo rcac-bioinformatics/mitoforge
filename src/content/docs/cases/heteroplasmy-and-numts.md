@@ -1,4 +1,6 @@
-# Heteroplasmy and NUMTs
+---
+title: "Heteroplasmy and NUMTs"
+---
 
 mitoforge gives you one mitogenome per sample. Sometimes that is a simplification: the
 assembler saw more than one candidate and had to choose. This page is about looking at
@@ -97,11 +99,11 @@ bin/run.sh samplesheet.csv negishi results -- --mitohifi_percent_id 70
 ```
 
 This is MitoHiFi's `-p`. The default is 50. See
-[Troubleshooting](../troubleshooting.md#mitohifi-p-tuning).
+[Troubleshooting](/mitoforge/troubleshooting/#mitohifi-p-tuning).
 
 ## What mitoforge does not do
 
 It does not quantify heteroplasmy. There is no variant caller and no allele-frequency
 table. What it gives you is the evidence — the candidates, the alignment, the coverage —
 so you can decide whether the question is worth a dedicated tool. This is
-[noted in the roadmap](../developer/roadmap.md) as a possible future addition.
+[noted in the roadmap](/mitoforge/developer/roadmap/) as a possible future addition.

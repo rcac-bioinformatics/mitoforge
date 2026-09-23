@@ -1,4 +1,6 @@
-# Citations
+---
+title: "Citations"
+---
 
 mitoforge does not assemble anything itself. Every result it gives you was produced by
 one of the tools below, and those are the ones to cite.

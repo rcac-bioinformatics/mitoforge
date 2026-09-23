@@ -1,9 +1,12 @@
 ---
+title: "`rcac-bioinformatics/mitoforge`: Contributing guidelines"
+---
+
+---
+
 title: Contributing
 markdownPlugin: checklist
 ---
-
-# `rcac-bioinformatics/mitoforge`: Contributing guidelines
 
 Hi there!
 Thanks for taking an interest in improving rcac-bioinformatics/mitoforge.

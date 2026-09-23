@@ -1,18 +1,20 @@
-# rcac-bioinformatics/mitoforge: Usage
+---
+title: "rcac-bioinformatics/mitoforge: Usage"
+---
 
 The full documentation is a website: **<https://rcac-bioinformatics.github.io/mitoforge/>**
 
 It is built from this directory, so everything is also here in the repository:
 
-| Page                                          | File                                     |
-| --------------------------------------------- | ---------------------------------------- |
-| Quick start — five commands, clone to results | [quick-start.md](quick-start.md)         |
-| Samplesheet — every column explained          | [samplesheet.md](samplesheet.md)         |
-| Cases — a worked example per kind of input    | [cases/index.md](cases/index.md)         |
-| Output reference — every file, what it means  | [output.md](output.md)                   |
-| Troubleshooting                               | [troubleshooting.md](troubleshooting.md) |
-| Citations                                     | [citations.md](citations.md)             |
-| Developer guide                               | [developer/index.md](developer/index.md) |
+| Page                                          | File                                              |
+| --------------------------------------------- | ------------------------------------------------- |
+| Quick start — five commands, clone to results | [quick-start.md](/mitoforge/quick-start/)         |
+| Samplesheet — every column explained          | [samplesheet.md](/mitoforge/samplesheet/)         |
+| Cases — a worked example per kind of input    | [cases/index.md](/mitoforge/cases/)               |
+| Output reference — every file, what it means  | [output.md](/mitoforge/output/)                   |
+| Troubleshooting                               | [troubleshooting.md](/mitoforge/troubleshooting/) |
+| Citations                                     | [citations.md](/mitoforge/citations/)             |
+| Developer guide                               | [developer/index.md](/mitoforge/developer/)       |
 
 ## The short version
 
@@ -39,9 +41,10 @@ nextflow run . --help
 nextflow run . --help_full     # including the hidden ones
 ```
 
-!!! note
+:::note
 Pass pipeline parameters on the command line or with `-params-file`. A config file
 given with `-c` can set anything _except_ parameters.
+:::
 
 ## Reproducing a run
 

@@ -1,4 +1,6 @@
-# Roadmap
+---
+title: "Roadmap"
+---
 
 Ideas that are deliberately **not** in the current version. Nothing here is a promise.
 Open an issue before starting on any of it.
@@ -8,7 +10,7 @@ Open an issue before starting on any of it.
 - **A real ANNOTATE stage.** v1 ships a stub that passes assemblies through unchanged;
   annotation happens inside MitoHiFi's finishing step. A standalone stage (MITOS2, or
   MitoAnnotator for fish) would let people re-annotate without re-assembling. See
-  [extending.md](extending.md) for where it plugs in.
+  [extending.md](/mitoforge/developer/extending/) for where it plugs in.
 - **More assemblers.** `--long_assembler` and `--short_assembler` each accept exactly one
   value today. NOVOPlasty and MITGARD are the obvious short-read additions.
 - **Nanopore input.** A third `platform` value with its own assembly subworkflow.

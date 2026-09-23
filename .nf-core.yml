@@ -6,6 +6,7 @@ lint:
   files_unchanged:
     - .github/workflows/linting.yml
     - docs/CONTRIBUTING.md
+    - docs/CONTRIBUTING.md
     - CODE_OF_CONDUCT.md
     - assets/nf-core-mitoforge_logo_light.png
     - docs/images/nf-core-mitoforge_logo_light.png
@@ -29,6 +30,11 @@ lint:
     - report_comment
   container_configs: false
   files_exist:
+    # The documentation moved to src/content/docs/ when the site became Starlight.
+    # docs/README.md points at it.
+    - docs/CONTRIBUTING.md
+    - docs/output.md
+    - docs/usage.md
     - .github/actions/get-shards/action.yml
     - .github/actions/nf-test/action.yml
     - ro-crate-metadata.json

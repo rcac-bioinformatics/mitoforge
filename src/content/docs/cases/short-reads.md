@@ -1,4 +1,6 @@
-# Short reads with your own reference
+---
+title: "Short reads with your own reference"
+---
 
 Illumina paired-end reads, and a close-relative mitogenome you have already downloaded.
 This is the most reproducible way to run mitoforge: nothing about the run depends on
@@ -20,7 +22,7 @@ grep -c '/gene=' refs/${ACC}.gb
 ```
 
 If that count is `0`, pick a different record. See
-[Troubleshooting](../troubleshooting.md#keyerror-gene).
+[Troubleshooting](/mitoforge/troubleshooting/#keyerror-gene).
 
 ## Samplesheet
 
@@ -82,14 +84,16 @@ zcat results/samples/voleA/assembly/voleA.animal_mt.fasta.gz | head -1
 
 ## Things to know
 
-!!! warning "Short-read assemblies are all-or-nothing"
+:::caution[Short-read assemblies are all-or-nothing]
 The finishing step rejects any assembly shorter than 80% of the reference. A
 fragmented GetOrganelle result therefore fails outright rather than giving you a
 partial mitogenome. If that happens you need more reads, or more mitochondrial
-reads — see [When a sample fails](failed-sample.md).
+reads — see [When a sample fails](/mitoforge/cases/failed-sample/).
+:::
 
-!!! tip "How much data do you need?"
+:::tip[How much data do you need?]
 GetOrganelle needs enough mitochondrial reads to reach roughly 50x over 16 kb. In a
 whole-genome library that is usually 1–5% of the reads, so a few hundred megabases
 of a typical library is often plenty. The `Estimated animal_mt-hitting
     base-coverage` line in `<sample>.get_org.log.txt` tells you what it actually had.
+:::

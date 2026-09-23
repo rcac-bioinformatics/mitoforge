@@ -1,4 +1,6 @@
-# Quick start
+---
+title: "Quick start"
+---
 
 From nothing to finished mitogenomes on **Negishi**, in five commands. Bell and Anvil
 are the same with a different profile name.
@@ -43,13 +45,14 @@ MITOFORGE_ACCOUNT=myaccount MITOFORGE_QUEUE=cpu bin/run.sh samplesheet.csv negis
 column -t -s$'\t' results/summary/mitoforge_summary.tsv
 ```
 
-!!! tip "Step 2 in plain words"
+:::tip[Step 2 in plain words]
 Compute nodes at RCAC cannot reach the internet, so the container images have to be
 in the cache before any job is submitted. The test profile exercises both the HiFi
 and the short-read path, so running it on the login node pulls everything you need
 and tells you the installation is sound. It downloads about 50 MB of real public
 data and takes a few minutes. See
-[Troubleshooting](troubleshooting.md#no-internet-on-compute-nodes).
+[Troubleshooting](/mitoforge/troubleshooting/#no-internet-on-compute-nodes).
+:::
 
     The one container the test does not pull is samtools, which is only used for BAM
     input. If your samplesheet has a `bam` column filled in, add:
@@ -98,7 +101,7 @@ results/
 └── pipeline_info/               run reports, timings, software versions
 ```
 
-Every file is explained in the [output reference](output.md).
+Every file is explained in the [output reference](/mitoforge/output/).
 
 ## What step 2 actually checks
 
@@ -121,5 +124,5 @@ afterwards is about your data or your settings. On a laptop the same test runs w
 
 ## Next
 
-- [Write your samplesheet](samplesheet.md)
-- [Find the case that matches your data](cases/index.md)
+- [Write your samplesheet](/mitoforge/samplesheet/)
+- [Find the case that matches your data](/mitoforge/cases/)
