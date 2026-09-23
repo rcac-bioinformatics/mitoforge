@@ -29,8 +29,8 @@ workflow ANNOTATE {
 ```
 
 Every sample is already annotated inside `FINALIZE`, because MitoHiFi calls MitoFinder.
-A standalone stage is worth having when you want a _different_ annotator — MITOS2 for
-invertebrates, MitoAnnotator for fish — or want to re-annotate without re-assembling.
+A standalone stage is worth having when you want a _different_ annotator, MITOS2 for
+invertebrates, MitoAnnotator for fish, or want to re-annotate without re-assembling.
 
 ## Step 1: get the module
 
@@ -93,7 +93,7 @@ process MYANNOTATOR {
 
 :::caution[Pin the container, and stage inputs carefully]
 Never use a floating tag. And if your tool writes an output file with the same name
-as one of its inputs, stage the input into a subdirectory — see the patch on
+as one of its inputs, stage the input into a subdirectory, see the patch on
 `modules/nf-core/mitohifi/mitohifi` for what happens otherwise.
 :::
 
@@ -204,7 +204,7 @@ warning on every run.
 
 ## Step 6: test it
 
-Update the existing tests rather than deleting them — they encode the contract.
+Update the existing tests rather than deleting them, they encode the contract.
 
 ```groovy title="subworkflows/local/annotate/tests/main.nf.test"
 test("annotates a mitogenome") {
@@ -242,13 +242,13 @@ nf-core pipelines lint
 
 ## Step 7: document it
 
-- `docs/output.md` — the new files, and what they mean
-- `docs/citations.md` — the tool you just added
+- `docs/output.md`, the new files, and what they mean
+- `docs/citations.md`, the tool you just added
 - `CITATIONS.md` and `toolCitationText()`/`toolBibliographyText()` in
   `subworkflows/local/utils_nfcore_mitoforge_pipeline/main.nf`, which feed the MultiQC
   methods section
 - `CHANGELOG.md`
-- `CLAUDE.md` — the "Current state" section
+- `CLAUDE.md`, the "Current state" section
 
 ## Adding a stage somewhere else
 
@@ -262,7 +262,7 @@ ANNOTATE  ( NEW_STAGE.out.assembly, params.skip_annotation )
 
 If your stage can fail for one sample, it does not need anything special: the default
 `errorStrategy` drops that sample and `SUMMARY` reports it. If it must never fail
-silently — a run-level step, not a per-sample one — set `errorStrategy = 'finish'` for
+silently, a run-level step, not a per-sample one, set `errorStrategy = 'finish'` for
 it in `conf/modules.config`, the way `MITOFORGE_SUMMARY` does.
 
 If it should also feed the run summary, add it to the progress channel in

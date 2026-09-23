@@ -12,7 +12,7 @@ cluster. The only differences are the profile name and how much patience you nee
 - **Disk.** The MitoHiFi container alone is about 7 GB, and the work directory holds
   every intermediate. Budget 30 GB, more for real samples.
 - **Memory.** `conf/base.config` asks for up to 64 GB for the heavy steps. On a smaller
-  machine, cap it — see below.
+  machine, cap it, see below.
 
 ## Install Nextflow
 

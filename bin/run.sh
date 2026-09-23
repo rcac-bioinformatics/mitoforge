@@ -16,20 +16,22 @@ Usage:
 Arguments:
     samplesheet.csv   Your samples. See
                       https://rcac-bioinformatics.github.io/mitoforge/samplesheet/
-    profile           One of: negishi, bell, anvil, docker, apptainer, test
+    profile           One of: purdue_gautschi, docker, apptainer, test
     outdir            Where results go. Default: results
 
-Cluster profiles (negishi, bell, anvil) also need an account and a partition.
-Give them on the command line or in the environment:
+The purdue_gautschi profile also needs a SLURM account. Give it on the command
+line or in the environment:
 
-    MITOFORGE_ACCOUNT=myaccount MITOFORGE_QUEUE=cpu bin/run.sh samples.csv negishi
+    MITOFORGE_ACCOUNT=myaccount bin/run.sh samples.csv purdue_gautschi
+
+The partition is chosen from each task's memory request, so there is none to set.
 
 Anything after `--` is passed straight to Nextflow, for example:
 
     bin/run.sh samples.csv docker results -- --genetic_code 5 -with-report
 
 Examples:
-    bin/run.sh samples.csv negishi
+    bin/run.sh samples.csv purdue_gautschi
     bin/run.sh samples.csv docker my_results
 USAGE
 }
@@ -66,8 +68,9 @@ SAMPLESHEET="$(cd "$(dirname "${SAMPLESHEET}")" && pwd)/$(basename "${SAMPLESHEE
 
 # Pick a container engine to pair with the chosen profile.
 case "${PROFILE}" in
-    negishi|bell|anvil)
-        PROFILES="${PROFILE},apptainer"
+    purdue_gautschi)
+        # The nf-core institutional config already turns Apptainer on.
+        PROFILES="${PROFILE}"
         ;;
     docker|apptainer|singularity|podman)
         PROFILES="${PROFILE}"
@@ -84,7 +87,7 @@ case "${PROFILE}" in
         ;;
     *)
         echo "ERROR: unknown profile '${PROFILE}'." >&2
-        echo "       Use one of: negishi, bell, anvil, docker, apptainer, test" >&2
+        echo "       Use one of: purdue_gautschi, docker, apptainer, test" >&2
         exit 1
         ;;
 esac
@@ -92,12 +95,9 @@ esac
 ARGS=(run "${PROJECT_DIR}" -profile "${PROFILES}" --input "${SAMPLESHEET}" --outdir "${OUTDIR}" -resume)
 
 case "${PROFILE}" in
-    negishi|bell|anvil)
+    purdue_gautschi)
         if [[ -n "${MITOFORGE_ACCOUNT:-}" ]]; then
             ARGS+=(--cluster_account "${MITOFORGE_ACCOUNT}")
-        fi
-        if [[ -n "${MITOFORGE_QUEUE:-}" ]]; then
-            ARGS+=(--cluster_queue "${MITOFORGE_QUEUE}")
         fi
         ;;
 esac

@@ -37,15 +37,13 @@ Genetic code 2 because a vole is a vertebrate. Both read files are required.
 ## Command
 
 ```bash
-MITOFORGE_ACCOUNT=myaccount MITOFORGE_QUEUE=cpu \
-    bin/run.sh samplesheet.csv negishi
+MITOFORGE_ACCOUNT=myaccount bin/run.sh samplesheet.csv purdue_gautschi
 ```
 
 To skip adapter trimming because your reads are already clean:
 
 ```bash
-MITOFORGE_ACCOUNT=myaccount MITOFORGE_QUEUE=cpu \
-    bin/run.sh samplesheet.csv negishi results -- --skip_trimming
+MITOFORGE_ACCOUNT=myaccount bin/run.sh samplesheet.csv purdue_gautschi results -- --skip_trimming
 ```
 
 ## What happens
@@ -88,7 +86,7 @@ zcat results/samples/voleA/assembly/voleA.animal_mt.fasta.gz | head -1
 The finishing step rejects any assembly shorter than 80% of the reference. A
 fragmented GetOrganelle result therefore fails outright rather than giving you a
 partial mitogenome. If that happens you need more reads, or more mitochondrial
-reads — see [When a sample fails](/mitoforge/cases/failed-sample/).
+reads, see [When a sample fails](/mitoforge/cases/failed-sample/).
 :::
 
 :::tip[How much data do you need?]

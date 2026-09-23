@@ -2,24 +2,22 @@
 title: "Quick start"
 ---
 
-From nothing to finished mitogenomes on **Negishi**, in five commands. Bell and Anvil
+From nothing to finished mitogenomes on **Gautschi**, in five commands.
 are the same with a different profile name.
 
 ## Before you start
 
-You need Nextflow 25.10.4 or newer on your PATH. RCAC provides it as a module; find the
-right name with:
+Load Nextflow and find your allocation:
 
 ```bash
-module spider nextflow
+module load nextflow/25.10.04
+nextflow -version
+
+slist        # the accounts you belong to  ->  --cluster_account
 ```
 
-You also need to know two things about your allocation:
-
-```bash
-slist        # which accounts you belong to  -> --cluster_account
-sinfo -s     # which partitions you can use  -> --cluster_queue
-```
+There is no partition to choose. The `purdue_gautschi` profile sends a task to `cpu`
+or to `highmem` based on how much memory it asked for.
 
 ## The five commands
 
@@ -39,7 +37,7 @@ cp assets/samplesheet_example.csv samplesheet.csv
 nano samplesheet.csv
 
 # 4. Run it
-MITOFORGE_ACCOUNT=myaccount MITOFORGE_QUEUE=cpu bin/run.sh samplesheet.csv negishi
+MITOFORGE_ACCOUNT=myaccount bin/run.sh samplesheet.csv purdue_gautschi
 
 # 5. Read the summary
 column -t -s$'\t' results/summary/mitoforge_summary.tsv
@@ -70,11 +68,10 @@ is:
 
 ```bash
 nextflow run . \
-    -profile negishi,apptainer \
+    -profile purdue_gautschi \
     --input samplesheet.csv \
     --outdir results \
-    --cluster_account myaccount \
-    --cluster_queue cpu \
+    --cluster_account myaccount
     -resume
 ```
 
@@ -82,7 +79,7 @@ Use the long form when you want to add parameters; `bin/run.sh` passes anything 
 `--` straight through:
 
 ```bash
-bin/run.sh samplesheet.csv negishi results -- --genetic_code 5 --skip_trimming
+bin/run.sh samplesheet.csv purdue_gautschi results -- --genetic_code 5 --skip_trimming
 ```
 
 ## What you get

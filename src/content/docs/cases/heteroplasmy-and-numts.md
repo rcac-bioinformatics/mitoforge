@@ -8,8 +8,8 @@ what it chose between.
 
 Two things cause extra candidates:
 
-- **NUMTs** — nuclear copies of mitochondrial sequence. Real DNA, wrong compartment.
-- **Heteroplasmy** — genuinely different mitochondrial haplotypes in the same
+- **NUMTs**: nuclear copies of mitochondrial sequence. Real DNA, wrong compartment.
+- **Heteroplasmy**: genuinely different mitochondrial haplotypes in the same
   individual.
 
 ## Where to look
@@ -32,7 +32,7 @@ sampleA     assembly  ptg000014l         8800       19               False
 sampleA     final     final_mitogenome  15316       36               False
 ```
 
-`ptg000014l` there — short, half the genes, not circular — is what a NUMT looks like.
+`ptg000014l` there, short, half the genes, not circular, is what a NUMT looks like.
 
 ### 2. `final_mitogenome_choice/`
 
@@ -74,20 +74,20 @@ results/samples/sampleA/assembly/coverage_plot.png
 results/samples/sampleA/assembly/final_mitogenome.coverage.png
 ```
 
-A true mitogenome has high, even coverage — often hundreds of times the nuclear depth. A
+A true mitogenome has high, even coverage, often hundreds of times the nuclear depth. A
 NUMT sits at roughly nuclear depth. A heteroplasmic variant sits somewhere in between,
 consistently across its whole length. A coverage plot with a step change in the middle
 usually means two things have been joined that should not have been.
 
 ## Telling them apart
 
-|                                       | NUMT                                                       | Heteroplasmy                                             |
-| ------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------- |
-| Length                                | Usually partial                                            | Usually full-length                                      |
-| Coverage                              | Around nuclear depth                                       | Between nuclear and mitochondrial, even along its length |
-| Circular                              | No                                                         | Often yes                                                |
-| Gene content                          | Fragmentary, often with frameshifts                        | Complete, 36–37 genes                                    |
-| Divergence from the chosen mitogenome | Can be several percent — NUMTs stop evolving once inserted | Usually well under one percent                           |
+|                                       | NUMT                                                      | Heteroplasmy                                             |
+| ------------------------------------- | --------------------------------------------------------- | -------------------------------------------------------- |
+| Length                                | Usually partial                                           | Usually full-length                                      |
+| Coverage                              | Around nuclear depth                                      | Between nuclear and mitochondrial, even along its length |
+| Circular                              | No                                                        | Often yes                                                |
+| Gene content                          | Fragmentary, often with frameshifts                       | Complete, 36–37 genes                                    |
+| Divergence from the chosen mitogenome | Can be several percent: NUMTs stop evolving once inserted | Usually well under one percent                           |
 
 ## Making MitoHiFi stricter
 
@@ -95,7 +95,7 @@ If NUMTs keep getting through, raise the fraction of a contig that must match th
 reference:
 
 ```bash
-bin/run.sh samplesheet.csv negishi results -- --mitohifi_percent_id 70
+bin/run.sh samplesheet.csv purdue_gautschi results -- --mitohifi_percent_id 70
 ```
 
 This is MitoHiFi's `-p`. The default is 50. See
@@ -104,6 +104,6 @@ This is MitoHiFi's `-p`. The default is 50. See
 ## What mitoforge does not do
 
 It does not quantify heteroplasmy. There is no variant caller and no allele-frequency
-table. What it gives you is the evidence — the candidates, the alignment, the coverage —
+table. What it gives you is the evidence, the candidates, the alignment, the coverage ,
 so you can decide whether the question is worth a dedicated tool. This is
 [noted in the roadmap](/mitoforge/developer/roadmap/) as a possible future addition.

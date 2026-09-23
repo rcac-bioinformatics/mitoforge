@@ -71,16 +71,22 @@ exactly the same software.
 
 ## Where it runs
 
-| Where                              | Profile                    | Container engine |
-| ---------------------------------- | -------------------------- | ---------------- |
-| Negishi, Bell, Anvil (Purdue RCAC) | `negishi`, `bell`, `anvil` | Apptainer        |
-| Your laptop                        | `docker`                   | Docker           |
+| Where                  | Profile           | Container engine |
+| ---------------------- | ----------------- | ---------------- |
+| Gautschi (Purdue RCAC) | `purdue_gautschi` | Apptainer        |
+| Your laptop            | `docker`          | Docker           |
 
-:::caution[The cluster profiles are untested on cluster]
-They were written from documentation on a machine with no SLURM. They should work,
-and the design is conservative, but you are the first person to run them. Please
-[open an issue](https://github.com/rcac-bioinformatics/mitoforge/issues) with
-anything that does not.
+The Gautschi profile comes from
+[nf-core/configs](https://github.com/nf-core/configs/blob/master/conf/purdue_gautschi.config),
+so it is maintained by the people who run the cluster rather than duplicated here. It
+picks the partition from each task's memory request; all you supply is
+`--cluster_account`.
+
+:::caution[The cluster profile is untested with this pipeline]
+The profile itself is used by other nf-core pipelines on Gautschi, but mitoforge has
+not yet completed a run there. Please
+[open an issue](https://github.com/rcac-bioinformatics/mitoforge/issues) with anything
+that does not work.
 :::
 
 ## Getting help

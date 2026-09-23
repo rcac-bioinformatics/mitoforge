@@ -116,17 +116,12 @@
             "title": "Cluster options",
             "type": "object",
             "fa_icon": "fas fa-server",
-            "description": "Required by the negishi, bell and anvil profiles.",
+            "description": "Required by the purdue_gautschi profile.",
             "properties": {
                 "cluster_account": {
                     "type": "string",
-                    "description": "SLURM account to charge jobs to, e.g. the name printed by `slist`.",
+                    "description": "SLURM account to charge jobs to. Run `slist` on a Gautschi login node to see yours.",
                     "fa_icon": "fas fa-id-card"
-                },
-                "cluster_queue": {
-                    "type": "string",
-                    "description": "SLURM partition to submit to. Defaults to the cluster's standard partition.",
-                    "fa_icon": "fas fa-stream"
                 }
             }
         },
@@ -208,16 +203,43 @@
                 "show_hidden": {
                     "type": "boolean",
                     "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided)."
+                },
+                "custom_config_version": {
+                    "type": "string",
+                    "default": "master",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog",
+                    "description": "Git branch/tag/commit of nf-core/configs to take institutional profiles from."
+                },
+                "custom_config_base": {
+                    "type": "string",
+                    "hidden": true,
+                    "default": "https://raw.githubusercontent.com/nf-core/configs/master",
+                    "fa_icon": "fas fa-users-cog",
+                    "description": "Base path or URL for the nf-core/configs institutional profiles.",
+                    "help_text": "This provides -profile purdue_gautschi. Set NXF_OFFLINE=true, or point this at a local checkout, to avoid fetching it at launch."
                 }
             }
         }
     },
     "allOf": [
-        { "$ref": "#/$defs/input_output_options" },
-        { "$ref": "#/$defs/reference_options" },
-        { "$ref": "#/$defs/assembly_options" },
-        { "$ref": "#/$defs/annotation_options" },
-        { "$ref": "#/$defs/cluster_options" },
-        { "$ref": "#/$defs/generic_options" }
+        {
+            "$ref": "#/$defs/input_output_options"
+        },
+        {
+            "$ref": "#/$defs/reference_options"
+        },
+        {
+            "$ref": "#/$defs/assembly_options"
+        },
+        {
+            "$ref": "#/$defs/annotation_options"
+        },
+        {
+            "$ref": "#/$defs/cluster_options"
+        },
+        {
+            "$ref": "#/$defs/generic_options"
+        }
     ]
 }

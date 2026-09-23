@@ -17,8 +17,7 @@ ilDeiPorc1,hifi,,,/data/m64094_230101_120000.hifi_reads.bam,,/refs/MW539688.1.fa
 ## Command
 
 ```bash
-MITOFORGE_ACCOUNT=myaccount MITOFORGE_QUEUE=cpu \
-    bin/run.sh samplesheet.csv negishi
+MITOFORGE_ACCOUNT=myaccount bin/run.sh samplesheet.csv purdue_gautschi
 ```
 
 ## What happens

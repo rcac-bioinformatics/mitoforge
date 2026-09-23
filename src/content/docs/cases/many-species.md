@@ -22,8 +22,7 @@ one run.
 ## Command
 
 ```bash
-MITOFORGE_ACCOUNT=myaccount MITOFORGE_QUEUE=cpu \
-    bin/run.sh samplesheet.csv negishi
+MITOFORGE_ACCOUNT=myaccount bin/run.sh samplesheet.csv purdue_gautschi
 ```
 
 ## Getting the genetic code right
@@ -38,21 +37,21 @@ table does not fail; it gives you an annotation full of internal stop codons.
 | 9    | Echinoderms and flatworms                                               |
 
 If you are unsure, look the species up in
-[NCBI Taxonomy](https://www.ncbi.nlm.nih.gov/taxonomy) — each entry states its
+[NCBI Taxonomy](https://www.ncbi.nlm.nih.gov/taxonomy), each entry states its
 mitochondrial genetic code.
 
 You can set a default for the whole run and only override the exceptions:
 
 ```bash
-bin/run.sh samplesheet.csv negishi results -- --genetic_code 5
+bin/run.sh samplesheet.csv purdue_gautschi results -- --genetic_code 5
 ```
 
 Any row with a value in the `genetic_code` column still wins.
 
 ## Congeners and hybrids
 
-For the real case this pipeline was built for — three congeneric species plus hybrids,
-with one same-genus reference available — point every row at the same reference:
+For the real case this pipeline was built for, three congeneric species plus hybrids,
+with one same-genus reference available, point every row at the same reference:
 
 ```csv
 sample,platform,fastq_1,fastq_2,bam,species,ref_fa,ref_gb,genetic_code

@@ -4,7 +4,7 @@ title: "Short reads using HiFi mitogenomes"
 
 You have a handful of HiFi samples and a lot of Illumina ones, from the same species or
 close relatives. The best reference for the Illumina samples is not something from NCBI
-— it is the mitogenome you are about to assemble from your own HiFi data.
+, it is the mitogenome you are about to assemble from your own HiFi data.
 
 Write `hifi:<sample>` in `ref_fa` and mitoforge works out the order for you.
 
@@ -33,8 +33,7 @@ the message.
 ## Command
 
 ```bash
-MITOFORGE_ACCOUNT=myaccount MITOFORGE_QUEUE=cpu \
-    bin/run.sh samplesheet.csv negishi
+MITOFORGE_ACCOUNT=myaccount bin/run.sh samplesheet.csv purdue_gautschi
 ```
 
 One command. There is no first pass and second pass to run by hand.
@@ -74,8 +73,8 @@ sample and rerun with `-resume`; everything that already worked is cached.
 :::
 
 :::tip[Keep the HiFi samples first in the file]
-It makes no difference to the pipeline — the dependency is resolved from the names,
-not the order — but it makes the samplesheet much easier for a human to read.
+It makes no difference to the pipeline, the dependency is resolved from the names,
+not the order, but it makes the samplesheet much easier for a human to read.
 :::
 
 :::note[Why the finishing step runs twice]

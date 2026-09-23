@@ -109,11 +109,11 @@ its very last step. Check before you commit to a reference:
 The NCBI translation table used to annotate this sample. Leave it empty to use
 `--genetic_code`, which defaults to **2**.
 
-| Code | Use it for                                                                      |
-| ---- | ------------------------------------------------------------------------------- |
-| 2    | Vertebrate mitochondrial — mammals, birds, fish, reptiles, amphibians           |
-| 5    | Invertebrate mitochondrial — insects, molluscs, crustaceans, most invertebrates |
-| 9    | Echinoderm and flatworm mitochondrial                                           |
+| Code | Use it for                                                                     |
+| ---- | ------------------------------------------------------------------------------ |
+| 2    | Vertebrate mitochondrial: mammals, birds, fish, reptiles, amphibians           |
+| 5    | Invertebrate mitochondrial: insects, molluscs, crustaceans, most invertebrates |
+| 9    | Echinoderm and flatworm mitochondrial                                          |
 
 Codes 1, 3, 4, 6, 10–14, 16, 21–25 are also accepted. Getting this wrong does not stop
 the run; it gives you an annotation full of spurious stop codons.

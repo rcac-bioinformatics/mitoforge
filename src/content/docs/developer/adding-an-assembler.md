@@ -34,7 +34,7 @@ nf-core modules list remote | grep -i novoplasty
 nf-core modules install novoplasty/novoplasty
 ```
 
-If there is no nf-core module, write a local one — see
+If there is no nf-core module, write a local one, see
 [Adding a stage](/mitoforge/developer/extending/#step-1-get-the-module) for the shape.
 
 ## Step 3: branch inside the subworkflow
@@ -97,8 +97,8 @@ ASSEMBLE_SHORT (
 `FINALIZE` is the rest of the pipeline, and it wants:
 
 - `[meta, fasta]`, with `meta` unchanged
-- **uncompressed** FASTA — MitoHiFi's contigs mode refuses gzip
-- an assembly that is **at least 80% of the reference length** — MitoHiFi rejects
+- **uncompressed** FASTA, MitoHiFi's contigs mode refuses gzip
+- an assembly that is **at least 80% of the reference length**: MitoHiFi rejects
   anything shorter, so a fragmented assembly fails rather than producing a fragment
 
 If your assembler writes gzip, put `GUNZIP` after it as GetOrganelle does. If it writes
@@ -159,15 +159,15 @@ not change unless that is the point of the change.
 
 ## Step 8: document it
 
-- `docs/samplesheet.md` — the platform-to-assembler table
-- `docs/cases/` — a case page if the new assembler needs different inputs
+- `docs/samplesheet.md`, the platform-to-assembler table
+- `docs/cases/`, a case page if the new assembler needs different inputs
 - `docs/citations.md` and `CITATIONS.md`
-- `docs/troubleshooting.md` — its characteristic failure modes
+- `docs/troubleshooting.md`, its characteristic failure modes
 - `CHANGELOG.md` and `CLAUDE.md`
 
 ## Adding a platform, not just an assembler
 
-A third `platform` value — Nanopore, say — is a bigger change:
+A third `platform` value, Nanopore, say, is a bigger change:
 
 1. Add it to the `enum` in `assets/schema_input.json`.
 2. Teach `INPUT_CHECK` its read-layout rules (single-ended? paired?).

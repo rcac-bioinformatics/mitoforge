@@ -66,7 +66,7 @@ species you think. Try a closer reference. If the only available relative really
 distant, loosen the filter:
 
 ```bash
-bin/run.sh samplesheet.csv negishi results -- --mitohifi_percent_id 30
+bin/run.sh samplesheet.csv purdue_gautschi results -- --mitohifi_percent_id 30
 ```
 
 **For Illumina**, look for the coverage estimate:
@@ -76,7 +76,7 @@ Estimated animal_mt-hitting base-coverage = 12.5
 ```
 
 Below about 30 there is not enough mitochondrial sequence to assemble from. You need
-more reads from that library — subsampling will not help.
+more reads from that library, subsampling will not help.
 
 Also look for:
 
@@ -100,16 +100,16 @@ less results/samples/sampleQ/final/sampleQ.log
 
 Common causes:
 
-- **`'parsed_blast.txt' files are empty`** — the assembly did not match the reference
+- **`'parsed_blast.txt' files are empty`**: the assembly did not match the reference
   well enough, or is shorter than 80% of it. Check its length against the reference.
-- **`KeyError: 'gene'`** — the reference GenBank file has no `/gene=` qualifiers. See
+- **`KeyError: 'gene'`**: the reference GenBank file has no `/gene=` qualifiers. See
   [Troubleshooting](/mitoforge/troubleshooting/#keyerror-gene). This one is worth checking
   first, because it fails right at the end after everything else worked.
 
 ## `failed: reporting`
 
 The mitogenome finished and is in `results/mitogenomes/`. Only the statistics step
-failed, which is a bug — please
+failed, which is a bug, please
 [open an issue](https://github.com/rcac-bioinformatics/mitoforge/issues) with the
 sample's `final/contigs_stats.tsv` attached.
 
@@ -134,7 +134,7 @@ bash .command.run   # run it again by hand, interactively
 ## Step 3: fix and rerun
 
 ```bash
-bin/run.sh samplesheet.csv negishi
+bin/run.sh samplesheet.csv purdue_gautschi
 ```
 
 `bin/run.sh` always passes `-resume`. Everything that worked is cached; only the fixed

@@ -57,7 +57,7 @@ workflow PIPELINE_INITIALISATION {
         before_text = before_text.replaceAll(/\033\[[0-9;]*m/, '')
     }
 
-    command = "nextflow run ${workflow.manifest.name} -profile <negishi|bell|anvil|docker> --input samplesheet.csv --outdir results"
+    command = "nextflow run ${workflow.manifest.name} -profile <purdue_gautschi|docker> --input samplesheet.csv --outdir results"
 
     UTILS_NFSCHEMA_PLUGIN (
         workflow,
@@ -140,31 +140,6 @@ workflow PIPELINE_COMPLETION {
 */
 
 //
-// The negishi/bell/anvil profiles submit to SLURM, which needs an account and a
-// partition. Fail before any job is submitted, and say exactly how to find them.
-//
-def validateClusterParams() {
-    def cluster_profiles = ['negishi', 'bell', 'anvil']
-    def active = workflow.profile.tokenize(',').intersect(cluster_profiles)
-    if (!active) {
-        return
-    }
-    def missing = []
-    if (!params.cluster_account) { missing << '--cluster_account <allocation>  (run `slist` to see yours)' }
-    if (!params.cluster_queue)   { missing << '--cluster_queue <partition>     (run `sinfo -s` to see yours)' }
-    if (missing) {
-        error(
-            "The '${active.first()}' profile submits jobs to SLURM and is missing:\n" +
-            missing.collect { m -> "    ${m}" }.join('\n') + "\n\n" +
-            "Add them to your command line, for example:\n" +
-            "    nextflow run ${workflow.manifest.name} -profile ${active.first()},apptainer \\\n" +
-            "        --input samplesheet.csv --outdir results \\\n" +
-            "        --cluster_account myaccount --cluster_queue cpu\n"
-        )
-    }
-}
-
-//
 // A failed sample is dropped rather than killing the run, which is easy to miss in a
 // hundred-sample log that ends with "Pipeline completed successfully". Say plainly, at
 // the end, which samples did not finish.
@@ -188,11 +163,34 @@ def reportFailedSamples(outdir) {
         failed.collect { line ->
             def fields = line.tokenize('\t')
             "    ${fields[0]}  ${fields.last()}"
-        }.join('\n') +
-        "\n\nThe rest finished; their mitogenomes are in ${outdir}/mitogenomes/\n" +
+        }.join('\n') + "\n\n" +
+        "The rest finished; their mitogenomes are in ${outdir}/mitogenomes/\n" +
         "Full table: ${outdir}/summary/mitoforge_summary.tsv\n" +
         "What to do next: https://rcac-bioinformatics.github.io/mitoforge/cases/failed-sample/"
     )
+}
+
+//
+// The purdue_gautschi profile submits to SLURM, which needs an account. The profile
+// itself checks this too, but only when the first task is submitted; checking here
+// fails before any job leaves the queue.
+//
+def validateClusterParams() {
+    if (!workflow.profile.tokenize(',').contains('purdue_gautschi')) {
+        return
+    }
+    if (!params.cluster_account) {
+        error(
+            "The 'purdue_gautschi' profile submits jobs to SLURM and needs an account:\n\n" +
+            "    --cluster_account <allocation>\n\n" +
+            "Run `slist` on a Gautschi login node to see the ones you belong to, then:\n" +
+            "    nextflow run ${workflow.manifest.name} -profile purdue_gautschi \\\n" +
+            "        --input samplesheet.csv --outdir results \\\n" +
+            "        --cluster_account myaccount\n\n" +
+            "The partition is chosen for you from each task's memory request, so there\n" +
+            "is no queue to set.\n"
+        )
+    }
 }
 
 //

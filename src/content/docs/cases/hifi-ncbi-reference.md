@@ -19,8 +19,7 @@ an invertebrate.
 ## Command
 
 ```bash
-MITOFORGE_ACCOUNT=myaccount MITOFORGE_QUEUE=cpu \
-    bin/run.sh samplesheet.csv negishi
+MITOFORGE_ACCOUNT=myaccount bin/run.sh samplesheet.csv purdue_gautschi
 ```
 
 ## What happens
@@ -30,7 +29,7 @@ MITOFORGE_ACCOUNT=myaccount MITOFORGE_QUEUE=cpu \
    downloads it as FASTA and GenBank. **This runs on the login node**, because compute
    nodes have no internet.
 2. MitoHiFi maps the reads to that reference with minimap2, throws away anything longer
-   than the reference — that is the NUMT filter — and assembles the rest with hifiasm.
+   than the reference, which is the NUMT filter, and assembles the rest with hifiasm.
 3. The assembly goes through the finishing step: circularise, trim the overlap, rotate
    to tRNA-Phe, annotate.
 
@@ -56,7 +55,7 @@ ilDeiPorc1  hifi      5             OQ694980.1.fasta  15316    36     True      
 `findMitoReference.py` searches NCBI live. As more mitogenomes are deposited, the
 nearest relative changes, and so does your reference. If you need a run you can
 reproduce exactly, download the reference once and name it in `ref_fa` and `ref_gb`
-instead — see [Short reads with your own reference](/mitoforge/cases/short-reads/) for the shape.
+instead, see [Short reads with your own reference](/mitoforge/cases/short-reads/) for the shape.
 :::
 
 :::tip[Check the reference before you trust the result]

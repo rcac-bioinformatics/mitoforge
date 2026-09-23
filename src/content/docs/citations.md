@@ -11,7 +11,7 @@ rather than from this page.
 
 ## The pipeline
 
-**mitoforge** — Arun Seetharam, Rosen Center for Advanced Computing, Purdue University.
+**mitoforge**: Arun Seetharam, Rosen Center for Advanced Computing, Purdue University.
 <https://github.com/rcac-bioinformatics/mitoforge>
 
 ## The framework
@@ -22,7 +22,7 @@ rather than from this page.
 > reproducible computational workflows. Nat Biotechnol. 2017 Apr 11;35(4):316-319.
 > doi: [10.1038/nbt.3820](https://doi.org/10.1038/nbt.3820)
 
-**nf-core** — mitoforge is built on the nf-core template and uses nf-core modules.
+**nf-core**: mitoforge is built on the nf-core template and uses nf-core modules.
 
 > Ewels PA, Peltzer A, Fillinger S, Patel H, Alneberg J, Wilm A, Garcia MU, Di Tommaso P,
 > Nahnsen S. The nf-core framework for community-curated bioinformatics pipelines.
@@ -31,7 +31,7 @@ rather than from this page.
 
 ## Assembly and finishing
 
-**MitoHiFi** — assembles HiFi samples, and finishes every sample whatever assembled it.
+**MitoHiFi**: assembles HiFi samples, and finishes every sample whatever assembled it.
 
 > Uliano-Silva M, Ferreira JGRN, Krasheninnikova K, Darwin Tree of Life Consortium,
 > Formenti G, Abueg L, Torrance J, Myers EW, Durbin R, Blaxter M, McCarthy SA. MitoHiFi:
@@ -41,32 +41,32 @@ rather than from this page.
 
 MitoHiFi calls four tools of its own. If you used mitoforge, you used all of them:
 
-**hifiasm** — assembles the baited HiFi reads.
+**hifiasm**: assembles the baited HiFi reads.
 
 > Cheng H, Concepcion GT, Feng X, Zhang H, Li H. Haplotype-resolved de novo assembly
 > using phased assembly graphs with hifiasm. Nat Methods. 2021 Feb;18(2):170-175.
 > doi: [10.1038/s41592-020-01056-5](https://doi.org/10.1038/s41592-020-01056-5)
 
-**minimap2** — maps reads to the reference mitogenome to find the mitochondrial ones.
+**minimap2**: maps reads to the reference mitogenome to find the mitochondrial ones.
 
 > Li H. Minimap2: pairwise alignment for nucleotide sequences. Bioinformatics.
 > 2018 Sep 15;34(18):3094-3100.
 > doi: [10.1093/bioinformatics/bty191](https://doi.org/10.1093/bioinformatics/bty191)
 
-**MitoFinder** — annotates the finished mitogenome.
+**MitoFinder**: annotates the finished mitogenome.
 
 > Allio R, Schomaker-Bastos A, Romiguier J, Prosdocimi F, Nabholz B, Delsuc F.
 > MitoFinder: Efficient automated large-scale extraction of mitogenomic data in target
 > enrichment phylogenomics. Mol Ecol Resour. 2020 Jul;20(4):892-905.
 > doi: [10.1111/1755-0998.13160](https://doi.org/10.1111/1755-0998.13160)
 
-**MAFFT** — aligns the candidate mitogenomes before choosing between them.
+**MAFFT**: aligns the candidate mitogenomes before choosing between them.
 
 > Katoh K, Standley DM. MAFFT multiple sequence alignment software version 7:
 > improvements in performance and usability. Mol Biol Evol. 2013 Apr;30(4):772-80.
 > doi: [10.1093/molbev/mst010](https://doi.org/10.1093/molbev/mst010)
 
-**CD-HIT** — clusters them.
+**CD-HIT**: clusters them.
 
 > Fu L, Niu B, Zhu Z, Wu S, Li W. CD-HIT: accelerated for clustering the next-generation
 > sequencing data. Bioinformatics. 2012 Dec 1;28(23):3150-2.
@@ -74,7 +74,7 @@ MitoHiFi calls four tools of its own. If you used mitoforge, you used all of the
 
 ## Short-read assembly
 
-**GetOrganelle** — assembles Illumina samples.
+**GetOrganelle**: assembles Illumina samples.
 
 > Jin JJ, Yu WB, Yang JB, Song Y, dePamphilis CW, Yi TS, Li DZ. GetOrganelle: a fast and
 > versatile toolkit for accurate de novo assembly of organelle genomes. Genome Biol.
@@ -83,7 +83,7 @@ MitoHiFi calls four tools of its own. If you used mitoforge, you used all of the
 
 GetOrganelle calls two tools of its own:
 
-**SPAdes** — assembles the baited reads.
+**SPAdes**: assembles the baited reads.
 
 > Bankevich A, Nurk S, Antipov D, Gurevich AA, Dvorkin M, Kulikov AS, Lesin VM,
 > Nikolenko SI, Pham S, Prjibelski AD, Pyshkin AV, Sirotkin AV, Vyahhi N, Tesler G,
@@ -91,7 +91,7 @@ GetOrganelle calls two tools of its own:
 > to single-cell sequencing. J Comput Biol. 2012 May;19(5):455-77.
 > doi: [10.1089/cmb.2012.0021](https://doi.org/10.1089/cmb.2012.0021)
 
-**Bowtie 2** — baits reads against the seed mitogenome.
+**Bowtie 2**: baits reads against the seed mitogenome.
 
 > Langmead B, Salzberg SL. Fast gapped-read alignment with Bowtie 2. Nat Methods.
 > 2012 Mar 4;9(4):357-9.
@@ -99,20 +99,20 @@ GetOrganelle calls two tools of its own:
 
 ## Read handling and reporting
 
-**fastp** — trims Illumina adapters and low-quality ends.
+**fastp**: trims Illumina adapters and low-quality ends.
 
 > Chen S, Zhou Y, Chen Y, Gu J. fastp: an ultra-fast all-in-one FASTQ preprocessor.
 > Bioinformatics. 2018 Sep 1;34(17):i884-i890.
 > doi: [10.1093/bioinformatics/bty560](https://doi.org/10.1093/bioinformatics/bty560)
 
-**SAMtools** — converts unaligned PacBio BAM to FASTQ.
+**SAMtools**: converts unaligned PacBio BAM to FASTQ.
 
 > Danecek P, Bonfield JK, Liddle J, Marshall J, Ohan V, Pollard MO, Whitwham A, Keane T,
 > McCarthy SA, Davies RM, Li H. Twelve years of SAMtools and BCFtools. Gigascience.
 > 2021 Feb 16;10(2):giab008.
 > doi: [10.1093/gigascience/giab008](https://doi.org/10.1093/gigascience/giab008)
 
-**MultiQC** — builds the HTML report.
+**MultiQC**: builds the HTML report.
 
 > Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for
 > multiple tools and samples in a single report. Bioinformatics. 2016 Oct 1;32(19):3047-8.
@@ -151,13 +151,13 @@ GetOrganelle calls two tools of its own:
 
 The `-profile test` run uses real published data, not simulations:
 
-- **PacBio HiFi** — 100 CCS reads from _Deilephila porcellus_, distributed with MitoHiFi
+- **PacBio HiFi**: 100 CCS reads from _Deilephila porcellus_, distributed with MitoHiFi
   as `tests/ilDeiPorc1.reads.100.fa`. Reference: GenBank
   [MW539688.1](https://www.ncbi.nlm.nih.gov/nuccore/MW539688.1), _Theretra latreillii
   lucasii_.
-- **Illumina** — the first 250,000 read pairs of SRA run
+- **Illumina**: the first 250,000 read pairs of SRA run
   [SRR5201683](https://www.ncbi.nlm.nih.gov/sra/SRR5201683), _Myodes glareolus_. This
   reduced set is the one the GetOrganelle authors publish and document. Reference:
   GenBank [PZ790849](https://www.ncbi.nlm.nih.gov/nuccore/PZ790849), _Caryomys eva_.
-- **Unaligned PacBio BAM** (unit tests only) — `alz.ccs.bam` from the
+- **Unaligned PacBio BAM** (unit tests only): `alz.ccs.bam` from the
   [nf-core test-datasets](https://github.com/nf-core/test-datasets) collection.

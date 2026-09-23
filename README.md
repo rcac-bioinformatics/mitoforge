@@ -17,23 +17,22 @@ and Apptainer, and on a laptop with Docker.
 
 ```bash
 nextflow run rcac-bioinformatics/mitoforge \
-    -profile negishi,apptainer \
+    -profile purdue_gautschi \
     --input samplesheet.csv \
     --outdir results \
-    --cluster_account myaccount \
-    --cluster_queue cpu
+    --cluster_account myaccount
 ```
 
 or, the short way:
 
 ```bash
-bin/run.sh samplesheet.csv negishi
+bin/run.sh samplesheet.csv purdue_gautschi
 ```
 
 ## Documentation
 
-Everything else — how to write the samplesheet, worked examples for each kind of input,
-what every output file means, and what to do when a sample fails — is at
+Everything else, how to write the samplesheet, worked examples for each kind of input,
+what every output file means, and what to do when a sample fails, is at
 **<https://rcac-bioinformatics.github.io/mitoforge/>**.
 
 New to it? Start with the [quick start](https://rcac-bioinformatics.github.io/mitoforge/quick-start/):
@@ -44,7 +43,7 @@ five commands from clone to results.
 Version 0.1.0. What changed, and what is known to be broken, is in
 [`CHANGELOG.md`](CHANGELOG.md).
 
-The Negishi, Bell and Anvil profiles are **untested on cluster** — they were written
+The Gautschi profiles are **untested on cluster**: they were written
 from documentation on a machine with no SLURM. Please
 [open an issue](https://github.com/rcac-bioinformatics/mitoforge/issues) with anything
 that does not work.

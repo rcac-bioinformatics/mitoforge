@@ -2,154 +2,125 @@
 title: "Adding a cluster profile"
 ---
 
-`conf/negishi.config`, `conf/bell.config` and `conf/anvil.config` are the same file with
-a different name. Adding a fourth cluster is copying one and changing what is actually
-different.
-
-## Step 1: copy one
-
-```bash
-cp conf/negishi.config conf/gilbreth.config
-```
-
-## Step 2: edit the header
-
-```groovy
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Gilbreth (Purdue RCAC) profile
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Cluster documentation: https://www.rcac.purdue.edu/knowledge/gilbreth
-
-    STATUS: tested on cluster 2026-05-01 by <name>.
-...
-*/
-```
-
-Say honestly whether it has been run there. "Untested on cluster" is useful information;
-a profile that claims to work and does not is worse than no profile.
-
-## Step 3: what actually differs
-
-Most of the file does not change. These are the parts that might:
-
-**The scheduler.** If it is not SLURM:
-
-```groovy
-executor {
-    name            = 'pbspro'   // or 'lsf', 'sge', ...
-    queueSize       = 50
-    submitRateLimit = '10 sec'
-}
-
-process {
-    executor       = 'pbspro'
-    queue          = { params.cluster_queue }
-    clusterOptions = { "-A ${params.cluster_account}" }
-}
-```
-
-`clusterOptions` is scheduler-specific. `-A` is SLURM's account flag.
-
-**The container cache.** The default chases `$RCAC_SCRATCH`, then `$SCRATCH`, then
-`$HOME`. If your cluster names it something else:
-
-```groovy
-apptainer.cacheDir = System.getenv('NXF_APPTAINER_CACHEDIR')
-    ?: (System.getenv('MY_SCRATCH') ?: System.getenv('HOME')) + '/.apptainer_cache'
-```
-
-It must be on a filesystem the compute nodes can see.
-
-**Node size.** `conf/base.config` asks for up to 16 CPUs and 64 GB, which fits inside a
-256 GB node. If your partition is smaller, cap it — do not edit `base.config`:
-
-```groovy
-process.resourceLimits = [ cpus: 32, memory: '120.GB', time: '24.h' ]
-```
-
-`resourceLimits` clamps requests rather than changing them, so a retry that doubles a
-request still schedules.
-
-**Queue limits.** If the scheduler will not take 50 jobs at once, lower `queueSize`.
-
-## Step 4: keep the internet steps local
-
-This part must survive the copy. Compute nodes at RCAC have no route out:
-
-```groovy
-process {
-    withName: 'MITOHIFI_FINDMITOREFERENCE' {
-        executor       = 'local'
-        clusterOptions = null
-        queue          = null
-    }
-    withName: 'GETORGANELLE_CONFIG' {
-        executor       = 'local'
-        clusterOptions = null
-        queue          = null
-    }
-}
-```
-
-If your cluster's compute nodes _can_ reach the internet, you may drop this — but
-leaving it costs nothing, and both processes are small.
-
-If a future stage needs the network, it has to be added here too. That is the one thing
-easy to forget when adding a stage.
-
-## Step 5: register the profile
+mitoforge does not carry its own cluster profiles. It enables
+[nf-core/configs](https://github.com/nf-core/configs), so every institutional profile
+published there is available by name:
 
 ```groovy title="nextflow.config"
-profiles {
-    // ...
-    negishi   { includeConfig 'conf/negishi.config'   }
-    bell      { includeConfig 'conf/bell.config'      }
-    anvil     { includeConfig 'conf/anvil.config'     }
-    gilbreth  { includeConfig 'conf/gilbreth.config'  }
-    test      { includeConfig 'conf/test.config'      }
+includeConfig !System.getenv('NXF_OFFLINE') && params.custom_config_base
+    ? "${params.custom_config_base}/nfcore_custom.config"
+    : "/dev/null"
+```
+
+That is how `-profile purdue_gautschi` works. The config itself lives at
+[`conf/purdue_gautschi.config`](https://github.com/nf-core/configs/blob/master/conf/purdue_gautschi.config)
+in nf-core/configs, not in this repository.
+
+The advantage is that the cluster's details are maintained in one place by the people
+who run it, and every nf-core pipeline gets the same behaviour. The cost is that adding
+a cluster means a pull request to another repository.
+
+## Using a cluster that already has a profile
+
+Nothing to do. Check the
+[list of institutional profiles](https://nf-co.re/configs) and use the name:
+
+```bash
+nextflow run rcac-bioinformatics/mitoforge \
+    -profile <institution> \
+    --input samplesheet.csv \
+    --outdir results
+```
+
+Most profiles need something passed in, usually an account. Read the profile's page on
+nf-co.re for what it expects.
+
+## Adding a cluster that has no profile
+
+Follow the
+[nf-core/configs contributing guide](https://github.com/nf-core/configs/blob/master/README.md).
+In outline:
+
+1. Fork nf-core/configs.
+2. Write `conf/<institution>.config`. `purdue_gautschi.config` is a reasonable model:
+   it sets the executor, derives the partition from each task's memory request, caps
+   requests with `process.resourceLimits`, and turns on Apptainer with a cache on
+   scratch.
+3. Add the profile to `nfcore_custom.config`.
+4. Add `docs/<institution>.md`.
+5. Open the pull request.
+
+Once it is merged, `-profile <institution>` works in mitoforge with no change here,
+because the configs are fetched at launch rather than pinned.
+
+:::note[Testing before it is merged]
+Point `custom_config_base` at your fork while you iterate:
+
+```bash
+nextflow run . -profile <institution> \
+    --custom_config_base https://raw.githubusercontent.com/<you>/configs/<branch> \
+    --input samplesheet.csv --outdir results
+```
+
+:::
+
+## A local config instead
+
+For a cluster that will never be shared, or for a one-off override, a plain `-c` file
+is simpler than a profile and needs no pull request:
+
+```groovy title="mycluster.config"
+process {
+    executor       = 'slurm'
+    queue          = 'compute'
+    clusterOptions = { "--account=${params.cluster_account}" }
+    resourceLimits = [ cpus: 64, memory: '240.GB', time: '48.h' ]
+}
+
+apptainer {
+    enabled    = true
+    autoMounts = true
+    cacheDir   = "${System.getenv('SCRATCH')}/.apptainer/cache"
 }
 ```
 
-And in `validateClusterParams()`, so it demands an account and a partition:
-
-```groovy title="subworkflows/local/utils_nfcore_mitoforge_pipeline/main.nf"
-def cluster_profiles = ['negishi', 'bell', 'anvil', 'gilbreth']
-```
-
-And in `bin/run.sh`, so the wrapper pairs it with Apptainer:
-
 ```bash
-case "${PROFILE}" in
-    negishi|bell|anvil|gilbreth)
-        PROFILES="${PROFILE},apptainer"
-        ;;
+nextflow run . -c mycluster.config --input samplesheet.csv --outdir results
 ```
 
-## Step 6: check it parses, then run it
+`-c` can set anything except pipeline parameters. Those go on the command line or in a
+`-params-file`.
 
-```bash
-nextflow config -profile gilbreth .        # does it parse?
-nextflow config -o json .                  # can the tooling read it?
+## What mitoforge itself still decides
 
-# on the login node, pull containers
-export NXF_APPTAINER_CACHEDIR="$MY_SCRATCH/.apptainer_cache"
-bin/fetch_testdata.sh
-nextflow run . -profile test,gilbreth,apptainer --outdir test_results \
-    --cluster_account myaccount --cluster_queue standard
+Two things stay here rather than in a cluster profile, because they are about the
+pipeline rather than the machine:
+
+- **Resource requests**, as the labels in `conf/base.config`. A cluster profile caps
+  them with `resourceLimits`; it does not set them.
+- **What each process does**, in `conf/modules.config`: arguments, published outputs,
+  and the retry behaviour that lets one failed sample drop out without taking the run
+  with it.
+
+## If a step needs the internet
+
+Compute nodes on Gautschi can reach the internet, verified by checking HTTPS to each
+host the pipeline actually contacts. Two steps need it:
+
+| Step                         | Contacts                  |
+| ---------------------------- | ------------------------- |
+| `MITOHIFI_FINDMITOREFERENCE` | `eutils.ncbi.nlm.nih.gov` |
+| `GETORGANELLE_CONFIG`        | `gitlab.com`, `gitee.com` |
+
+If you add a cluster whose compute nodes are walled off, pin those two to the login
+node in your config:
+
+```groovy
+process {
+    withName: 'MITOHIFI_FINDMITOREFERENCE' { executor = 'local' }
+    withName: 'GETORGANELLE_CONFIG'        { executor = 'local' }
+}
 ```
 
-The test profile is small enough to run on a cluster without wasting an allocation, and
-it exercises both the HiFi and the short-read path.
-
-## Step 7: document it
-
-- `docs/quick-start.md` and `docs/index.md` — the table of where it runs
-- `docs/troubleshooting.md` — anything cluster-specific, particularly about the cache
-- `README.md` if the profile list is in it
-- `CLAUDE.md` — whether it has been tested on the cluster
-
-## A GPU cluster
-
-Nothing in mitoforge uses a GPU. MitoHiFi, GetOrganelle and everything they call are
-CPU-only. A GPU partition will run it, and waste the GPUs.
+That only works when Nextflow itself is launched from a login node. A new stage that
+reaches the network has to be added to that list as well, which is easy to forget.

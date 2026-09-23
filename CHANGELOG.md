@@ -3,6 +3,34 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### `Changed`
+
+- **Cluster profiles now come from nf-core/configs.** The hand-written `negishi`,
+  `bell` and `anvil` profiles are gone, replaced by `-profile purdue_gautschi`, which
+  is maintained at
+  [nf-core/configs](https://github.com/nf-core/configs/blob/master/conf/purdue_gautschi.config)
+  by the people who run the cluster. It routes each task to `cpu` or `highmem` from its
+  memory request, so `--cluster_queue` no longer exists; `--cluster_account` is still
+  required.
+- Documentation moved from MkDocs to Astro Starlight, with syntax highlighting on every
+  code block and an explicit internal link check in CI.
+
+### `Fixed`
+
+- All 33 admonitions had been rendering as empty title-only boxes since v0.1.0, with
+  their body text spilled out underneath. Prettier stripped the four-space indentation
+  that MkDocs Material requires. They render correctly under Starlight.
+
+### `Notes`
+
+- Compute nodes on Gautschi reach the internet, checked against every host the pipeline
+  contacts: `eutils.ncbi.nlm.nih.gov`, `gitlab.com`, `quay.io`, `ghcr.io` and
+  `depot.galaxyproject.org`. The v0.1.0 profiles assumed otherwise and pinned two steps
+  to the login node. `purdue_gautschi` does not, so a run launched from inside a batch
+  job works.
+
 ## v0.1.0 - 2026-09-22
 
 First release. Assembles, circularises and annotates animal mitochondrial genomes from

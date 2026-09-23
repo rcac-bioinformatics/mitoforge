@@ -119,8 +119,8 @@ nf-test, and the config silently stops applying.
 
 ## Where to go next
 
-- [Adding a stage](/mitoforge/developer/extending/) — worked example: filling in the ANNOTATE stub
+- [Adding a stage](/mitoforge/developer/extending/), worked example: filling in the ANNOTATE stub
 - [Adding an assembler](/mitoforge/developer/adding-an-assembler/)
 - [Adding a cluster profile](/mitoforge/developer/adding-a-cluster-profile/)
-- [Roadmap](/mitoforge/developer/roadmap/) — what is deliberately not here yet
+- [Roadmap](/mitoforge/developer/roadmap/), what is deliberately not here yet
 - [Contributing](/mitoforge/contributing/)

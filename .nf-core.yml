@@ -23,9 +23,6 @@ lint:
     - process.cpus
     - process.memory
     - process.time
-    - custom_config
-    - params.custom_config_version
-    - params.custom_config_base
   multiqc_config:
     - report_comment
   container_configs: false

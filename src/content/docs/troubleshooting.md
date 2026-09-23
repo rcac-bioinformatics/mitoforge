@@ -12,8 +12,8 @@ If a single sample failed rather than the whole run, start with
 Purdue's compute nodes cannot reach the internet. Two steps in mitoforge need to, and
 both are pinned to the login node in the cluster profiles:
 
-- `MITOHIFI_FINDMITOREFERENCE` — looks up a reference at NCBI by species name
-- `GETORGANELLE_CONFIG` — downloads GetOrganelle's seed and label databases
+- `MITOHIFI_FINDMITOREFERENCE`, looks up a reference at NCBI by species name
+- `GETORGANELLE_CONFIG`, downloads GetOrganelle's seed and label databases
 
 A third thing needs the internet and is **not** handled for you: pulling the containers.
 Do that once, on the login node, before you submit anything.
@@ -41,9 +41,9 @@ To pull exactly what _your_ samplesheet needs instead, ask Nextflow which contai
 will use and pull them yourself:
 
 ```bash
-nextflow inspect . -profile negishi,apptainer \
+nextflow inspect . -profile purdue_gautschi \
     --input samplesheet.csv --outdir results \
-    --cluster_account myaccount --cluster_queue cpu \
+    --cluster_account myaccount \
     | grep '"container"' | cut -d'"' -f4 | sort -u \
     | while read -r img; do
           case "$img" in
@@ -83,7 +83,7 @@ see a truncated or unreadable `.sif`, delete it and pull again:
 
 ```bash
 rm "$NXF_APPTAINER_CACHEDIR/<the-broken-image>"
-nextflow run . -profile negishi,apptainer ... -preview
+nextflow run . -profile purdue_gautschi ... -preview
 ```
 
 **Nothing is being cached at all.** Check the variable is exported, not just set:
@@ -121,9 +121,9 @@ process {
 ```
 
 ```bash
-nextflow run . -profile negishi,apptainer -c more_memory.config \
+nextflow run . -profile purdue_gautschi -c more_memory.config \
     --input samplesheet.csv --outdir results \
-    --cluster_account myaccount --cluster_queue cpu -resume
+    --cluster_account myaccount -resume
 ```
 
 Or target one process:
@@ -157,7 +157,7 @@ You gave one sample a mix of gzipped and plain read files. Make them consistent.
 
 **"Running Mitohifi in contigs mode requires uncompressed input!"**
 
-This should not happen — the pipeline uncompresses assemblies before the finishing step.
+This should not happen, the pipeline uncompresses assemblies before the finishing step.
 If you see it, please
 [open an issue](https://github.com/rcac-bioinformatics/mitoforge/issues).
 
@@ -185,8 +185,8 @@ KeyError: 'gene'
 
 MitoHiFi reads the `/gene=` qualifier off every CDS feature in your reference GenBank
 file. Many real submissions annotate CDS features with `/product=` only, and MitoHiFi
-does not fall back to it. It fails on its very last step — after it has already written
-the finished mitogenome — so the sample shows up as `failed: finishing` even though the
+does not fall back to it. It fails on its very last step, after it has already written
+the finished mitogenome, so the sample shows up as `failed: finishing` even though the
 result is sitting in the work directory.
 
 **Check any reference before you commit to it:**
@@ -214,17 +214,17 @@ mitogenome for the contig to be kept. The default is 50. mitoforge exposes it as
 `--mitohifi_percent_id`.
 
 ```bash
-bin/run.sh samplesheet.csv negishi results -- --mitohifi_percent_id 70
+bin/run.sh samplesheet.csv purdue_gautschi results -- --mitohifi_percent_id 70
 ```
 
-**Raise it** when NUMTs are getting through — extra candidates in
+**Raise it** when NUMTs are getting through, extra candidates in
 `all_contigs_stats.tsv` that are short, not circular, and missing genes. 70 is a
 reasonable first try. This is common in vertebrates, which carry far more nuclear
 mitochondrial insertions than insects do; a vertebrate sample that assembles several
 "mitogenomes" is usually collecting NUMTs.
 
 **Lower it** when the only reference available is distant and nothing passes the filter
-at all — `'parsed_blast.txt' and 'parsed_blast_all.txt' files are empty`. Try 30. Then
+at all, `'parsed_blast.txt' and 'parsed_blast_all.txt' files are empty`. Try 30. Then
 check the result carefully: a loose filter is exactly how a NUMT gets chosen as the
 answer.
 
@@ -260,24 +260,23 @@ Two that catch people out:
 ## The cluster profile will not start
 
 ```
-ERROR ~ The 'negishi' profile submits jobs to SLURM and is missing:
-    --cluster_account <allocation>  (run `slist` to see yours)
-    --cluster_queue <partition>     (run `sinfo -s` to see yours)
+ERROR ~ The 'purdue_gautschi' profile submits jobs to SLURM and needs an account:
+
+    --cluster_account <allocation>
 ```
 
-Exactly what it says. Both are required, and neither is guessed for you.
+Exactly what it says. Run `slist` on a Gautschi login node to see the accounts you
+belong to:
 
 ```bash
-slist       # your accounts
-sinfo -s    # your partitions
+slist
 ```
 
-Or set them in the environment and let `bin/run.sh` pass them:
+Or set it in the environment and let `bin/run.sh` pass it along:
 
 ```bash
 export MITOFORGE_ACCOUNT=myaccount
-export MITOFORGE_QUEUE=cpu
-bin/run.sh samplesheet.csv negishi
+bin/run.sh samplesheet.csv purdue_gautschi
 ```
 
 ## `-resume` is rerunning everything

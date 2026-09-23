@@ -32,7 +32,7 @@ results/
 └── pipeline_info/
 ```
 
-## `mitogenomes/` — the answer
+## `mitogenomes/`, the answer
 
 This is what you came for. One set of files per sample, named after the sample.
 
@@ -56,7 +56,7 @@ phylogeny from a hundred of these:
 
 :::
 
-## `summary/` — how the run went
+## `summary/`, how the run went
 
 ### `mitoforge_summary.tsv`
 
@@ -121,7 +121,7 @@ _not_ chosen, which is where NUMTs and heteroplasmic variants show up. See
 The same table with a header MultiQC understands. Not for you; it is what puts the
 summary at the top of the MultiQC report.
 
-## `samples/<sample>/` — the working output
+## `samples/<sample>/`, the working output
 
 ### `trimming/` (Illumina only)
 
@@ -142,10 +142,10 @@ The mitogenome `findMitoReference.py` fetched from NCBI for this sample, as
 `<accession>.fasta` and `<accession>.gb`. Keep these: they are what makes the run
 reproducible, because a lookup repeated next year may return a different record.
 
-Rows that named `ref_fa` and `ref_gb` themselves have no `reference/` directory — you
+Rows that named `ref_fa` and `ref_gb` themselves have no `reference/` directory, you
 already have those files.
 
-### `assembly/` — what the assembler produced
+### `assembly/`, what the assembler produced
 
 For a **HiFi** sample, this is MitoHiFi's reads-mode output:
 
@@ -175,10 +175,10 @@ For an **Illumina** sample, this is GetOrganelle's output:
 GetOrganelle's extended read files are not published; they are large and are in the work
 directory.
 
-### `final/` — the finishing step
+### `final/`, the finishing step
 
 MitoHiFi contigs mode, run on whatever the assembler produced. Same files as the HiFi
-`assembly/` directory above, minus the mitogenome itself — that lives in
+`assembly/` directory above, minus the mitogenome itself, which lives in
 `mitogenomes/<sample>.fasta` instead of being written twice.
 
 | File                                                                  | What it is                                  |
