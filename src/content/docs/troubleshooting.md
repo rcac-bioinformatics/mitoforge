@@ -24,6 +24,7 @@ The easy way is to run the built-in test on the login node. It exercises both th
 and the short-read path, so it pulls everything except the samtools image:
 
 ```bash
+export APPTAINER_CACHEDIR="$RCAC_SCRATCH/.apptainer/cache"
 export NXF_APPTAINER_CACHEDIR="$RCAC_SCRATCH/.apptainer_cache"
 bin/fetch_testdata.sh
 nextflow run . -profile test,apptainer --outdir test_results
@@ -78,6 +79,26 @@ on a compute node means the image was not cached. Pre-pull and rerun with `-resu
 **The cache fills your quota.** The images are several gigabytes together. `$RCAC_SCRATCH`
 is the right place.
 
+**`disk quota exceeded` while pulling, even though you set `NXF_APPTAINER_CACHEDIR`.**
+There are two caches, and that variable only moves one of them. `NXF_APPTAINER_CACHEDIR`
+tells Nextflow where to keep the finished `.img`. Apptainer separately unpacks the
+docker layers into its _own_ cache, which defaults to `$HOME/.apptainer/cache`, and on
+RCAC that quota is small. A failure ending in `close
+/home/<you>/.apptainer/cache/oci-tmp/...: disk quota exceeded` is this. Set both, then
+clear what the failed pull left behind:
+
+```bash
+export APPTAINER_CACHEDIR="$RCAC_SCRATCH/.apptainer/cache"
+export NXF_APPTAINER_CACHEDIR="$RCAC_SCRATCH/.apptainer_cache"
+mkdir -p "$APPTAINER_CACHEDIR" "$NXF_APPTAINER_CACHEDIR"
+
+apptainer cache clean --force
+rm -rf ~/.apptainer/cache
+```
+
+Put both exports in your `~/.bashrc` so this cannot come back. The MitoHiFi image is the
+one that usually triggers it: it ships MitoFinder, infernal and tRNAscan-SE.
+
 **Two runs pulling at once corrupt an image.** Apptainer does not lock the cache. If you
 see a truncated or unreadable `.sif`, delete it and pull again:
 
@@ -89,6 +110,7 @@ nextflow run . -profile purdue_gautschi ... -preview
 **Nothing is being cached at all.** Check the variable is exported, not just set:
 
 ```bash
+echo "$APPTAINER_CACHEDIR"
 echo "$NXF_APPTAINER_CACHEDIR"
 ```
 
@@ -141,9 +163,9 @@ The labels are in `conf/base.config`: `process_single`, `process_low`, `process_
 If your partition's nodes are smaller than the request, the job will never schedule
 and will sit in the queue forever. Cap it instead:
 
-    ```groovy
-    process.resourceLimits = [ cpus: 64, memory: '240.GB', time: '48.h' ]
-    ```
+```groovy
+process.resourceLimits = [ cpus: 64, memory: '240.GB', time: '48.h' ]
+```
 
 :::
 

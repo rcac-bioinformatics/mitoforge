@@ -28,6 +28,8 @@ cd mitoforge
 
 # 2. On the LOGIN NODE, run the built-in test. This pulls every container into a
 #    shared cache and proves the install works. Compute nodes have no internet.
+#    Both caches have to live on scratch. $HOME is far too small for these images.
+export APPTAINER_CACHEDIR="$RCAC_SCRATCH/.apptainer/cache"
 export NXF_APPTAINER_CACHEDIR="$RCAC_SCRATCH/.apptainer_cache"
 bin/fetch_testdata.sh
 nextflow run . -profile test,apptainer --outdir test_results
@@ -50,15 +52,16 @@ and the short-read path, so running it on the login node pulls everything you ne
 and tells you the installation is sound. It downloads about 50 MB of real public
 data and takes a few minutes. See
 [Troubleshooting](/mitoforge/troubleshooting/#no-internet-on-compute-nodes).
+
+The one container the test does not pull is samtools, which is only used for BAM
+input. If your samplesheet has a `bam` column filled in, add:
+
+```bash
+apptainer pull --dir "$NXF_APPTAINER_CACHEDIR" \
+    docker://community.wave.seqera.io/library/htslib_samtools:1.24--d697cfb9dce007cd
+```
+
 :::
-
-    The one container the test does not pull is samtools, which is only used for BAM
-    input. If your samplesheet has a `bam` column filled in, add:
-
-    ```bash
-    apptainer pull --dir "$NXF_APPTAINER_CACHEDIR" \
-        docker://community.wave.seqera.io/library/htslib_samtools:1.24--d697cfb9dce007cd
-    ```
 
 ## What step 4 actually runs
 

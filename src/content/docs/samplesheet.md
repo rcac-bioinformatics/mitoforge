@@ -96,9 +96,9 @@ MitoHiFi reads the `/gene=` qualifier off every CDS in your `ref_gb`. Plenty of 
 submissions annotate CDS features with `/product=` only, and MitoHiFi then fails on
 its very last step. Check before you commit to a reference:
 
-    ```bash
-    grep -c '/gene=' my_reference.gb    # must be greater than 0
-    ```
+```bash
+grep -c '/gene=' my_reference.gb    # must be greater than 0
+```
 
 :::
 

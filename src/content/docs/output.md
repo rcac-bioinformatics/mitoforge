@@ -47,12 +47,12 @@ It is the contig name MitoHiFi gave it, something like
 `>ptg000001l.rc.rotated_rotated`. Rename it yourself if you are about to build a
 phylogeny from a hundred of these:
 
-    ```bash
-    for f in results/mitogenomes/*.fasta; do
-        s=$(basename "$f" .fasta)
-        sed "1s/.*/>$s/" "$f" > "renamed/$s.fasta"
-    done
-    ```
+```bash
+for f in results/mitogenomes/*.fasta; do
+    s=$(basename "$f" .fasta)
+    sed "1s/.*/>$s/" "$f" > "renamed/$s.fasta"
+done
+```
 
 :::
 

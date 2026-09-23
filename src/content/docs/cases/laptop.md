@@ -97,9 +97,9 @@ output files belong to you and not to root.
 The MitoHiFi container is published for amd64 only. On arm64 it has to run under
 emulation:
 
-    ```bash
-    nextflow run . -profile docker,emulate_amd64 --input samplesheet.csv --outdir results
-    ```
+```bash
+nextflow run . -profile docker,emulate_amd64 --input samplesheet.csv --outdir results
+```
 
 :::
 
@@ -109,10 +109,10 @@ emulation:
 :::tip[Reclaiming disk]
 The work directory is where everything goes. Once you have your results:
 
-    ```bash
-    nextflow clean -f -before $(nextflow log -q | tail -1)   # keep only the last run
-    rm -rf work                                              # or just delete it
-    ```
+```bash
+nextflow clean -f -before $(nextflow log -q | tail -1)   # keep only the last run
+rm -rf work                                              # or just delete it
+```
 
 :::
 
