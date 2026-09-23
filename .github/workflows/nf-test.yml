@@ -28,7 +28,12 @@ concurrency:
 env:
   NXF_ANSI_LOG: false
   NFT_VER: "0.9.5"
-  NFT_WORKDIR: "~"
+  # NFT_WORKDIR is deliberately not set. The nf-core template sets it to "~", which
+  # is passed through literally and makes nf-test create a directory actually named
+  # "~" inside the workspace. GetOrganelle's slim_graph.py refuses any path
+  # containing a tilde ('Invalid char "~" from the input file/path'), so every
+  # short-read assembly failed on CI and nowhere else. Unset, nf-test.config falls
+  # back to .nf-test, which is what a local run uses.
 
 jobs:
   nf-test:
