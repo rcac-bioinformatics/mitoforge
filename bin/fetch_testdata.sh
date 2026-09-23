@@ -42,10 +42,52 @@ fetch() {
 }
 
 # Pull a single record from NCBI nucleotide in both FASTA and GenBank form.
+#
+# Unlike the static files above, this goes through an API that rate-limits by IP.
+# eutils answers a throttled request with HTTP 200 and a short error body, which
+# curl is perfectly happy with, so a "successful" download can leave a file that is
+# non-empty and useless. That is not a theoretical worry: GetOrganelle exits 0 when
+# its seed is unusable, writes no assembly, and the sample then silently vanishes
+# from the pipeline. Every record fetched here is checked for shape, and retried.
 fetch_ncbi() {
     local accession="$1" dir="$2"
-    fetch "${NCBI_EFETCH}&id=${accession}&rettype=fasta" "${dir}/${accession}.fasta"
-    fetch "${NCBI_EFETCH}&id=${accession}&rettype=gb"    "${dir}/${accession}.gb"
+    fetch_ncbi_one "${accession}" "fasta" "${dir}/${accession}.fasta" '^>'
+    fetch_ncbi_one "${accession}" "gb"    "${dir}/${accession}.gb"    '^LOCUS'
+}
+
+fetch_ncbi_one() {
+    local accession="$1" rettype="$2" dest="$3" first_line_re="$4"
+    local api_key_arg="" attempt
+
+    # An NCBI API key raises the rate limit from 3 to 10 requests a second. Set
+    # NCBI_API_KEY in the environment if you have one; it is not required.
+    if [[ -n "${NCBI_API_KEY:-}" ]]; then
+        api_key_arg="&api_key=${NCBI_API_KEY}"
+    fi
+
+    if [[ -s "${dest}" ]] && head -n 1 "${dest}" | grep -qE "${first_line_re}"; then
+        echo "  [skip] $(basename "${dest}") already present"
+        return
+    fi
+
+    for attempt in 1 2 3 4 5; do
+        echo "  [get ] $(basename "${dest}") (attempt ${attempt})"
+        if curl -fsSL "${NCBI_EFETCH}&id=${accession}&rettype=${rettype}${api_key_arg}" -o "${dest}.part"; then
+            # A real record starts with '>' or 'LOCUS' and is more than a stub.
+            if head -n 1 "${dest}.part" | grep -qE "${first_line_re}" && [[ $(wc -c < "${dest}.part") -gt 1000 ]]; then
+                mv "${dest}.part" "${dest}"
+                return
+            fi
+            echo "  WARN:  NCBI returned something that is not a ${rettype} record:" >&2
+            head -c 200 "${dest}.part" | sed 's/^/         /' >&2
+        fi
+        rm -f "${dest}.part"
+        sleep $(( attempt * 3 ))
+    done
+
+    echo "  ERROR: could not fetch ${accession} (${rettype}) from NCBI after 5 attempts." >&2
+    echo "         This is usually rate limiting. Set NCBI_API_KEY, or wait and rerun." >&2
+    exit 1
 }
 
 echo "==> HiFi test data (MitoHiFi shipped test set)"

@@ -77,11 +77,58 @@ jobs:
         # nf-test.config already sets `profile = "test,docker"`.
         run: nf-test test --ci --verbose --tap=test.tap
 
+      # When a test fails here it is almost never the pipeline logic - it is the
+      # environment, and the evidence lives in files that die with the runner.
+      # Print enough of it that the next failure explains itself.
+      - name: Diagnostics on failure
+        if: ${{ always() && steps.nf_test.outcome == 'failure' }}
+        run: |
+          echo "::group::Test data that was fetched"
+          ls -laR testdata/ || true
+          for f in testdata/illumina/PZ790849.fasta testdata/illumina/PZ790849.gb \
+                   testdata/hifi/MW539688.1.fasta testdata/contigs/NC_016067.1.fasta; do
+            echo "--- ${f} ($(wc -c < "${f}" 2>/dev/null || echo 0) bytes) ---"
+            head -n 2 "${f}" 2>/dev/null || echo "MISSING"
+          done
+          echo "::endgroup::"
+
+          echo "::group::Assembler logs"
+          find . -name "*.get_org.log.txt" -o -name "*.log" -path "*work*" 2>/dev/null \
+            | head -20 | while read -r log; do
+                echo "===== ${log} ====="
+                tail -n 40 "${log}"
+              done
+          echo "::endgroup::"
+
+          echo "::group::Failed task stderr"
+          find . -name ".command.err" -size +0 2>/dev/null | head -20 | while read -r err; do
+            echo "===== ${err} ====="
+            tail -n 30 "${err}"
+          done
+          echo "::endgroup::"
+
+          echo "::group::Disk"
+          df -h /
+          echo "::endgroup::"
+
       - name: Summarise
         if: always()
         run: |
+          passed=0; failed=0
+          if [ -f test.tap ]; then
+            passed=$(grep -c '^ok ' test.tap || true)
+            failed=$(grep -c '^not ok ' test.tap || true)
+          fi
           {
             echo "## nf-test | Nextflow ${{ matrix.NXF_VER }}"
+            echo ""
+            # Spell the tally out. This leg can be non-blocking, and a green job
+            # that quietly contains failed tests is worse than a red one.
+            echo "**${passed} passed, ${failed} failed.**"
+            if [ "${failed}" -gt 0 ] && [ "${{ matrix.NXF_VER }}" = "latest-everything" ]; then
+              echo ""
+              echo "> This leg does not block CI, so the job above may still show green."
+            fi
             echo ""
             if [ -f test.tap ]; then
               echo "| | Test |"

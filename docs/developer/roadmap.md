@@ -38,6 +38,12 @@ MitoHiFi itself, not here:
   another. MitoHiFi then opens the staged symlink for writing and overwrites the file in
   the upstream task's work directory. mitoforge carries a patch that stages them into
   `input/` and `reference/`; the fix belongs upstream.
+- **GetOrganelle.** It exits `0` when its seed file is unusable - it prints
+  `ERROR: <seed> is empty!` and then returns success. Nothing downstream can tell that
+  apart from "ran fine, found nothing": the nf-core module's `fasta` output is optional,
+  so the channel is simply empty and the sample disappears. mitoforge's SUMMARY catches
+  it and reports `failed: assembly`, which is the right answer, but a non-zero exit
+  would let Nextflow report it properly and immediately.
 - **MitoHiFi.** `src/getGenesList.py` reads `/gene=` off every CDS in the reference
   GenBank file, and raises `KeyError: 'gene'` if a CDS has none. Plenty of real
   mitogenome submissions annotate CDS features with `/product=` only - the bank vole
