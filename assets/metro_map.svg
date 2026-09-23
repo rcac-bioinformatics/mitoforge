@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1325 464" preserveAspectRatio="xMinYMin meet">
+<defs>
+</defs>
+<metadata id="diagram-manifest" data-schema-version="1.0"><![CDATA[{"groups":[{"color":"#8c6bb1","id":"reference","label":"Reference mitogenome"},{"color":"#2db572","id":"mitogenome","label":"Finished mitogenome"},{"color":"#f0a202","id":"hifi","label":"PacBio HiFi"},{"color":"#1f77b4","id":"illumina","label":"Illumina paired-end"}],"height":464,"match":{"flags":"i","target":"fqProcessName","type":"regex"},"nodes":[{"groups":["reference"],"h":10.0,"id":"in_ref","label":"in_ref","patterns":[],"r":5.0,"region":"reference_prep","rx":5.0,"w":10.0,"x":140.5,"y":120.0},{"groups":["reference"],"h":10.0,"id":"findmitoreference","label":"findMitoReference","patterns":["(?:^|:)RCACBIOINFORMATICS_MITOFORGE:MITOFORGE:(?:.+:)?MITOHIFI_FINDMITOREFERENCE$"],"r":5.0,"region":"reference_prep","rx":5.0,"w":10.0,"x":140.5,"y":160.0},{"groups":["hifi"],"h":10.0,"id":"in_hifi","label":"in_hifi","patterns":[],"r":5.0,"region":"hifi_asm","rx":5.0,"w":10.0,"x":321.0,"y":160.0},{"groups":["hifi"],"h":10.0,"id":"samtools_fastq","label":"samtools fastq","patterns":["(?:^|:)RCACBIOINFORMATICS_MITOFORGE:MITOFORGE:(?:.+:)?SAMTOOLS_FASTQ$"],"r":5.0,"region":"hifi_asm","rx":5.0,"w":10.0,"x":381.0,"y":160.0},{"groups":["hifi","reference"],"h":14.0,"id":"mitohifi_reads","label":"MitoHiFi -r","patterns":["(?:^|:)RCACBIOINFORMATICS_MITOFORGE:MITOFORGE:(?:.+:)?MITOHIFI_MITOHIFI$"],"r":5.0,"region":"hifi_asm","rx":5.0,"w":10.0,"x":490.5,"y":122.0},{"groups":["illumina"],"h":10.0,"id":"in_illumina","label":"in_illumina","patterns":[],"r":5.0,"region":"short_asm","rx":5.0,"w":10.0,"x":342.5,"y":350.0},{"groups":["illumina"],"h":10.0,"id":"getorganelle_config","label":"GetOrganelle DB","patterns":["(?:^|:)RCACBIOINFORMATICS_MITOFORGE:MITOFORGE:(?:.+:)?GETORGANELLE_CONFIG$"],"r":5.0,"region":"short_asm","rx":5.0,"w":10.0,"x":342.5,"y":390.0},{"groups":["illumina"],"h":10.0,"id":"fastp","label":"fastp","patterns":["(?:^|:)RCACBIOINFORMATICS_MITOFORGE:MITOFORGE:(?:.+:)?FASTP$"],"r":5.0,"region":"short_asm","rx":5.0,"w":10.0,"x":402.5,"y":350.0},{"groups":["illumina","reference"],"h":14.0,"id":"getorganelle","label":"GetOrganelle","patterns":["(?:^|:)RCACBIOINFORMATICS_MITOFORGE:MITOFORGE:(?:.+:)?GETORGANELLE_FROMREADS$"],"r":5.0,"region":"short_asm","rx":5.0,"w":10.0,"x":516.5,"y":312.0},{"groups":["illumina"],"h":10.0,"id":"gunzip","label":"gunzip","patterns":["(?:^|:)RCACBIOINFORMATICS_MITOFORGE:MITOFORGE:(?:.+:)?GUNZIP$"],"r":5.0,"region":"short_asm","rx":5.0,"w":10.0,"x":576.5,"y":314.0},{"groups":["hifi","illumina","mitogenome"],"h":14.0,"id":"mitohifi_contigs","label":"MitoHiFi -c","patterns":["(?:^|:)RCACBIOINFORMATICS_MITOFORGE:MITOFORGE:(?:.+:)?MITOHIFI_FINALIZE$"],"r":5.0,"region":"finishing","rx":5.0,"w":10.0,"x":760.0,"y":122.0},{"groups":["mitogenome"],"h":10.0,"id":"sample_stats","label":"Per-sample stats","patterns":["(?:^|:)RCACBIOINFORMATICS_MITOFORGE:MITOFORGE:(?:.+:)?MITOFORGE_SAMPLE_STATS$"],"r":5.0,"region":"reporting","rx":5.0,"w":10.0,"x":939.5,"y":120.0},{"groups":["mitogenome"],"h":10.0,"id":"summary","label":"Summary table","patterns":["(?:^|:)RCACBIOINFORMATICS_MITOFORGE:MITOFORGE:(?:.+:)?MITOFORGE_SUMMARY$"],"r":5.0,"region":"reporting","rx":5.0,"w":10.0,"x":999.5,"y":120.0},{"groups":["mitogenome"],"h":10.0,"id":"multiqc","label":"MultiQC","patterns":["(?:^|:)RCACBIOINFORMATICS_MITOFORGE:MITOFORGE:(?:.+:)?MULTIQC$"],"r":5.0,"region":"reporting","rx":5.0,"w":10.0,"x":1059.5,"y":120.0},{"groups":["mitogenome"],"h":10.0,"id":"out_mitogenome","label":"out_mitogenome","patterns":[],"r":5.0,"region":"results","rx":5.0,"w":10.0,"x":1257.5,"y":120.0},{"groups":["mitogenome"],"h":10.0,"id":"out_summary","label":"out_summary","patterns":[],"r":5.0,"region":"results","rx":5.0,"w":10.0,"x":1257.5,"y":160.0},{"groups":["mitogenome"],"h":10.0,"id":"out_report","label":"out_report","patterns":[],"r":5.0,"region":"results","rx":5.0,"w":10.0,"x":1257.5,"y":200.0}],"regions":[{"id":"reference_prep","label":"Reference"},{"id":"hifi_asm","label":"HiFi assembly"},{"id":"short_asm","label":"Short-read assembly"},{"id":"finishing","label":"Finishing"},{"id":"reporting","label":"Summary"},{"id":"results","label":"Results"}],"title":"rcac-bioinformatics/mitoforge","version":"1.0","width":1325}]]></metadata>
+<style>.nf-metro-bg { fill: var(--nfm-map-bg, light-dark(#f5f5f5, #2b2b2b)); }
+.nf-metro-title { fill: var(--nfm-map-title-color, light-dark(#111111, #ffffff)); }
+.nf-metro-station-label { fill: var(--nfm-map-label-color, light-dark(#333333, #e0e0e0)); }
+.nf-metro-section-box { fill: var(--nfm-map-section-fill, light-dark(#ededed, #373737)); stroke: var(--nfm-map-section-stroke, light-dark(#e6e6e6, #595959)); }
+.nf-metro-section-label { fill: var(--nfm-map-section-label-color, light-dark(#666666, #c8c8c8)); }
+.nf-metro-group-label { fill: var(--nfm-map-section-label-color, light-dark(#666666, #c8c8c8)); }
+.nf-metro-group-underline { stroke: var(--nfm-map-section-label-color, light-dark(#666666, #c8c8c8)); }
+.nf-metro-legend-bg { fill: var(--nfm-map-legend-bg, light-dark(rgba(255, 255, 255, 0.8), rgba(0, 0, 0, 0.3))); }
+.nf-metro-legend-text { fill: var(--nfm-map-legend-text-color, light-dark(#333333, #e0e0e0)); }
+.nf-metro-marker-stroke { stroke: var(--nfm-map-marker-stroke, light-dark(#333333, #f0f0f0)); }
+.nf-metro-label-halo { fill: var(--nfm-map-bg, light-dark(#f5f5f5, #2b2b2b)); stroke: var(--nfm-map-bg, light-dark(#f5f5f5, #2b2b2b)); }</style>
+<rect x="0" y="0" width="1325" height="464" fill="#2b2b2b" class="nf-metro-bg" />
+<rect x="60.0" y="70.0" width="161.0" height="140.0" rx="8" ry="8" fill="#373737" stroke="#595959" stroke-width="1.0" class="nf-metro-section-box" data-section-id="reference_prep" data-section-lines="reference" />
+<circle cx="71.0" cy="55.0" r="11" fill="#333333" class="nf-metro-section-num-circle" data-section-id="reference_prep" />
+<text x="71.0" y="55.0" font-size="12" fill="#ffffff" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em" data-section-id="reference_prep">1</text>
+<text x="87.0" y="55.0" font-size="16.0" fill="#c8c8c8" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" dy="0.3em" class="nf-metro-section-label" data-section-id="reference_prep">Reference</text>
+<rect x="263.0" y="70.0" width="281.0" height="140.0" rx="8" ry="8" fill="#373737" stroke="#595959" stroke-width="1.0" class="nf-metro-section-box" data-section-id="hifi_asm" data-section-lines="hifi,reference" />
+<circle cx="274.0" cy="55.0" r="11" fill="#333333" class="nf-metro-section-num-circle" data-section-id="hifi_asm" />
+<text x="274.0" y="55.0" font-size="12" fill="#ffffff" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em" data-section-id="hifi_asm">2</text>
+<text x="290.0" y="55.0" font-size="16.0" fill="#c8c8c8" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" dy="0.3em" class="nf-metro-section-label" data-section-id="hifi_asm">HiFi assembly</text>
+<rect x="271.0" y="260.0" width="355.5" height="180.0" rx="8" ry="8" fill="#373737" stroke="#595959" stroke-width="1.0" class="nf-metro-section-box" data-section-id="short_asm" data-section-lines="illumina,reference" />
+<circle cx="282.0" cy="245.0" r="11" fill="#333333" class="nf-metro-section-num-circle" data-section-id="short_asm" />
+<text x="282.0" y="245.0" font-size="12" fill="#ffffff" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em" data-section-id="short_asm">3</text>
+<text x="298.0" y="245.0" font-size="16.0" fill="#c8c8c8" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" dy="0.3em" class="nf-metro-section-label" data-section-id="short_asm">Short-read assembly</text>
+<rect x="706.5" y="70.0" width="107.0" height="100.0" rx="8" ry="8" fill="#373737" stroke="#595959" stroke-width="1.0" class="nf-metro-section-box" data-section-id="finishing" data-section-lines="hifi,illumina,mitogenome" />
+<circle cx="717.5" cy="55.0" r="11" fill="#333333" class="nf-metro-section-num-circle" data-section-id="finishing" />
+<text x="717.5" y="55.0" font-size="12" fill="#ffffff" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em" data-section-id="finishing">4</text>
+<text x="733.5" y="55.0" font-size="16.0" fill="#c8c8c8" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" dy="0.3em" class="nf-metro-section-label" data-section-id="finishing">Finishing</text>
+<rect x="863.5" y="70.0" width="246.0" height="100.0" rx="8" ry="8" fill="#373737" stroke="#595959" stroke-width="1.0" class="nf-metro-section-box" data-section-id="reporting" data-section-lines="mitogenome" />
+<circle cx="874.5" cy="55.0" r="11" fill="#333333" class="nf-metro-section-num-circle" data-section-id="reporting" />
+<text x="874.5" y="55.0" font-size="12" fill="#ffffff" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em" data-section-id="reporting">5</text>
+<text x="890.5" y="55.0" font-size="16.0" fill="#c8c8c8" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" dy="0.3em" class="nf-metro-section-label" data-section-id="reporting">Summary</text>
+<rect x="1189.5" y="70.0" width="136.0" height="180.0" rx="8" ry="8" fill="#373737" stroke="#595959" stroke-width="1.0" class="nf-metro-section-box" data-section-id="results" data-section-lines="mitogenome" />
+<circle cx="1200.5" cy="55.0" r="11" fill="#333333" class="nf-metro-section-num-circle" data-section-id="results" />
+<text x="1200.5" y="55.0" font-size="12" fill="#ffffff" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em" data-section-id="results">6</text>
+<text x="1216.5" y="55.0" font-size="16.0" fill="#c8c8c8" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" dy="0.3em" class="nf-metro-section-label" data-section-id="results">Results</text>
+<path d="M342.5,350.0 L402.5,350.0" stroke="#1f77b4" stroke-width="3.0" stroke-linecap="round" class="metro-line-illumina" data-line-id="illumina" />
+<path d="M342.5,390.0 L422.5,390.0 Q432.5,390.0,436.1716653473605,380.69844778668676 L458.8283346526395,323.30155221331324 Q462.5,314.0,472.5,314.0 L516.5,314.0" stroke="#1f77b4" stroke-width="3.0" fill="none" stroke-linecap="round" stroke-linejoin="round" class="metro-line-illumina" data-line-id="illumina" />
+<path d="M402.5,350.0 L422.5,350.0 Q432.5,350.0,438.9018439966448,342.3177872040262 L456.0981560033552,321.6822127959738 Q462.5,314.0,472.5,314.0 L516.5,314.0" stroke="#1f77b4" stroke-width="3.0" fill="none" stroke-linecap="round" stroke-linejoin="round" class="metro-line-illumina" data-line-id="illumina" />
+<path d="M516.5,314.0 L576.5,314.0" stroke="#1f77b4" stroke-width="3.0" stroke-linecap="round" class="metro-line-illumina" data-line-id="illumina" />
+<path d="M576.5,314.0 L626.5,314.0" stroke="#1f77b4" stroke-width="3.0" stroke-linecap="round" class="metro-line-illumina" data-line-id="illumina" />
+<path d="M706.5,124.0 L760.0,124.0" stroke="#1f77b4" stroke-width="3.0" stroke-linecap="round" class="metro-line-illumina" data-line-id="illumina" />
+<path d="M626.5,314.0 L656.5,314.0 Q666.5,314.0,666.5,304.0 L666.5,134.0 Q666.5,124.0,676.5,124.0 L706.5,124.0" stroke="#1f77b4" stroke-width="3.0" fill="none" stroke-linecap="round" stroke-linejoin="round" class="metro-line-illumina" data-line-id="illumina" />
+<path d="M321.0,160.0 L381.0,160.0" stroke="#f0a202" stroke-width="3.0" stroke-linecap="round" class="metro-line-hifi" data-line-id="hifi" />
+<path d="M381.0,160.0 L401.0,160.0 Q411.0,160.0,417.4018439966448,152.31778720402625 L434.5981560033552,131.68221279597375 Q441.0,124.0,451.0,124.0 L490.5,124.0" stroke="#f0a202" stroke-width="3.0" fill="none" stroke-linecap="round" stroke-linejoin="round" class="metro-line-hifi" data-line-id="hifi" />
+<path d="M490.5,124.0 L544.0,124.0" stroke="#f0a202" stroke-width="3.0" stroke-linecap="round" class="metro-line-hifi" data-line-id="hifi" />
+<path d="M706.5,120.0 L760.0,120.0" stroke="#f0a202" stroke-width="3.0" stroke-linecap="round" class="metro-line-hifi" data-line-id="hifi" />
+<path d="M544.0,124.0 L551.1715728752538,124.0 Q554.0,124.0,556.0,122.0 L556.0,122.0 Q558.0,120.0,560.8284271247462,120.0 L706.5,120.0" stroke="#f0a202" stroke-width="3.0" fill="none" stroke-linecap="round" stroke-linejoin="round" class="metro-line-hifi" data-line-id="hifi" />
+<path d="M939.5,120.0 L999.5,120.0" stroke="#2db572" stroke-width="3.0" stroke-linecap="round" class="metro-line-mitogenome" data-line-id="mitogenome" />
+<path d="M999.5,120.0 L1059.5,120.0" stroke="#2db572" stroke-width="3.0" stroke-linecap="round" class="metro-line-mitogenome" data-line-id="mitogenome" />
+<path d="M760.0,120.0 L813.5,120.0" stroke="#2db572" stroke-width="3.0" stroke-linecap="round" class="metro-line-mitogenome" data-line-id="mitogenome" />
+<path d="M863.5,120.0 L939.5,120.0" stroke="#2db572" stroke-width="3.0" stroke-linecap="round" class="metro-line-mitogenome" data-line-id="mitogenome" />
+<path d="M1189.5,120.0 L1257.5,120.0" stroke="#2db572" stroke-width="3.0" stroke-linecap="round" class="metro-line-mitogenome" data-line-id="mitogenome" />
+<path d="M999.5,120.0 L1109.5,120.0" stroke="#2db572" stroke-width="3.0" stroke-linecap="round" class="metro-line-mitogenome" data-line-id="mitogenome" />
+<path d="M1189.5,120.0 L1194.5,120.0 Q1204.5,120.0,1210.5,128.0 L1228.5,152.0 Q1234.5,160.0,1244.5,160.0 L1257.5,160.0" stroke="#2db572" stroke-width="3.0" fill="none" stroke-linecap="round" stroke-linejoin="round" class="metro-line-mitogenome" data-line-id="mitogenome" />
+<path d="M1059.5,120.0 L1109.5,120.0" stroke="#2db572" stroke-width="3.0" stroke-linecap="round" class="metro-line-mitogenome" data-line-id="mitogenome" />
+<path d="M1189.5,120.0 L1194.5,120.0 Q1204.5,120.0,1208.011234415884,129.36329177569044 L1230.988765584116,190.63670822430956 Q1234.5,200.0,1244.5,200.0 L1257.5,200.0" stroke="#2db572" stroke-width="3.0" fill="none" stroke-linecap="round" stroke-linejoin="round" class="metro-line-mitogenome" data-line-id="mitogenome" />
+<path d="M813.5,120.0 L823.5,120.0" stroke="#2db572" stroke-width="3.0" stroke-linecap="round" class="metro-line-mitogenome" data-line-id="mitogenome" />
+<path d="M823.5,120.0 L863.5,120.0" stroke="#2db572" stroke-width="3.0" stroke-linecap="round" class="metro-line-mitogenome" data-line-id="mitogenome" />
+<path d="M823.5,120.0 L829.5,120.0 Q839.5,120.0,839.5,130.0 L839.5,186.0 Q839.5,196.0,849.5,196.0 L1139.5,196.0 Q1149.5,196.0,1149.5,186.0 L1149.5,130.0 Q1149.5,120.0,1159.5,120.0 L1189.5,120.0" stroke="#2db572" stroke-width="3.0" fill="none" stroke-linecap="round" stroke-linejoin="round" class="metro-line-mitogenome" data-line-id="mitogenome" />
+<path d="M1109.5,120.0 L1189.5,120.0" stroke="#2db572" stroke-width="3.0" stroke-linecap="round" class="metro-line-mitogenome" data-line-id="mitogenome" />
+<path d="M140.5,120.0 L221.0,120.0" stroke="#8c6bb1" stroke-width="3.0" stroke-linecap="round" class="metro-line-reference" data-line-id="reference" />
+<path d="M263.0,120.0 L490.5,120.0" stroke="#8c6bb1" stroke-width="3.0" stroke-linecap="round" class="metro-line-reference" data-line-id="reference" />
+<path d="M271.0,310.0 L516.5,310.0" stroke="#8c6bb1" stroke-width="3.0" stroke-linecap="round" class="metro-line-reference" data-line-id="reference" />
+<path d="M140.5,160.0 L166.0,160.0 Q176.0,160.0,182.0,152.0 L200.0,128.0 Q206.0,120.0,216.0,120.0 L221.0,120.0" stroke="#8c6bb1" stroke-width="3.0" fill="none" stroke-linecap="round" stroke-linejoin="round" class="metro-line-reference" data-line-id="reference" />
+<path d="M221.0,120.0 L231.0,120.0" stroke="#8c6bb1" stroke-width="3.0" stroke-linecap="round" class="metro-line-reference" data-line-id="reference" />
+<path d="M231.0,120.0 L263.0,120.0" stroke="#8c6bb1" stroke-width="3.0" stroke-linecap="round" class="metro-line-reference" data-line-id="reference" />
+<path d="M231.0,120.0 L232.0,120.0 Q242.0,120.0,242.0,130.0 L242.0,300.0 Q242.0,310.0,252.0,310.0 L271.0,310.0" stroke="#8c6bb1" stroke-width="3.0" fill="none" stroke-linecap="round" stroke-linejoin="round" class="metro-line-reference" data-line-id="reference" />
+<g class="nf-metro-station-group" data-node-id="in_ref" data-node-cx="140.5" data-node-cy="120.0" data-node-r="5.0" data-node-groups="reference" data-node-region="reference_prep" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="135.5" y="115.0" width="10.0" height="10.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="in_ref" data-station-lines="reference" data-station-label="in_ref" data-section-id="reference_prep" data-section-name="Reference" />
+<g data-station-id="in_ref">
+<path d="M99.3,99.8 L117.3,99.8 L125.3,107.8 L125.3,129.8 Q125.3,131.8,123.3,131.8 L99.3,131.8 Q97.3,131.8,97.3,129.8 L97.3,101.8 Q97.3,99.8,99.3,99.8 Z" fill="#ffffff" stroke="#333333" stroke-width="1.5" stroke-linejoin="round" />
+<path d="M117.3,99.8 L117.3,107.8 L125.3,107.8 Z" fill="#333333" opacity="0.15" stroke="none" />
+<path d="M117.3,99.8 L117.3,107.8 L125.3,107.8" fill="none" stroke="#333333" stroke-width="0.8999999999999999" />
+<path d="M103.5,104.0 L121.5,104.0 L129.5,112.0 L129.5,134.0 Q129.5,136.0,127.5,136.0 L103.5,136.0 Q101.5,136.0,101.5,134.0 L101.5,106.0 Q101.5,104.0,103.5,104.0 Z" fill="#ffffff" stroke="#333333" stroke-width="1.5" stroke-linejoin="round" />
+<path d="M121.5,104.0 L121.5,112.0 L129.5,112.0 Z" fill="#333333" opacity="0.15" stroke="none" />
+<path d="M121.5,104.0 L121.5,112.0 L129.5,112.0" fill="none" stroke="#333333" stroke-width="0.8999999999999999" />
+<text x="115.5" y="117.075" font-size="6.388888888888889" fill="#000000" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em">FASTA/</text>
+<text x="115.5" y="125.325" font-size="7.5" fill="#000000" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em">GBK</text>
+</g>
+</g>
+<g class="nf-metro-station-group" data-node-id="findmitoreference" data-node-cx="140.5" data-node-cy="160.0" data-node-r="5.0" data-node-groups="reference" data-node-region="reference_prep" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="135.5" y="155.0" width="10.0" height="10.0" rx="5.0" ry="5.0" fill="#2b2b2b" stroke="#f0f0f0" stroke-width="1.5" class="nf-metro-station nf-metro-marker-stroke" data-station-id="findmitoreference" data-station-lines="reference" data-station-label="findMitoReference" data-section-id="reference_prep" data-section-name="Reference" />
+</g>
+<g class="nf-metro-station-group" data-node-id="in_hifi" data-node-cx="321.0" data-node-cy="160.0" data-node-r="5.0" data-node-groups="hifi" data-node-region="hifi_asm" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="316.0" y="155.0" width="10.0" height="10.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="in_hifi" data-station-lines="hifi" data-station-label="in_hifi" data-section-id="hifi_asm" data-section-name="HiFi assembly" />
+<g data-station-id="in_hifi">
+<path d="M279.8,139.8 L297.8,139.8 L305.8,147.8 L305.8,169.8 Q305.8,171.8,303.8,171.8 L279.8,171.8 Q277.8,171.8,277.8,169.8 L277.8,141.8 Q277.8,139.8,279.8,139.8 Z" fill="#ffffff" stroke="#333333" stroke-width="1.5" stroke-linejoin="round" />
+<path d="M297.8,139.8 L297.8,147.8 L305.8,147.8 Z" fill="#333333" opacity="0.15" stroke="none" />
+<path d="M297.8,139.8 L297.8,147.8 L305.8,147.8" fill="none" stroke="#333333" stroke-width="0.8999999999999999" />
+<path d="M284.0,144.0 L302.0,144.0 L310.0,152.0 L310.0,174.0 Q310.0,176.0,308.0,176.0 L284.0,176.0 Q282.0,176.0,282.0,174.0 L282.0,146.0 Q282.0,144.0,284.0,144.0 Z" fill="#ffffff" stroke="#333333" stroke-width="1.5" stroke-linejoin="round" />
+<path d="M302.0,144.0 L302.0,152.0 L310.0,152.0 Z" fill="#333333" opacity="0.15" stroke="none" />
+<path d="M302.0,144.0 L302.0,152.0 L310.0,152.0" fill="none" stroke="#333333" stroke-width="0.8999999999999999" />
+<text x="296.0" y="157.075" font-size="6.388888888888889" fill="#000000" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em">FASTQ/</text>
+<text x="296.0" y="165.325" font-size="7.5" fill="#000000" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em">BAM</text>
+</g>
+</g>
+<g class="nf-metro-station-group" data-node-id="samtools_fastq" data-node-cx="381.0" data-node-cy="160.0" data-node-r="5.0" data-node-groups="hifi" data-node-region="hifi_asm" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="376.0" y="155.0" width="10.0" height="10.0" rx="5.0" ry="5.0" fill="#2b2b2b" stroke="#f0f0f0" stroke-width="1.5" class="nf-metro-station nf-metro-marker-stroke" data-station-id="samtools_fastq" data-station-lines="hifi" data-station-label="samtools fastq" data-section-id="hifi_asm" data-section-name="HiFi assembly" />
+</g>
+<g class="nf-metro-station-group" data-node-id="mitohifi_reads" data-node-cx="490.5" data-node-cy="122.0" data-node-r="5.0" data-node-groups="hifi,reference" data-node-region="hifi_asm" data-node-w="10.0" data-node-h="14.0" data-node-rx="5.0">
+<rect x="485.5" y="115.0" width="10.0" height="14.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="mitohifi_reads" data-station-lines="hifi,reference" data-station-label="MitoHiFi -r" data-section-id="hifi_asm" data-section-name="HiFi assembly" />
+</g>
+<g class="nf-metro-station-group" data-node-id="in_illumina" data-node-cx="342.5" data-node-cy="350.0" data-node-r="5.0" data-node-groups="illumina" data-node-region="short_asm" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="337.5" y="345.0" width="10.0" height="10.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="in_illumina" data-station-lines="illumina" data-station-label="in_illumina" data-section-id="short_asm" data-section-name="Short-read assembly" />
+<g data-station-id="in_illumina">
+<path d="M301.3,329.8 L319.3,329.8 L327.3,337.8 L327.3,359.8 Q327.3,361.8,325.3,361.8 L301.3,361.8 Q299.3,361.8,299.3,359.8 L299.3,331.8 Q299.3,329.8,301.3,329.8 Z" fill="#ffffff" stroke="#333333" stroke-width="1.5" stroke-linejoin="round" />
+<path d="M319.3,329.8 L319.3,337.8 L327.3,337.8 Z" fill="#333333" opacity="0.15" stroke="none" />
+<path d="M319.3,329.8 L319.3,337.8 L327.3,337.8" fill="none" stroke="#333333" stroke-width="0.8999999999999999" />
+<path d="M305.5,334.0 L323.5,334.0 L331.5,342.0 L331.5,364.0 Q331.5,366.0,329.5,366.0 L305.5,366.0 Q303.5,366.0,303.5,364.0 L303.5,336.0 Q303.5,334.0,305.5,334.0 Z" fill="#ffffff" stroke="#333333" stroke-width="1.5" stroke-linejoin="round" />
+<path d="M323.5,334.0 L323.5,342.0 L331.5,342.0 Z" fill="#333333" opacity="0.15" stroke="none" />
+<path d="M323.5,334.0 L323.5,342.0 L331.5,342.0" fill="none" stroke="#333333" stroke-width="0.8999999999999999" />
+<text x="317.5" y="351.2" font-size="7.5" fill="#000000" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em">FASTQ</text>
+</g>
+</g>
+<g class="nf-metro-station-group" data-node-id="getorganelle_config" data-node-cx="342.5" data-node-cy="390.0" data-node-r="5.0" data-node-groups="illumina" data-node-region="short_asm" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="337.5" y="385.0" width="10.0" height="10.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="getorganelle_config" data-station-lines="illumina" data-station-label="GetOrganelle DB" data-section-id="short_asm" data-section-name="Short-read assembly" />
+</g>
+<g class="nf-metro-station-group" data-node-id="fastp" data-node-cx="402.5" data-node-cy="350.0" data-node-r="5.0" data-node-groups="illumina" data-node-region="short_asm" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="397.5" y="345.0" width="10.0" height="10.0" rx="5.0" ry="5.0" fill="#2b2b2b" stroke="#f0f0f0" stroke-width="1.5" class="nf-metro-station nf-metro-marker-stroke" data-station-id="fastp" data-station-lines="illumina" data-station-label="fastp" data-section-id="short_asm" data-section-name="Short-read assembly" />
+</g>
+<g class="nf-metro-station-group" data-node-id="getorganelle" data-node-cx="516.5" data-node-cy="312.0" data-node-r="5.0" data-node-groups="illumina,reference" data-node-region="short_asm" data-node-w="10.0" data-node-h="14.0" data-node-rx="5.0">
+<rect x="511.5" y="305.0" width="10.0" height="14.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="getorganelle" data-station-lines="illumina,reference" data-station-label="GetOrganelle" data-section-id="short_asm" data-section-name="Short-read assembly" />
+</g>
+<g class="nf-metro-station-group" data-node-id="gunzip" data-node-cx="576.5" data-node-cy="314.0" data-node-r="5.0" data-node-groups="illumina" data-node-region="short_asm" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="571.5" y="309.0" width="10.0" height="10.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="gunzip" data-station-lines="illumina" data-station-label="gunzip" data-section-id="short_asm" data-section-name="Short-read assembly" />
+</g>
+<g class="nf-metro-station-group" data-node-id="mitohifi_contigs" data-node-cx="760.0" data-node-cy="122.0" data-node-r="5.0" data-node-groups="hifi,illumina,mitogenome" data-node-region="finishing" data-node-w="10.0" data-node-h="14.0" data-node-rx="5.0">
+<rect x="755.0" y="115.0" width="10.0" height="14.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="mitohifi_contigs" data-station-lines="hifi,illumina,mitogenome" data-station-label="MitoHiFi -c" data-section-id="finishing" data-section-name="Finishing" />
+</g>
+<g class="nf-metro-station-group" data-node-id="sample_stats" data-node-cx="939.5" data-node-cy="120.0" data-node-r="5.0" data-node-groups="mitogenome" data-node-region="reporting" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="934.5" y="115.0" width="10.0" height="10.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="sample_stats" data-station-lines="mitogenome" data-station-label="Per-sample stats" data-section-id="reporting" data-section-name="Summary" />
+</g>
+<g class="nf-metro-station-group" data-node-id="summary" data-node-cx="999.5" data-node-cy="120.0" data-node-r="5.0" data-node-groups="mitogenome" data-node-region="reporting" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="994.5" y="115.0" width="10.0" height="10.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="summary" data-station-lines="mitogenome" data-station-label="Summary table" data-section-id="reporting" data-section-name="Summary" />
+</g>
+<g class="nf-metro-station-group" data-node-id="multiqc" data-node-cx="1059.5" data-node-cy="120.0" data-node-r="5.0" data-node-groups="mitogenome" data-node-region="reporting" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="1054.5" y="115.0" width="10.0" height="10.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="multiqc" data-station-lines="mitogenome" data-station-label="MultiQC" data-section-id="reporting" data-section-name="Summary" />
+</g>
+<g class="nf-metro-station-group" data-node-id="out_mitogenome" data-node-cx="1257.5" data-node-cy="120.0" data-node-r="5.0" data-node-groups="mitogenome" data-node-region="results" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="1252.5" y="115.0" width="10.0" height="10.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="out_mitogenome" data-station-lines="mitogenome" data-station-label="out_mitogenome" data-section-id="results" data-section-name="Results" />
+<g data-station-id="out_mitogenome">
+<path d="M1274.7,99.8 L1292.7,99.8 L1300.7,107.8 L1300.7,129.8 Q1300.7,131.8,1298.7,131.8 L1274.7,131.8 Q1272.7,131.8,1272.7,129.8 L1272.7,101.8 Q1272.7,99.8,1274.7,99.8 Z" fill="#ffffff" stroke="#333333" stroke-width="1.5" stroke-linejoin="round" />
+<path d="M1292.7,99.8 L1292.7,107.8 L1300.7,107.8 Z" fill="#333333" opacity="0.15" stroke="none" />
+<path d="M1292.7,99.8 L1292.7,107.8 L1300.7,107.8" fill="none" stroke="#333333" stroke-width="0.8999999999999999" />
+<path d="M1270.5,104.0 L1288.5,104.0 L1296.5,112.0 L1296.5,134.0 Q1296.5,136.0,1294.5,136.0 L1270.5,136.0 Q1268.5,136.0,1268.5,134.0 L1268.5,106.0 Q1268.5,104.0,1270.5,104.0 Z" fill="#ffffff" stroke="#333333" stroke-width="1.5" stroke-linejoin="round" />
+<path d="M1288.5,104.0 L1288.5,112.0 L1296.5,112.0 Z" fill="#333333" opacity="0.15" stroke="none" />
+<path d="M1288.5,104.0 L1288.5,112.0 L1296.5,112.0" fill="none" stroke="#333333" stroke-width="0.8999999999999999" />
+<text x="1282.5" y="112.95" font-size="6.388888888888889" fill="#000000" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em">FASTA/</text>
+<text x="1282.5" y="121.2" font-size="7.5" fill="#000000" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em">GBK/</text>
+<text x="1282.5" y="129.45" font-size="7.5" fill="#000000" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em">GFF</text>
+</g>
+</g>
+<g class="nf-metro-station-group" data-node-id="out_summary" data-node-cx="1257.5" data-node-cy="160.0" data-node-r="5.0" data-node-groups="mitogenome" data-node-region="results" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="1252.5" y="155.0" width="10.0" height="10.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="out_summary" data-station-lines="mitogenome" data-station-label="out_summary" data-section-id="results" data-section-name="Results" />
+<g data-station-id="out_summary">
+<path d="M1270.5,144.0 L1288.5,144.0 L1296.5,152.0 L1296.5,174.0 Q1296.5,176.0,1294.5,176.0 L1270.5,176.0 Q1268.5,176.0,1268.5,174.0 L1268.5,146.0 Q1268.5,144.0,1270.5,144.0 Z" fill="#ffffff" stroke="#333333" stroke-width="1.5" stroke-linejoin="round" />
+<path d="M1288.5,144.0 L1288.5,152.0 L1296.5,152.0 Z" fill="#333333" opacity="0.15" stroke="none" />
+<path d="M1288.5,144.0 L1288.5,152.0 L1296.5,152.0" fill="none" stroke="#333333" stroke-width="0.8999999999999999" />
+<text x="1282.5" y="161.2" font-size="7.5" fill="#000000" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em">TSV</text>
+</g>
+</g>
+<g class="nf-metro-station-group" data-node-id="out_report" data-node-cx="1257.5" data-node-cy="200.0" data-node-r="5.0" data-node-groups="mitogenome" data-node-region="results" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="1252.5" y="195.0" width="10.0" height="10.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="out_report" data-station-lines="mitogenome" data-station-label="out_report" data-section-id="results" data-section-name="Results" />
+<g data-station-id="out_report">
+<path d="M1270.5,184.0 L1288.5,184.0 L1296.5,192.0 L1296.5,214.0 Q1296.5,216.0,1294.5,216.0 L1270.5,216.0 Q1268.5,216.0,1268.5,214.0 L1268.5,186.0 Q1268.5,184.0,1270.5,184.0 Z" fill="#ffffff" stroke="#333333" stroke-width="1.5" stroke-linejoin="round" />
+<path d="M1288.5,184.0 L1288.5,192.0 L1296.5,192.0 Z" fill="#333333" opacity="0.15" stroke="none" />
+<path d="M1288.5,184.0 L1288.5,192.0 L1296.5,192.0" fill="none" stroke="#333333" stroke-width="0.8999999999999999" />
+<text x="1282.5" y="201.2" font-size="7.5" fill="#000000" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em">HTML</text>
+</g>
+</g>
+<text x="939.5" y="131.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="hanging">Per-sample stats</text>
+<text x="939.5" y="131.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="hanging" data-station-id="sample_stats" class="nf-metro-station-label">Per-sample stats</text>
+<text x="342.5" y="401.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="hanging">GetOrganelle DB</text>
+<text x="342.5" y="401.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="hanging" data-station-id="getorganelle_config" class="nf-metro-station-label">GetOrganelle DB</text>
+<text x="760.0" y="135.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="hanging">MitoHiFi -c</text>
+<text x="760.0" y="135.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="hanging" data-station-id="mitohifi_contigs" class="nf-metro-station-label">MitoHiFi -c</text>
+<text x="140.5" y="171.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="hanging">findMitoReference</text>
+<text x="140.5" y="171.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="hanging" data-station-id="findmitoreference" class="nf-metro-station-label">findMitoReference</text>
+<text x="383.3" y="171.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="hanging">samtools fastq</text>
+<text x="383.3" y="171.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="hanging" data-station-id="samtools_fastq" class="nf-metro-station-label">samtools fastq</text>
+<text x="402.5" y="361.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="hanging">fastp</text>
+<text x="402.5" y="361.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="hanging" data-station-id="fastp" class="nf-metro-station-label">fastp</text>
+<text x="999.5" y="106.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="auto">Summary table</text>
+<text x="999.5" y="106.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="auto" data-station-id="summary" class="nf-metro-station-label">Summary table</text>
+<text x="490.5" y="106.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="auto">MitoHiFi -r</text>
+<text x="490.5" y="106.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="auto" data-station-id="mitohifi_reads" class="nf-metro-station-label">MitoHiFi -r</text>
+<text x="516.5" y="296.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="auto">GetOrganelle</text>
+<text x="516.5" y="296.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="auto" data-station-id="getorganelle" class="nf-metro-station-label">GetOrganelle</text>
+<text x="1059.5" y="131.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="hanging">MultiQC</text>
+<text x="1059.5" y="131.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="hanging" data-station-id="multiqc" class="nf-metro-station-label">MultiQC</text>
+<text x="576.5" y="325.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="hanging">gunzip</text>
+<text x="576.5" y="325.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="hanging" data-station-id="gunzip" class="nf-metro-station-label">gunzip</text>
+<rect x="1093.8" y="276.0" width="221.70000000000002" height="154.0" rx="6" ry="6" fill="rgba(0, 0, 0, 0.3)" class="nf-metro-legend-bg" />
+<path d="M1105.8,300.0 L1129.8,300.0" stroke="#8c6bb1" stroke-width="3.0" stroke-linecap="round" />
+<text x="1141.8" y="300.0" font-size="14.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" dy="0.3em" class="nf-metro-legend-text">Reference mitogenome</text>
+<path d="M1105.8,324.0 L1129.8,324.0" stroke="#2db572" stroke-width="3.0" stroke-linecap="round" />
+<text x="1141.8" y="324.0" font-size="14.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" dy="0.3em" class="nf-metro-legend-text">Finished mitogenome</text>
+<path d="M1105.8,348.0 L1129.8,348.0" stroke="#f0a202" stroke-width="3.0" stroke-linecap="round" />
+<text x="1141.8" y="348.0" font-size="14.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" dy="0.3em" class="nf-metro-legend-text">PacBio HiFi</text>
+<path d="M1105.8,372.0 L1129.8,372.0" stroke="#1f77b4" stroke-width="3.0" stroke-linecap="round" />
+<text x="1141.8" y="372.0" font-size="14.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" dy="0.3em" class="nf-metro-legend-text">Illumina paired-end</text>
+<circle cx="1117.8" cy="406.0" r="6.0" fill="#2b2b2b" stroke="#f0f0f0" stroke-width="1.5" class="nf-metro-marker-stroke" />
+<text x="1141.8" y="406.0" font-size="14.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" dy="0.3em" class="nf-metro-legend-text">Runs only when needed</text>
+<text x="1317.0" y="456.0" font-size="8" fill="rgba(150, 150, 150, 0.6)" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" text-anchor="end">created with nf-metro v2.1.0</text>
+</svg>

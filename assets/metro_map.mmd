@@ -1,0 +1,97 @@
+%%metro title: rcac-bioinformatics/mitoforge
+%%metro style: nfcore
+%%metro line: hifi | PacBio HiFi | #f0a202
+%%metro line: illumina | Illumina paired-end | #1f77b4
+%%metro line: reference | Reference mitogenome | #8c6bb1
+%%metro line: mitogenome | Finished mitogenome | #2db572
+%%metro files: in_hifi | FASTQ/BAM
+%%metro files: in_illumina | FASTQ
+%%metro files: in_ref | FASTA/GBK
+%%metro files: out_mitogenome | FASTA/GBK/GFF
+%%metro file: out_summary | TSV
+%%metro file: out_report | HTML
+%%metro marker: findmitoreference | circle, open
+%%metro marker: samtools_fastq | circle, open
+%%metro marker: fastp | circle, open
+%%metro marker_legend: circle, open | Runs only when needed
+%%metro line_order: span
+%%metro compact_offsets: true
+%%metro legend: bl
+
+%%metro process_scope: RCACBIOINFORMATICS_MITOFORGE:MITOFORGE
+%%metro process: findmitoreference | MITOHIFI_FINDMITOREFERENCE
+%%metro process: samtools_fastq | SAMTOOLS_FASTQ
+%%metro process: mitohifi_reads | MITOHIFI_MITOHIFI
+%%metro process: fastp | FASTP
+%%metro process: getorganelle_config | GETORGANELLE_CONFIG
+%%metro process: getorganelle | GETORGANELLE_FROMREADS
+%%metro process: gunzip | GUNZIP
+%%metro process: mitohifi_contigs | MITOHIFI_FINALIZE
+%%metro process: sample_stats | MITOFORGE_SAMPLE_STATS
+%%metro process: summary | MITOFORGE_SUMMARY
+%%metro process: multiqc | MULTIQC
+
+graph LR
+    subgraph reference_prep [Reference]
+        %%metro exit: right | reference
+        in_ref[ ]
+        findmitoreference[findMitoReference]
+    end
+
+    subgraph hifi_asm [HiFi assembly]
+        %%metro entry: left | reference
+        %%metro exit: right | hifi
+        in_hifi[ ]
+        samtools_fastq[samtools fastq]
+        mitohifi_reads[MitoHiFi -r]
+        in_hifi -->|hifi| samtools_fastq
+        samtools_fastq -->|hifi| mitohifi_reads
+    end
+
+    subgraph short_asm [Short-read assembly]
+        %%metro entry: left | reference
+        %%metro exit: right | illumina
+        in_illumina[ ]
+        getorganelle_config[GetOrganelle DB]
+        fastp[fastp]
+        getorganelle[GetOrganelle]
+        gunzip[gunzip]
+        in_illumina -->|illumina| fastp
+        getorganelle_config -->|illumina| getorganelle
+        fastp -->|illumina| getorganelle
+        getorganelle -->|illumina| gunzip
+    end
+
+    subgraph finishing [Finishing]
+        %%metro entry: left | hifi,illumina,reference
+        %%metro exit: right | mitogenome
+        mitohifi_contigs[MitoHiFi -c]
+    end
+
+    subgraph reporting [Summary]
+        %%metro entry: left | mitogenome
+        %%metro exit: right | mitogenome
+        sample_stats[Per-sample stats]
+        summary[Summary table]
+        multiqc[MultiQC]
+        sample_stats -->|mitogenome| summary
+        summary -->|mitogenome| multiqc
+    end
+
+    subgraph results [Results]
+        %%metro entry: left | mitogenome
+        out_mitogenome[ ]
+        out_summary[ ]
+        out_report[ ]
+    end
+
+    in_ref -->|reference| mitohifi_reads
+    in_ref -->|reference| getorganelle
+    findmitoreference -->|reference| mitohifi_reads
+    findmitoreference -->|reference| getorganelle
+    mitohifi_reads -->|hifi| mitohifi_contigs
+    gunzip -->|illumina| mitohifi_contigs
+    mitohifi_contigs -->|mitogenome| sample_stats
+    mitohifi_contigs -->|mitogenome| out_mitogenome
+    summary -->|mitogenome| out_summary
+    multiqc -->|mitogenome| out_report

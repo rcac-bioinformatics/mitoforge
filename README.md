@@ -13,6 +13,16 @@ per-contig statistics.
 Built on the [nf-core](https://nf-co.re) template. Runs on Purdue RCAC clusters with SLURM
 and Apptainer, and on a laptop with Docker.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/metro_map_dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="assets/metro_map_light.png">
+  <img alt="mitoforge pipeline overview: HiFi reads through MitoHiFi, Illumina reads through GetOrganelle, both converging on the same finishing step" src="assets/metro_map_light.png">
+</picture>
+
+Hollow stations only run when they are needed: `findMitoReference` when the samplesheet
+gives a species name rather than a reference, `samtools fastq` when the HiFi reads arrive
+as BAM, and `fastp` unless you pass `--skip_trimming`.
+
 ## Run it
 
 ```bash

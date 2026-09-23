@@ -3,6 +3,7 @@ title: "mitoforge"
 ---
 
 import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import MetroMap from "../../components/MetroMap.astro";
 
 Assemble, circularise and annotate animal mitochondrial genomes from PacBio HiFi or
 Illumina paired-end reads, for many samples at once.
@@ -13,21 +14,14 @@ went.
 
 ## What it does
 
-```
-samplesheet.csv
-      │
-      ├── HiFi samples ─────── MitoHiFi -r ────┐
-      │                                        │
-      └── Illumina samples ─── GetOrganelle ───┤
-                                               │
-                              MitoHiFi -c (the finishing step)
-                                               │
-                              results/mitogenomes/<sample>.fasta
-                              results/summary/mitoforge_summary.tsv
-```
+<MetroMap alt="mitoforge pipeline overview. PacBio HiFi reads go through MitoHiFi in reads mode; Illumina paired-end reads go through fastp and GetOrganelle. A reference mitogenome, either supplied in the samplesheet or fetched by findMitoReference, seeds both routes. Both routes converge on MitoHiFi in contigs mode, which produces the finished mitogenome, the summary table and the MultiQC report." />
 
 Whichever route a sample took, it goes through the same finishing step, so every sample
 ends up with the same files in the same places.
+
+Hollow stations are steps that only run when they are needed: `findMitoReference` when
+the samplesheet gives a species name rather than a reference, `samtools fastq` when the
+HiFi reads arrive as BAM, and `fastp` unless you pass `--skip_trimming`.
 
 ## Where to go next
 

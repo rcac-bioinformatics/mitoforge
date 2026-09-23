@@ -80,7 +80,7 @@ These are not style preferences. Breaking one will bite someone.
 
 ```bash
 # toolchain
-python -m venv .venv && .venv/bin/pip install nf-core pre-commit
+python -m venv .venv && .venv/bin/pip install nf-core pre-commit nf-metro
 curl -s https://get.nextflow.io | bash
 curl -fsSL https://code.askimed.com/install/nf-test | bash
 
@@ -116,6 +116,41 @@ Write `withName: 'MITOHIFI_MITOHIFI'`, not `withName: '.*:ASSEMBLE_HIFI:MITOHIFI
 The qualified form does not match when a subworkflow is run on its own under
 nf-test, and the config silently stops applying.
 :::
+
+## The metro map
+
+The diagram on the [home page](/mitoforge/) and in the README is generated, not drawn.
+`assets/metro_map.mmd` is the source; everything else under `assets/metro_map*` is built
+from it by [nf-metro](https://github.com/seqeralabs/nf-metro).
+
+```bash
+# the one the docs inline. --no-self-color-scheme and --no-dark-mode-css hand the
+# light/dark decision to Starlight instead of the visitor's OS setting
+.venv/bin/nf-metro render assets/metro_map.mmd -o assets/metro_map.svg \
+    --responsive --no-self-color-scheme --no-dark-mode-css --bare --legend br \
+    --validate --strict
+
+# the two the README picks between with <picture>
+.venv/bin/nf-metro render assets/metro_map.mmd -o assets/metro_map_light.png --mode light --legend br
+.venv/bin/nf-metro render assets/metro_map.mmd -o assets/metro_map_dark.png --mode dark --legend br
+```
+
+The docs SVG is inlined by `src/components/MetroMap.astro` rather than used as an
+`<img>`, because the map colours itself with CSS `light-dark()`, which resolves against
+the inherited `color-scheme`. An `<img>` is a separate document and would not inherit
+the site's theme, so the map would ignore the light/dark toggle.
+
+After adding or renaming a process, check the map still covers it:
+
+```bash
+nextflow run . -profile test,docker --outdir results
+awk 'NR > 1 { print $3 }' results/pipeline_info/execution_trace_*.txt | sort -u > /tmp/procs.txt
+.venv/bin/nf-metro check-mapping assets/metro_map.mmd --processes /tmp/procs.txt
+```
+
+A conditional process that did not run in that particular test will be reported as
+stale, so read the list rather than trusting the exit code. The stations with no
+mapping are the file icons, which have no process behind them by design.
 
 ## Where to go next
 

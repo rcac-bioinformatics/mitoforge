@@ -1,0 +1,34 @@
+---
+// The metro map is generated from assets/metro_map.mmd by nf-metro:
+//
+//   nf-metro render assets/metro_map.mmd -o assets/metro_map.svg \
+//     --responsive --no-self-color-scheme --no-dark-mode-css --validate
+//
+// It is inlined rather than used as an <img> on purpose. The SVG colours itself
+// with CSS light-dark(), which resolves against the inherited color-scheme, and
+// an <img> is a separate document that would not inherit Starlight's theme. So
+// the map follows the site's light/dark toggle only while it is inlined.
+import metroMap from "../../assets/metro_map.svg?raw";
+
+interface Props {
+    /** Accessible description of the diagram. */
+    alt: string;
+}
+
+const { alt } = Astro.props;
+---
+
+<figure class="metro-map" role="img" aria-label={alt}>
+    <Fragment set:html={metroMap} />
+</figure>
+
+<style>
+    .metro-map {
+        margin: 1.5rem 0;
+    }
+
+    .metro-map :global(svg) {
+        width: 100%;
+        height: auto;
+    }
+</style>
