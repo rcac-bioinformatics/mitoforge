@@ -23,6 +23,37 @@ Hollow stations are steps that only run when they are needed: `findMitoReference
 the samplesheet gives a species name rather than a reference, `samtools fastq` when the
 HiFi reads arrive as BAM, and `fastp` unless you pass `--skip_trimming`.
 
+### What goes in
+
+You hand the pipeline one file, `--input samplesheet.csv`. Everything else on the map is
+a path named in one of its columns, so the three file icons on the left are three groups
+of columns in that one sheet rather than three things you supply separately.
+
+| Icon on the map        | Samplesheet columns     | Which rows                      |
+| ---------------------- | ----------------------- | ------------------------------- |
+| `FASTA/GBK`, section 1 | `ref_fa` and `ref_gb`   | rows that name a reference file |
+| `FASTQ/BAM`, section 2 | `fastq_1` **or** `bam`  | rows with `platform: hifi`      |
+| `FASTQ`, section 3     | `fastq_1` and `fastq_2` | rows with `platform: illumina`  |
+
+One row is one sample, and the `platform` column is what decides whether that row takes
+the orange line or the blue one. Every row needs reads and a reference mitogenome.
+
+Reads come in exactly one of two ways: `fastq_1` (plus `fastq_2` for Illumina), or `bam`
+for an unaligned PacBio BAM. Filling in both is an error, and `bam` is HiFi only. That is
+why `samtools fastq` is hollow, it only runs for the rows that arrived as BAM.
+
+The reference has three routes, and the map draws only the first two:
+
+- `ref_fa` and `ref_gb`, the files you supply, which is the `FASTA/GBK` icon
+- `species`, a scientific name that `findMitoReference` looks up at NCBI, which is why
+  that station is hollow
+- `ref_fa: hifi:<sample>`, reusing the finished mitogenome of another row in the same
+  sheet, for Illumina rows only. The map leaves this one out because the edge runs
+  backwards out of the finishing step and a metro map has to stay acyclic. It is worked
+  through in [Short reads using HiFi mitogenomes](/mitoforge/cases/short-reads-from-hifi/).
+
+[Samplesheet](/mitoforge/samplesheet/) documents every column.
+
 ## Where to go next
 
 <CardGrid>

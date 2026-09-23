@@ -23,6 +23,11 @@ Hollow stations only run when they are needed: `findMitoReference` when the samp
 gives a species name rather than a reference, `samtools fastq` when the HiFi reads arrive
 as BAM, and `fastp` unless you pass `--skip_trimming`.
 
+The file icons on the left are not separate inputs. You pass one `--input
+samplesheet.csv`, and each icon is a group of columns in it: `ref_fa` and `ref_gb`,
+`fastq_1` or `bam` for HiFi rows, `fastq_1` and `fastq_2` for Illumina rows. See
+[the samplesheet reference](https://rcac-bioinformatics.github.io/mitoforge/samplesheet/).
+
 ## Run it
 
 ```bash
